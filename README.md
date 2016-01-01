@@ -34,5 +34,8 @@ len(doc.sentences)
 # A Document contains the words, pos tags, lemmas, named entities, and syntactic dependencies of its component Sentences
 doc.bag_of_labeled_deps
 
+# We can access the Named Entities for the Document as a dictionary mapping an NE Label -> List[String]
+doc.nes
+
 # A Sentence contains words, pos tags, lemmas, named entities, and syntactic dependencies
 doc.sentences[0].lemmas
