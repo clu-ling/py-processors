@@ -23,8 +23,9 @@ It may take a minute or so to load the large model files.
 
 ### Using `py-processors`
 
-```
+```python
 from processors import *
+
 proc = Processor()
 doc = proc.annotate("My name is Inigo Montoya.  You killed my father.  Prepare to die.")
 
