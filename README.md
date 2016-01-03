@@ -7,7 +7,7 @@ Python wrapper for the CLU Lab's [`processors`]() NLP library.  Relies on the [`
 git clone https://github.com/myedibleenso/py-processors.git
 pip install -e py-processors
 ```
-# How to use it?
+# How do I use it?
 
 ### Running `processors-server`
 Eventually the `processors-server.jar` will be bundled with this library.  For now you can get it here (requires `Java 8` and `Scala 2.11.x`):
