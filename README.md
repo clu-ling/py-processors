@@ -1,5 +1,5 @@
 # What is it?
-Python wrapper for the CLU Lab's [`processors`]() NLP library.  Relies on the [`processors-server`]().
+Python wrapper for the CLU Lab's [`processors`](http://github.com/clulab/processors) NLP library.  Relies on the [`processors-server`](http://github.com/myedibleenso/processors-server).
 
 # Requirements
 - Java 8
@@ -10,18 +10,19 @@ Python wrapper for the CLU Lab's [`processors`]() NLP library.  Relies on the [`
 git clone https://github.com/myedibleenso/py-processors.git
 pip install -e py-processors
 ```
+
 ### Grab the `processors-server` fat `jar`
 
 `wget http://www.cs.arizona.edu/~hahnpowell/processors-server/current/processors-server.jar`
 
 or
-
 `curl -H "Accept: application/zip" http://www.cs.arizona.edu/~hahnpowell/processors-server/current/processors-server.jar -o processors-server.jar`
 
 # How to use it?
 
 ```python
 from processors import *
+
 proc = Processor()
 
 # Start the server.
