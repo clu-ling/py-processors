@@ -81,7 +81,6 @@ class Sentence(object):
                     # store the entity
                     named_entity = ' '.join(self.words[start:end])
                     entity_dict[current].append(named_entity)
-                    print("NE sequence {} started at {} and has ended at {} ({})".format(current, start, i, named_entity))
                     # reset our book-keeping vars
                     current = Sentence.NONENTITY
                     start = None
