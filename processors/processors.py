@@ -14,17 +14,30 @@ class Processor(object):
     def __init__(self, address="http://127.0.0.1:8888/parse", jar_path=None):
         if jar_path:
             self.jar_path = os.path.expanduser(jar_path)
+            # attempt to start the server
+            self._start_server()
         else:
             try:
                 self.jar_path = os.path.expanduser(os.environ[Processor.PROC_VAR])
+                self._start_server()
             except:
-                raise Exception("processors-server.jar not found.  Please add {} to your environment (ex. {}=/path/to/processors-server.jar)".format(Processor.PROC_VAR, Processor.PROC_VAR))
+                print("WARNING: processors-server.jar not found.  \nPlease start the server using start_server(/path/to/processors-server.jar).  \nAvoid this error in the future by adding {} to your environment (ex. {}=/path/to/processors-server.jar)".format(Processor.PROC_VAR, Processor.PROC_VAR))
         self.address = address
-        self._start_command = "java -cp {} NLPServer".format(self.jar_path)
-        #self._start_server()
+        self._start_command = "java -cp {} NLPServer"
+
+    def start_server(self, jarpath=None):
+        if jarpath:
+            self.jar_path = jarpath
+        self._start_server()
 
     def _start_server(self):
-        self._process = sp.Popen(shlex.split(self._start_command), shell=False)
+        self._process = sp.Popen(shlex.split(self._start_command.format(self.jar_path)), shell=False)
+
+    def _get_path(self, p):
+        """
+        expand a user-specified path.  Supports "~" shortcut.
+        """
+        return os.path.abspath(os.path.normpath(os.path.expanduser(p)))
 
     def annotate(self, text):
         # POST json to the server API
