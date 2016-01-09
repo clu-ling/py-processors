@@ -13,10 +13,14 @@ pip install -e py-processors
 
 ### Grab the `processors-server` fat `jar`
 
-`wget http://www.cs.arizona.edu/~hahnpowell/processors-server/current/processors-server.jar`
+```
+wget http://www.cs.arizona.edu/~hahnpowell/processors-server/current/processors-server.jar
+```
 
 or
-`curl -H "Accept: application/zip" http://www.cs.arizona.edu/~hahnpowell/processors-server/current/processors-server.jar -o processors-server.jar`
+```
+curl -H "Accept: application/zip" http://www.cs.arizona.edu/~hahnpowell/processors-server/current/processors-server.jar -o processors-server.jar
+```
 
 # How to use it?
 
