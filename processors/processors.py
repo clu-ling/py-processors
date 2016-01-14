@@ -13,7 +13,13 @@ import time
 
 class Processor(object):
     PROC_VAR = 'PROCESSORS_SERVER'
-    def __init__(self, address="http://127.0.0.1:8888/parse", jar_path=None):
+    def __init__(self, hostname="127.0.0.1", port=8888, jar_path=None):
+
+        self.hostname = hostname
+        self.port = port
+        self.address = self._make_address()
+        self._start_command = "java -cp {} NLPServer"
+        self.timeout = 120
         if jar_path:
             self.jar_path = os.path.expanduser(jar_path)
             # attempt to start the server
@@ -23,12 +29,11 @@ class Processor(object):
                 # use the os module's devnull for compatibility with python 2.7
                 self.DEVNULL = open(os.devnull, 'wb')
                 self.jar_path = os.path.expanduser(os.environ[Processor.PROC_VAR])
+                if not os.path.exists(self.jar_path):
+                    raise Exception
                 self._start_server()
-            except:
-                print("WARNING: processors-server.jar not found.  \nPlease start the server using start_server(/path/to/processors-server.jar).  \nAvoid this error in the future by adding {} to your environment:\n\t{}=/path/to/processors-server.jar".format(Processor.PROC_VAR, Processor.PROC_VAR))
-        self.address = address
-        self._start_command = "java -cp {} NLPServer"
-        self.timeout = 120
+            except Exception as e:
+                print("WARNING: processors-server.jar not found at {}.  \nPlease start the server using start_server(/path/to/processors-server.jar).  \nAvoid this error in the future by adding {} to your environment:\n\t{}=/path/to/processors-server.jar".format(self.jar_path, Processor.PROC_VAR, Processor.PROC_VAR))
 
     def start_server(self, jarpath=None, timeout=120):
         self.timeout = int(float(timeout)/2)
@@ -56,6 +61,17 @@ class Processor(object):
         # if the server still hasn't started, raise an Exception
         raise Exception("Couldn't connect to processors-server. Is the port in use?")
 
+    def _make_address(self):
+        return "http://{}:{}/parse".format(self.hostname, self.port)
+
+    def make_address(self, hostname, port):
+        # update hostname
+        self.hostname = hostname
+        # update port
+        self.port = port
+        # update address
+        self.address = self._make_address()
+
     def _get_path(self, p):
         """
         Expand a user-specified path.  Supports "~" shortcut.
@@ -65,7 +81,11 @@ class Processor(object):
     def annotate(self, text):
         try:
             # POST json to the server API
-            response = requests.post(self.address, json={"text":"{}".format(text)})
+            #response = requests.post(self.address, json={"text":"{}".format(text)})
+            # for older versions of requests, use the call below
+            response = requests.post(self.address,
+                                    data=json.dumps({"text":"{}".format(text)}),
+                                    headers={"content-type": "application/json"})
             # response content should be utf-8
             content = response.content.decode("utf-8")
             # load json and build Sentences and Document
