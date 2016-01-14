@@ -33,7 +33,7 @@ class Processor(object):
                     raise Exception
                 self._start_server()
             except Exception as e:
-                print("WARNING: processors-server.jar not found at {}.  \nPlease start the server using start_server(/path/to/processors-server.jar).  \nAvoid this error in the future by adding {} to your environment:\n\t{}=/path/to/processors-server.jar".format(self.jar_path, Processor.PROC_VAR, Processor.PROC_VAR))
+                print("WARNING: processors-server.jar not found.  \nPlease start the server using start_server(/path/to/processors-server.jar).  \nAvoid this error in the future by adding {} to your environment:\n\t{}=/path/to/processors-server.jar".format(Processor.PROC_VAR, Processor.PROC_VAR))
 
     def start_server(self, jarpath=None, timeout=120):
         self.timeout = int(float(timeout)/2)
