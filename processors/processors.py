@@ -30,13 +30,13 @@ class Processor(object):
         self._start_command = "java -cp {} NLPServer"
         self.timeout = 120
 
-    def start_server(self, jarpath=None):
+    def start_server(self, jarpath=None, timeout=120):
+        self.timeout = int(float(timeout)/2)
         if jarpath:
             self.jar_path = jarpath
         self._start_server()
 
-    def _start_server(self, timeout=30):
-        self.timeout = int(float(timeout)/2)
+    def _start_server(self):
         self._process = sp.Popen(shlex.split(self._start_command.format(self.jar_path)),
                                              shell=False,
                                              stderr=self.DEVNULL,
