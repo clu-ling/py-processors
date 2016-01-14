@@ -47,3 +47,15 @@ doc.nes
 # A Sentence contains words, pos tags, lemmas, named entities, and syntactic dependencies
 doc.sentences[0].lemmas
 ```
+
+# Issues
+### Something is already running on port `8888`, but I don't know what.  Help!
+
+I will eventually change `processors-server` to optionally take a port as a command line argument.  You'll be able to specify this in `.start_server()`.  For the time being, though...
+
+Try running the following command:
+
+```
+lsof -i :8888
+```
+You can then kill the responsible process using the reported PID
