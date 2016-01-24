@@ -27,7 +27,8 @@ curl -H "Accept: application/zip" http://www.cs.arizona.edu/~hahnpowell/processo
 ```python
 from processors import *
 
-proc = Processor()
+# the constructor requires you to specify a port to run the server on
+proc = Processor(port=8886)
 
 # Start the server.
 # It may take a minute or so to load the large model files.
@@ -46,16 +47,38 @@ doc.nes
 
 # A Sentence contains words, pos tags, lemmas, named entities, and syntactic dependencies
 doc.sentences[0].lemmas
+
+# get the first sentence
+s = doc.sentences[0]
+
+# the number of tokens in this sentence
+s.length
+
+# the named entities contained in this sentence
+s.nes
+
+# generate labeled dependencies using "words", "tags", "lemmas", "entities", or token index ("index")
+s.labeled_dependencies_using("tags")
+
+# generate unlabeled dependencies using "words", "tags", "lemmas", "entities", or token index ("index")
+s.unlabeled_dependencies_using("lemmas")
+
+# play around with the dependencies directly
+deps = s.dependencies
+
+# see what dependencies lead directly to the first token (i.e. token 0 is the dependent of what?)
+deps.incoming[0]
+
+# see what dependencies are originating from the first token (i.e. token 0 is the head of what?)
+deps.outgoing[0]
 ```
 
 # Issues
-### Something is already running on port `8888`, but I don't know what.  Help!
-
-I will eventually change `processors-server` to optionally take a port as a command line argument.  You'll be able to specify this in `.start_server()`.  For the time being, though...
+### Something is already running on port `XXXX`, but I don't know what.  Help!
 
 Try running the following command:
 
 ```
-lsof -i :8888
+lsof -i :<portnumber>
 ```
-You can then kill the responsible process using the reported PID
+You can then kill the responsible process using the reported `PID`
