@@ -21,6 +21,12 @@ class Document(object):
         self.bag_of_unlabeled_deps = list(chain(*[s.dependencies.unlabeled for s in self.sentences]))
         self.text = text if text else " ".join(self.words)
 
+    def bag_of_labeled_dependencies_using(self, form):
+        return list(chain(*[s.labeled_dependencies_using(form) for s in self.sentences]))
+
+    def bag_of_unlabeled_dependencies_using(self, form):
+        return list(chain(*[s.unlabeled_dependencies_using(form) for s in self.sentences]))
+
     def _merge_ne_dicts(self):
         # Get the set of all NE labels found in the Doc's sentences
         entity_labels = set(chain(*[s.nes.keys() for s in self.sentences]))
@@ -110,6 +116,43 @@ class Sentence(object):
 
     def to_string(self):
         return ' '.join("{w}__{p}".format(w=self.words[i],p=self.tags[i]) for i in range(self.length))
+
+    def labeled_dependencies_using(self, form):
+        """
+        Generates a list of labeled dependencies for a sentence
+        using "words", "tags", "lemmas", "entities", or token index ("index")
+        """
+
+        f = form.lower()
+        if f == "words":
+            tokens = self.words
+        elif f == "tags":
+            tokens = self.tags
+        elif f == "lemmas":
+            tokens = self.lemmas
+        elif f == "entities":
+            tokens = self.nes
+        elif f == "index":
+            tokens = list(range(self.length))
+        #else:
+        #    raise Exception("""form must be "words", "tags", "lemmas", or "index"""")
+        deps = self.dependencies
+        labeled = []
+        for out in deps.outgoing:
+            for (dest, rel) in deps.outgoing[out]:
+                labeled.append("{}_{}_{}".format(tokens[out], rel.upper(), tokens[dest]))
+        return labeled
+
+    def unlabeled_dependencies_using(self, form):
+        """
+        Generate a list of unlabeled dependencies for a sentence
+        using "words", "tags", "lemmas", "entities", or token index ("index")
+        """
+        unlabeled = []
+        for sd in self.labeled_dependencies_using(form):
+            (head, _, dep) = sd.split("_")
+            unlabeled.append("{}_{}".format(head, dep))
+        return unlabeled
 
 
 class Dependencies(object):
