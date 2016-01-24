@@ -6,7 +6,7 @@ with open('requirements.txt') as f:
     required = f.read().splitlines()
 
 setup(name='py-processors',
-      version='0.1',
+      version='1.0',
       include_package_data=True,
       keywords=['nlp', 'processors', 'jvm'],
       description="A wrapper for interacting with the CLU Lab's processors library.",
