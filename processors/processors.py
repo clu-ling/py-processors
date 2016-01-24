@@ -13,12 +13,12 @@ import time
 
 class Processor(object):
     PROC_VAR = 'PROCESSORS_SERVER'
-    def __init__(self, hostname="127.0.0.1", port=8888, jar_path=None):
+    def __init__(self, port, hostname="127.0.0.1", jar_path=None):
 
         self.hostname = hostname
         self.port = port
-        self.address = self._make_address()
-        self._start_command = "java -cp {} NLPServer"
+        self.make_address(hostname, port)
+        self._start_command = "java -cp {} NLPServer {}"
         self.timeout = 120
         if jar_path:
             self.jar_path = os.path.expanduser(jar_path)
@@ -35,14 +35,25 @@ class Processor(object):
             except Exception as e:
                 print("WARNING: processors-server.jar not found.  \nPlease start the server using start_server(/path/to/processors-server.jar).  \nAvoid this error in the future by adding {} to your environment:\n\t{}=/path/to/processors-server.jar".format(Processor.PROC_VAR, Processor.PROC_VAR))
 
-    def start_server(self, jarpath=None, timeout=120):
+    def start_server(self, port, jarpath=None, timeout=120):
+        self.port = port
         self.timeout = int(float(timeout)/2)
         if jarpath:
             self.jar_path = jarpath
         self._start_server()
 
-    def _start_server(self):
-        self._process = sp.Popen(shlex.split(self._start_command.format(self.jar_path)),
+    def stop_server(self, port=None):
+        port = port or self.port
+        address = "http://{}:{}".format(self.hostname, port)
+        shutdown_address = "{}/shutdown".format(address)
+        response = requests.post(shutdown_address)
+        if response:
+            print(response.content.decode("utf-8"))
+
+    def _start_server(self, port=None):
+        if port:
+            self.port = port
+        self._process = sp.Popen(shlex.split(self._start_command.format(self.jar_path, self.port)),
                                              shell=False,
                                              stderr=self.DEVNULL,
                                              stdout=self.DEVNULL,
@@ -61,16 +72,13 @@ class Processor(object):
         # if the server still hasn't started, raise an Exception
         raise Exception("Couldn't connect to processors-server. Is the port in use?")
 
-    def _make_address(self):
-        return "http://{}:{}/parse".format(self.hostname, self.port)
-
     def make_address(self, hostname, port):
         # update hostname
         self.hostname = hostname
         # update port
         self.port = port
         # update address
-        self.address = self._make_address()
+        self.address = "http://{}:{}".format(self.hostname, self.port)
 
     def _get_path(self, p):
         """
@@ -83,7 +91,8 @@ class Processor(object):
             # POST json to the server API
             #response = requests.post(self.address, json={"text":"{}".format(text)})
             # for older versions of requests, use the call below
-            response = requests.post(self.address,
+            annotate_service_address = "{}/annotate".format(self.address)
+            response = requests.post(annotate_service_address,
                                     data=json.dumps({"text":"{}".format(text)}),
                                     headers={"content-type": "application/json"})
             # response content should be utf-8
@@ -109,7 +118,7 @@ class Processor(object):
         Stop server
         """
         try:
-            self._process.kill()
+            self.stop_server()
             # close our file object
             self.DEVNULL.close()
             print("Successfully shut down processors-server!")
