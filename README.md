@@ -6,19 +6,19 @@ Python wrapper for the CLU Lab's [`processors`](http://github.com/clulab/process
 
 # Installation
 
-```
+```bash
 git clone https://github.com/myedibleenso/py-processors.git
 pip install -e py-processors
 ```
 
 ### Grab the `processors-server` fat `jar`
 
-```
+```bash
 wget http://www.cs.arizona.edu/~hahnpowell/processors-server/current/processors-server.jar
 ```
 
 or
-```
+```bash
 curl -H "Accept: application/zip" http://www.cs.arizona.edu/~hahnpowell/processors-server/current/processors-server.jar -o processors-server.jar
 ```
 
@@ -78,7 +78,7 @@ deps.outgoing[0]
 
 Try running the following command:
 
-```
+```bash
 lsof -i :<portnumber>
 ```
 You can then kill the responsible process using the reported `PID`
