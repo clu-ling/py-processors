@@ -37,7 +37,7 @@ class Processor(object):
 
     def start_server(self, jar_path=None, timeout=120):
         self.timeout = int(float(timeout)/2)
-        if jarpath:
+        if jar_path:
             self.jar_path = jar_path
         self._start_server()
 
