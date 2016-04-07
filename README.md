@@ -27,12 +27,14 @@ curl -H "Accept: application/zip" http://www.cs.arizona.edu/~hahnpowell/processo
 ```python
 from processors import *
 
-# the constructor requires you to specify a port to run the server on
+# The constructor requires you to specify a port for running the server.
+# You can also provide a jar path to the constructor, if you haven't already
+# set a PROCESSORS_SERVER environment variable.
 proc = Processor(port=8886)
 
-# Start the server.
+# Start the server (optionally provide the path to the jar).
 # It may take a minute or so to load the large model files.
-proc.start_server(path/to/processors-server.jar)
+proc.start_server("path/to/processors-server.jar")
 
 doc = proc.annotate("My name is Inigo Montoya.  You killed my father.  Prepare to die.")
 
