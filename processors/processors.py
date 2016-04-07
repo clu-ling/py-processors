@@ -20,14 +20,14 @@ class Processor(object):
         self.make_address(hostname, port)
         self._start_command = "java -cp {} NLPServer {}"
         self.timeout = 120
+        # use the os module's devnull for compatibility with python 2.7
+        self.DEVNULL = open(os.devnull, 'wb')
         if jar_path:
             self.jar_path = os.path.expanduser(jar_path)
             # attempt to start the server
             self._start_server()
         else:
             try:
-                # use the os module's devnull for compatibility with python 2.7
-                self.DEVNULL = open(os.devnull, 'wb')
                 self.jar_path = os.path.expanduser(os.environ[Processor.PROC_VAR])
                 if not os.path.exists(self.jar_path):
                     raise Exception
