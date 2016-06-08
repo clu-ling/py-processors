@@ -48,7 +48,7 @@ class PyProcessorsInstall(install):
         install.run(self)
 
 setup(name='py-processors',
-      version='1.0',
+      version='2.0',
       keywords=['nlp', 'processors', 'jvm'],
       description="A wrapper for interacting with the CLU Lab's processors library.",
       url='http://github.com/myedibleenso/py-processors',
