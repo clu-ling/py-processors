@@ -1,5 +1,7 @@
 # What is it?
-Python wrapper for the CLU Lab's [`processors`](http://github.com/clulab/processors) NLP library.  Relies on the [`processors-server`](http://github.com/myedibleenso/processors-server).
+`py-processors` is a Python wrapper for the CLU Lab's [`processors`](http://github.com/clulab/processors) NLP library.  `py-processors` relies on [`processors-server`](http://github.com/myedibleenso/processors-server).  
+
+Though ([mostly](https://github.com/myedibleenso/py-processors/issues?q=is%3Aopen+is%3Aissue+label%3Apython2.x)) compatible with Python 2.x, this library was developed with 3.x in mind.
 
 # Requirements
 - Java 8
@@ -7,19 +9,7 @@ Python wrapper for the CLU Lab's [`processors`](http://github.com/clulab/process
 # Installation
 
 ```bash
-git clone https://github.com/myedibleenso/py-processors.git
-pip install -e py-processors
-```
-
-### Grab the `processors-server` fat `jar`
-
-```bash
-wget http://www.cs.arizona.edu/~hahnpowell/processors-server/current/processors-server.jar
-```
-
-or
-```bash
-curl -H "Accept: application/zip" http://www.cs.arizona.edu/~hahnpowell/processors-server/current/processors-server.jar -o processors-server.jar
+pip install git+https://github.com/myedibleenso/py-processors.git
 ```
 
 # How to use it?
@@ -30,13 +20,13 @@ from processors import *
 # The constructor requires you to specify a port for running the server.
 # You can also provide a jar path to the constructor, if you haven't already
 # set a PROCESSORS_SERVER environment variable.
-proc = Processor(port=8886)
+api = ProcessorsAPI(port=8886)
 
 # Start the server (optionally provide the path to the jar).
 # It may take a minute or so to load the large model files.
-proc.start_server("path/to/processors-server.jar")
+api.start_server("path/to/processors-server.jar")
 
-doc = proc.annotate("My name is Inigo Montoya.  You killed my father.  Prepare to die.")
+doc = api.annotate("My name is Inigo Montoya.  You killed my father.  Prepare to die.")
 
 # There should be 3 Sentence objects in this Document
 len(doc.sentences)
@@ -73,7 +63,16 @@ deps.incoming[0]
 
 # see what dependencies are originating from the first token (i.e. token 0 is the head of what?)
 deps.outgoing[0]
+
+# try using BioNLPProcessor
+biodoc = api.bionlp.annotate("We next considered the effect of Ras monoubiquitination on GAP-mediated hydrolysis")
+
+# check out the bio-specific entities
+biodoc.nes 
 ```
+
+# I want the latest `processors-server.jar`
+In that case, take a look over [here](https:github.com/myedibleenso/processors-server).
 
 # Issues
 ### Something is already running on port `XXXX`, but I don't know what.  Help!
