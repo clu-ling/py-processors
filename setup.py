@@ -28,7 +28,7 @@ class JarManager(object):
             sys.stdout.flush()
         jar_url = "http://www.cs.arizona.edu/~hahnpowell/processors-server/current/processors-server.jar"
         print("Downloading {} from {} ...".format(ppjar, jar_url))
-        urlretrieve(jar_url, "processors-server.jar", reporthook=dlProgress)
+        urlretrieve(jar_url, ppjar, reporthook=dlProgress)
         print("Installing py-processors ...")
 
 class PyProcessorsDevelop(develop):
@@ -48,7 +48,7 @@ class PyProcessorsInstall(install):
         install.run(self)
 
 setup(name='py-processors',
-      version='2.0',
+      version='2.1',
       keywords=['nlp', 'processors', 'jvm'],
       description="A wrapper for interacting with the CLU Lab's processors library.",
       url='http://github.com/myedibleenso/py-processors',
