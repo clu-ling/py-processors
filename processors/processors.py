@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 # use data structures
 from .ds import Document, Sentence, Dependencies
