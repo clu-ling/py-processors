@@ -1,6 +1,6 @@
-#sudo: false
-sudo: required
-dist: trusty
+sudo: false
+# sudo: required
+# dist: trusty
 
 language: python
 
@@ -10,10 +10,10 @@ jdk:
   - oraclejdk7
 
 python:
-  # - "2.7"
-  # - "3.2"
-  # - "3.3"
-  # - "3.4"
+  - "2.7"
+  - "3.2"
+  - "3.3"
+  - "3.4"
   - "3.5"
 
 before_install:
@@ -28,8 +28,8 @@ install:
 #   timeout: 1000
 
 # command to run tests
-script:
-  - green -vv --run-coverage
+#script:
+#  - green -vv --run-coverage
 
 after_success:
   - coveralls
