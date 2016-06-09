@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 from codecs import open
 from setuptools.command.install import install
@@ -29,7 +30,7 @@ class JarManager(object):
         jar_url = "http://www.cs.arizona.edu/~hahnpowell/processors-server/current/processors-server.jar"
         print("Downloading {} from {} ...".format(ppjar, jar_url))
         urlretrieve(jar_url, ppjar, reporthook=dlProgress)
-        print("Installing py-processors ...")
+        print("\nInstalling py-processors ...")
 
 class PyProcessorsDevelop(develop):
 

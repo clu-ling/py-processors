@@ -1,3 +1,5 @@
+sudo: false
+
 language: python
 
 python:
@@ -9,7 +11,7 @@ python:
 
 # command to install dependencies
 install:
-  - python setup.py install
+  - pip install .
 #  - pip install -v git+https://github.com/myedibleenso/py-processors.git
 # cache:
 #   pip: true
