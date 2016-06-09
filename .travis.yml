@@ -1,0 +1,23 @@
+language: python
+
+python:
+  - "2.7"
+  - "3.2"
+  - "3.3"
+  - "3.4"
+  - "3.5"
+
+# command to install dependencies
+install:
+  - python setup.py install
+#  - pip install -v git+https://github.com/myedibleenso/py-processors.git
+# cache:
+#   pip: true
+#   timeout: 1000
+
+# command to run tests
+script:
+  - green -vv --run-coverage
+
+after_success:
+  - coveralls
