@@ -72,10 +72,15 @@ class ProcessorsAPI(object):
         port = port or self.port
         address = "http://{}:{}".format(self.hostname, port)
         shutdown_address = "{}/shutdown".format(address)
-        response = requests.post(shutdown_address)
-        if response:
-            print(response.content.decode("utf-8"))
+        # attempt shutdown
+        try:
+            response = requests.post(shutdown_address)
+            if response:
+                print(response.content.decode("utf-8"))
             return True
+        # will fail if the server is already down
+        except Exception as e:
+            pass
         return False
 
     def _start_server(self, port=None):
