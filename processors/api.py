@@ -75,6 +75,8 @@ class ProcessorsAPI(object):
         response = requests.post(shutdown_address)
         if response:
             print(response.content.decode("utf-8"))
+            return True
+        return False
 
     def _start_server(self, port=None):
         if port:
