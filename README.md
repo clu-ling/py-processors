@@ -76,8 +76,15 @@ biodoc.nes
 
 # Running the tests
 
-```python
-py.test --cov-report term-missing --cov=processors tests/
+1. Clone and install the package locally:
+```bash
+git clone https://github.com/myedibleenso/py-processors.git
+cd py-processors
+pip install -e .
+```
+2. Run the tests
+```bash
+green -vv --run-coverage
 ```
 
 # I want the latest `processors-server.jar`
