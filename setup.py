@@ -1,16 +1,16 @@
+#!/usr/bin/env python
+
+from codecs import open
 from setuptools.command.install import install
 from setuptools.command.develop import develop
 from setuptools import setup
+import re
 import os
 import sys
 try:
     from urllib import urlretrieve
 except:
     from urllib.request import urlretrieve
-
-# use requirements.txt as deps list
-with open('requirements.txt') as f:
-    required = f.read().splitlines()
 
 
 class JarManager(object):
@@ -47,14 +47,28 @@ class PyProcessorsInstall(install):
         # install everything else
         install.run(self)
 
+# use requirements.txt as deps list
+with open('requirements.txt') as f:
+    required = f.read().splitlines()
+
+# get readme
+with open('README.md', 'r', 'utf-8') as f:
+    readme = f.read()
+
+# get version
+with open('processors/__init__.py', 'r') as fd:
+    version = re.search(r'^__version__\s*=\s*[\'"]([^\'"]*)[\'"]',
+                        fd.read(), re.MULTILINE).group(1)
+
 setup(name='py-processors',
-      version='2.1',
+      version=version,
       keywords=['nlp', 'processors', 'jvm'],
       description="A wrapper for interacting with the CLU Lab's processors library.",
+      long_description=readme,
       url='http://github.com/myedibleenso/py-processors',
       author='myedibleenso',
       author_email='gushahnpowell@gmail.com',
-      license='Apache',
+      license='Apache 2.0',
       packages=["processors"],
       install_requires=required,
       cmdclass={
@@ -62,6 +76,4 @@ setup(name='py-processors',
         'develop': PyProcessorsDevelop,
       },
       include_package_data=True,
-      test_suite='nose.collector',
-      tests_require=['nose'],
       zip_safe=False)
