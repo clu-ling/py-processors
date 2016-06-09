@@ -1,4 +1,4 @@
-[![Throughput Graph](https://graphs.waffle.io/myedibleenso/py-processors/throughput.svg)](https://waffle.io/myedibleenso/py-processors/metrics/throughput)[![Coverage Status](https://coveralls.io/repos/github/myedibleenso/py-processors/badge.svg?branch=master)](https://coveralls.io/github/myedibleenso/py-processors?branch=master)
+[![Throughput Graph](https://graphs.waffle.io/myedibleenso/py-processors/throughput.svg)](https://waffle.io/myedibleenso/py-processors/metrics/throughput)[![Build Status](https://travis-ci.org/myedibleenso/py-processors.svg?branch=master)](https://travis-ci.org/myedibleenso/py-processors)[![Coverage Status](https://coveralls.io/repos/github/myedibleenso/py-processors/badge.svg?branch=master)](https://coveralls.io/github/myedibleenso/py-processors?branch=master)
 
 # What is it?
 `py-processors` is a Python wrapper for the CLU Lab's [`processors`](http://github.com/clulab/processors) NLP library.  `py-processors` relies on [`processors-server`](http://github.com/myedibleenso/processors-server).  
