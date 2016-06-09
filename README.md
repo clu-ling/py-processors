@@ -1,3 +1,5 @@
+[![Throughput Graph](https://graphs.waffle.io/myedibleenso/py-processors/throughput.svg)](https://waffle.io/myedibleenso/py-processors/metrics/throughput)[![Coverage Status](https://coveralls.io/repos/github/myedibleenso/py-processors/badge.svg?branch=master)](https://coveralls.io/github/myedibleenso/py-processors?branch=master)
+
 # What is it?
 `py-processors` is a Python wrapper for the CLU Lab's [`processors`](http://github.com/clulab/processors) NLP library.  `py-processors` relies on [`processors-server`](http://github.com/myedibleenso/processors-server).  
 
@@ -26,7 +28,8 @@ api = ProcessorsAPI(port=8886)
 # It may take a minute or so to load the large model files.
 api.start_server("path/to/processors-server.jar")
 
-doc = api.annotate("My name is Inigo Montoya.  You killed my father.  Prepare to die.")
+# try annotating some text using FastNLPProcessor (a CoreNLP wrapper)
+doc = api.fastnlp.annotate("My name is Inigo Montoya.  You killed my father.  Prepare to die.")
 
 # There should be 3 Sentence objects in this Document
 len(doc.sentences)
@@ -68,7 +71,13 @@ deps.outgoing[0]
 biodoc = api.bionlp.annotate("We next considered the effect of Ras monoubiquitination on GAP-mediated hydrolysis")
 
 # check out the bio-specific entities
-biodoc.nes 
+biodoc.nes
+```
+
+# Running the tests
+
+```python
+py.test --cov-report term-missing --cov=processors tests/
 ```
 
 # I want the latest `processors-server.jar`
