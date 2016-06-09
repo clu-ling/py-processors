@@ -81,11 +81,13 @@ class ProcessorsAPI(object):
     def _start_server(self, port=None):
         if port:
             self.port = port
-        self._process = sp.Popen(shlex.split(self._start_command.format(self.jar_path, self.port)),
-                                             shell=False,
-                                             stderr=self.DEVNULL,
-                                             stdout=self.DEVNULL,
-                                             universal_newlines=True)
+        # build the command
+        cmd = self._start_command.format(self.jar_path, self.port)
+        self._process = sp.Popen(shlex.split(cmd),
+                                 shell=False,
+                                 stderr=self.DEVNULL,
+                                 stdout=self.DEVNULL,
+                                 universal_newlines=True)
 
         print("Starting processors-server ({})...".format(self.jar_path))
         print("\nWaiting for server...")
@@ -95,7 +97,8 @@ class ProcessorsAPI(object):
                 if success:
                     print("Connection with processors-server established!")
                     return True
-            except:
+            except Exception as e:
+                #print(e)
                 # wait and try again
                 time.sleep(2)
         # if the server still hasn't started, raise an Exception

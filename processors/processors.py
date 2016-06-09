@@ -37,7 +37,8 @@ class Processor(object):
                 deps = Dependencies(s['dependencies'], words)
                 sentences.append(Sentence(words=words, lemmas=lemmas, tags=tags, entities=entities, dependencies=deps))
             return Document(text=text, sentences=sentences)
-        except:
+        except Exception as e:
+            #print(e)
             raise Exception("Connection refused!  Is the server running?")
 
 class FastNLPProcessor(Processor):
