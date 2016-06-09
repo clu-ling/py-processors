@@ -8,6 +8,6 @@ from .api import ProcessorsAPI
 
 
 __title__ = 'py-processors'
-__version__ = '2.2'
+__version__ = '2.3'
 __author__ = 'Gus Hahn-Powell'
 __copyright__ = 'Copyright 2016 Gus Hahn-Powell'
