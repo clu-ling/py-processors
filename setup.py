@@ -75,5 +75,13 @@ setup(name='py-processors',
         'install': PyProcessorsInstall,
         'develop': PyProcessorsDevelop,
       },
+      classifiers=(
+        "Intended Audience :: Science/Research",
+        "Natural Language :: English",
+        "Topic :: Scientific/Engineering :: Artificial Intelligence",
+        "Programming Language :: Python :: 2.7",
+        "Programming Language :: Python :: 3"
+      ),
+      tests_require=['green', 'coverage'],
       include_package_data=True,
       zip_safe=False)
