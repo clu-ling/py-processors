@@ -8,6 +8,7 @@ from collections import defaultdict
 import re
 
 class Document(object):
+
     def __init__(self, sentences, text=None):
         self.size = len(sentences)
         self.sentences = sentences
@@ -46,6 +47,25 @@ class Document(object):
     def __str__(self):
         return self.text
 
+    def to_JSON(self):
+        return json.dumps(self, default=lambda o: o.__dict__,
+            sort_keys=True, indent=4)
+
+    @staticmethod
+    def load_from_JSON(json_dict):
+        sentences = []
+        for s in json_dict["sentences"]:
+            sent = Sentence(
+                s["words"],
+                s.get("tags", None),
+                s.get("lemmas", None),
+                s.get("_entities", None),
+                s.get("text", None),
+                Dependencies.load_from_JSON(s.get("dependencies", dict()))
+            )
+            sentences.append(sent)
+        return Document(sentences, json_dict.get("text", None))
+
 class Sentence(object):
 
     UNKNOWN = "UNKNOWN"
@@ -64,7 +84,6 @@ class Sentence(object):
 
     def _set_toks(self, toks):
         return toks if toks else [self.UNKNOWN]*self.length
-
 
     def _set_nes(self, entities):
         """
@@ -109,7 +128,6 @@ class Sentence(object):
                     end = None
         # this might be empty
         return entity_dict
-
 
     def __str__(self):
         return self.text
@@ -204,3 +222,17 @@ class Dependencies(object):
             for (dest, _) in self.outgoing[out]:
                 unlabeled.append("{}_{}".format(self._words[out], self._words[dest]))
         return unlabeled
+
+    @staticmethod
+    def load_from_JSON(deps_dict):
+        """
+        Loads Dependencies from JSON
+        """
+        deps = Dependencies([], [])
+        deps.words = deps_dict.get("_words", [])
+        deps.deps = deps_dict.get("deps", [])
+        deps.incoming = deps_dict.get("incoming", [])
+        deps.outgoing = deps_dict.get("outgoing", [])
+        deps.labeled = deps_dict.get("labeled", [])
+        deps.unlabeled = deps_dict.get("unlabeled", [])
+        return deps

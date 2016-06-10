@@ -72,6 +72,18 @@ biodoc = api.bionlp.annotate("We next considered the effect of Ras monoubiquitin
 
 # check out the bio-specific entities
 biodoc.nes
+
+# serialize to/from JSON!
+json_file = "serialized_doc_example.json"
+ross_doc = api.fastnlp.annotate("We don't make mistakes, just happy little accidents.")
+
+# serialize to JSON
+with open(json_file, "w") as out:
+    out.write(ross_doc.to_JSON())
+
+# load from JSON
+with open(json_file, "r") as jf:
+    d = Document.load_from_JSON(json.load(jf, 'utf-8'))    
 ```
 
 # Running the tests
