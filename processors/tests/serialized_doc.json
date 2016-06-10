@@ -1,0 +1,341 @@
+{
+    "_entities": [
+        "O", 
+        "O", 
+        "O", 
+        "O", 
+        "O", 
+        "O", 
+        "O", 
+        "O", 
+        "O", 
+        "O", 
+        "O"
+    ], 
+    "bag_of_labeled_deps": [
+        "accidents_AMOD_happy", 
+        "accidents_AMOD_little", 
+        "make_NSUBJ_we", 
+        "make_AUX_do", 
+        "make_NEG_n't", 
+        "make_DOBJ_mistakes", 
+        "make_PUNCT_,", 
+        "make_DEP_accidents", 
+        "make_PUNCT_.", 
+        "happy_ADVMOD_just"
+    ], 
+    "bag_of_unlabeled_deps": [
+        "accidents_happy", 
+        "accidents_little", 
+        "make_we", 
+        "make_do", 
+        "make_n't", 
+        "make_mistakes", 
+        "make_,", 
+        "make_accidents", 
+        "make_.", 
+        "happy_just"
+    ], 
+    "lemmas": [
+        "we", 
+        "do", 
+        "not", 
+        "make", 
+        "mistake", 
+        ",", 
+        "just", 
+        "happy", 
+        "little", 
+        "accident", 
+        "."
+    ], 
+    "nes": {}, 
+    "sentences": [
+        {
+            "_entities": [
+                "O", 
+                "O", 
+                "O", 
+                "O", 
+                "O", 
+                "O", 
+                "O", 
+                "O", 
+                "O", 
+                "O", 
+                "O"
+            ], 
+            "dependencies": {
+                "_words": [
+                    "we", 
+                    "do", 
+                    "n't", 
+                    "make", 
+                    "mistakes", 
+                    ",", 
+                    "just", 
+                    "happy", 
+                    "little", 
+                    "accidents", 
+                    "."
+                ], 
+                "deps": [
+                    [
+                        3, 
+                        0, 
+                        "nsubj"
+                    ], 
+                    [
+                        3, 
+                        1, 
+                        "aux"
+                    ], 
+                    [
+                        3, 
+                        2, 
+                        "neg"
+                    ], 
+                    [
+                        3, 
+                        4, 
+                        "dobj"
+                    ], 
+                    [
+                        3, 
+                        5, 
+                        "punct"
+                    ], 
+                    [
+                        3, 
+                        9, 
+                        "dep"
+                    ], 
+                    [
+                        3, 
+                        10, 
+                        "punct"
+                    ], 
+                    [
+                        7, 
+                        6, 
+                        "advmod"
+                    ], 
+                    [
+                        9, 
+                        7, 
+                        "amod"
+                    ], 
+                    [
+                        9, 
+                        8, 
+                        "amod"
+                    ]
+                ], 
+                "incoming": {
+                    "0": [
+                        [
+                            3, 
+                            "nsubj"
+                        ]
+                    ], 
+                    "1": [
+                        [
+                            3, 
+                            "aux"
+                        ]
+                    ], 
+                    "2": [
+                        [
+                            3, 
+                            "neg"
+                        ]
+                    ], 
+                    "4": [
+                        [
+                            3, 
+                            "dobj"
+                        ]
+                    ], 
+                    "5": [
+                        [
+                            3, 
+                            "punct"
+                        ]
+                    ], 
+                    "6": [
+                        [
+                            7, 
+                            "advmod"
+                        ]
+                    ], 
+                    "7": [
+                        [
+                            9, 
+                            "amod"
+                        ]
+                    ], 
+                    "8": [
+                        [
+                            9, 
+                            "amod"
+                        ]
+                    ], 
+                    "9": [
+                        [
+                            3, 
+                            "dep"
+                        ]
+                    ], 
+                    "10": [
+                        [
+                            3, 
+                            "punct"
+                        ]
+                    ]
+                }, 
+                "labeled": [
+                    "accidents_AMOD_happy", 
+                    "accidents_AMOD_little", 
+                    "make_NSUBJ_we", 
+                    "make_AUX_do", 
+                    "make_NEG_n't", 
+                    "make_DOBJ_mistakes", 
+                    "make_PUNCT_,", 
+                    "make_DEP_accidents", 
+                    "make_PUNCT_.", 
+                    "happy_ADVMOD_just"
+                ], 
+                "outgoing": {
+                    "3": [
+                        [
+                            0, 
+                            "nsubj"
+                        ], 
+                        [
+                            1, 
+                            "aux"
+                        ], 
+                        [
+                            2, 
+                            "neg"
+                        ], 
+                        [
+                            4, 
+                            "dobj"
+                        ], 
+                        [
+                            5, 
+                            "punct"
+                        ], 
+                        [
+                            9, 
+                            "dep"
+                        ], 
+                        [
+                            10, 
+                            "punct"
+                        ]
+                    ], 
+                    "7": [
+                        [
+                            6, 
+                            "advmod"
+                        ]
+                    ], 
+                    "9": [
+                        [
+                            7, 
+                            "amod"
+                        ], 
+                        [
+                            8, 
+                            "amod"
+                        ]
+                    ]
+                }, 
+                "unlabeled": [
+                    "accidents_happy", 
+                    "accidents_little", 
+                    "make_we", 
+                    "make_do", 
+                    "make_n't", 
+                    "make_mistakes", 
+                    "make_,", 
+                    "make_accidents", 
+                    "make_.", 
+                    "happy_just"
+                ]
+            }, 
+            "lemmas": [
+                "we", 
+                "do", 
+                "not", 
+                "make", 
+                "mistake", 
+                ",", 
+                "just", 
+                "happy", 
+                "little", 
+                "accident", 
+                "."
+            ], 
+            "length": 11, 
+            "nes": {}, 
+            "tags": [
+                "PRP", 
+                "VBP", 
+                "RB", 
+                "VB", 
+                "NNS", 
+                ",", 
+                "RB", 
+                "JJ", 
+                "JJ", 
+                "NNS", 
+                "."
+            ], 
+            "text": "We do n't make mistakes , just happy little accidents .", 
+            "words": [
+                "We", 
+                "do", 
+                "n't", 
+                "make", 
+                "mistakes", 
+                ",", 
+                "just", 
+                "happy", 
+                "little", 
+                "accidents", 
+                "."
+            ]
+        }
+    ], 
+    "size": 1, 
+    "tags": [
+        "PRP", 
+        "VBP", 
+        "RB", 
+        "VB", 
+        "NNS", 
+        ",", 
+        "RB", 
+        "JJ", 
+        "JJ", 
+        "NNS", 
+        "."
+    ], 
+    "text": "We don't make mistakes, just happy little accidents.", 
+    "words": [
+        "We", 
+        "do", 
+        "n't", 
+        "make", 
+        "mistakes", 
+        ",", 
+        "just", 
+        "happy", 
+        "little", 
+        "accidents", 
+        "."
+    ]
+}

@@ -1,6 +1,6 @@
 include processors/*.py
-
 include processors/*.jar
+include processors/tests/*.json
 
 recursive-include docs *.rst conf.py *.css Makefile
 recursive-exclude * __pycache__
