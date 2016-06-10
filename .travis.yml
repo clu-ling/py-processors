@@ -11,9 +11,9 @@ jdk:
 
 python:
   - "2.7"
-  - "3.2"
-  - "3.3"
-  - "3.4"
+  # - "3.2"
+  # - "3.3"
+  # - "3.4"
   - "3.5"
 
 before_install:
@@ -21,14 +21,15 @@ before_install:
 
 # command to install dependencies
 install:
-  - pip install -v .
-#  - pip install -v git+https://github.com/myedibleenso/py-processors.git
+  - pip install .
+#  - pip install git+https://github.com/myedibleenso/py-processors.git
 # cache:
 #   pip: true
 #   timeout: 1000
 
 # command to run tests
-#script:
+script:
+  - green -vv --run-coverage processors/tests/testserialization.py
 #  - green -vv --run-coverage
 
 after_success:
