@@ -18,7 +18,7 @@ python:
 
 before_install:
   - pip install -U pip setuptools
-
+  - pip install coveralls
 # command to install dependencies
 install:
   - pip install .
