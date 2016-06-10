@@ -21,7 +21,7 @@ class ProcessorsAPI(object):
         self.port = port
         self.make_address(hostname, port)
         self._start_command = "java -cp {} NLPServer {}"
-        self.timeout = 180
+        self.timeout = 120
         # processors
         self.default = Processor(self.address)
         self.fastnlp = FastNLPProcessor(self.address)
