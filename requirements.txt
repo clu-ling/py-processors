@@ -3,5 +3,5 @@ green>=2.5.0
 coverage
 Sphinx
 sphinx_rtd_theme
-recommonmark
+recommonmark>=0.4.0
 sphinxcontrib-napoleon
