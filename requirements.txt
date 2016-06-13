@@ -1,3 +1,7 @@
 requests>=2.4.2
 green>=2.5.0
 coverage
+Sphinx
+sphinx_rtd_theme
+recommonmark
+sphinxcontrib-napoleon
