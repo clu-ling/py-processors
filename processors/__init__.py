@@ -9,6 +9,6 @@ import json
 
 
 __title__ = 'py-processors'
-__version__ = '2.4'
+__version__ = '2.5'
 __author__ = 'Gus Hahn-Powell'
 __copyright__ = 'Copyright 2016 Gus Hahn-Powell'

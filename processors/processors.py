@@ -19,8 +19,9 @@ class Processor(object):
             # for older versions of requests, use the call below
             #print("SERVICE: {}".format(self.service))
             response = requests.post(self.service,
-                                    data=json.dumps({"text":"{}".format(text)}),
-                                    headers={"content-type": "application/json"})
+                                     data=json.dumps({"text":"{}".format(text)}),
+                                     headers={"content-type": "application/json"},
+                                     timeout=None)
             # response content should be utf-8
             content = response.content.decode("utf-8")
             #print("CONTENT: {}".format(content))
@@ -39,7 +40,9 @@ class Processor(object):
             return Document(text=text, sentences=sentences)
         except Exception as e:
             #print(e)
-            raise Exception("Connection refused!  Is the server running?")
+            print("Error encountered...")
+            return None
+            #raise Exception("Connection refused!  Is the server running?")
 
 class FastNLPProcessor(Processor):
 

@@ -7,7 +7,7 @@
 Though ([mostly](https://github.com/myedibleenso/py-processors/issues?q=is%3Aopen+is%3Aissue+label%3Apython2.x)) compatible with Python 2.x, this library was developed with 3.x in mind.
 
 # Requirements
-- Java (&ge;7)
+- Java 7+
 
 # Installation
 
