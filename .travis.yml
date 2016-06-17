@@ -2,7 +2,15 @@ sudo: false
 # sudo: required
 # dist: trusty
 
-language: java
+language: python
+
+addons:
+  apt:
+    packages:
+      - oracle-java8-installer
+  # hosts:
+  #   - localhost
+
 
 # test the server on multiple JDKs
 jdk:
@@ -15,10 +23,6 @@ python:
   # - "3.3"
   # - "3.4"
   - "3.5"
-
-# addons:
-#   hosts:
-#     - localhost
 
 before_install:
   - pip install -U pip setuptools
