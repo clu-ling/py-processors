@@ -6,7 +6,7 @@ from processors import *
 
 port = 8886
 # initialize the server
-API = ProcessorsAPI(port)
+API = ProcessorsAPI(port=port, timeout=240)
 
 class ProcessorsAPITests(unittest.TestCase):
 
