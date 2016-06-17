@@ -25,8 +25,8 @@ before_install:
   - pip install coveralls
   # show java version
   - java -version
-  # show available memory
-  - free -g
+  # start server as an experiment
+  - java -Xmx3G -cp /home/travis/build/myedibleenso/py-processors/processors/processors-server.jar NLPServer 8886
 
 # command to install dependencies
 install:
