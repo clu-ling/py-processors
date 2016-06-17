@@ -58,13 +58,61 @@ class ProcessorsAPI(object):
         """
         return self.default.annotate(text)
 
+    def establish_connection(self):
+        """
+        Attempt to connect to a server (assumes server is running)
+        """
+        if self.annotate("Blah"):
+            print("Connection with server established!")
+        else:
+            try:
+                # Attempt to start the server
+                self._start_server()
+            except Exception as e:
+                if not os.path.exists(self.jar_path):
+                    print("processors-server.jar not found.")
+                print("Unable to start server. Please start the server manually with .start_server(\"path/to/processors-server.jar\")")
+                print("\n{}".format(e))
+
+    def resolve_jar_path(self, jar_path):
+        """
+        Attempts to preferentially set value of self.jar_path
+        """
+        # Preference 1: if a .jar is given, check to see if the path is valid
+        if jar_path:
+            print("Using provided path")
+            jp = os.path.expanduser(jar_path)
+            # check if path is valid
+            if os.path.exists(jp):
+                self.jar_path = jp
+        else:
+            # Preference 2: if a PROCESSORS_SERVER environment variable is defined, check its validity
+            if ProcessorsAPI.PROC_VAR in os.environ:
+                print("Using path given via $PROCESSORS_SERVER")
+                jp = os.path.expanduser(os.environ[ProcessorsAPI.PROC_VAR])
+                # check if path is valid
+                if os.path.exists(jp):
+                    self.jar_path = jp
+                else:
+                    print("WARNING: {0} path is invalid.  \nPlease verify this entry in your environment:\n\texport {0}=/path/to/processors-server.jar".format(ProcessorsAPI.PROC_VAR))
+            # Preference 3: attempt to use the processors-sever.jar downloaded when this package was installed
+            else:
+                print("Using default")
+                self.jar_path = resource_filename(__name__, "processors-server.jar")
+
     def start_server(self, jar_path=None, timeout=120):
+        """
+        Starts processors-sever.jar
+        """
         self.timeout = int(float(timeout)/2)
         if jar_path:
             self.jar_path = jar_path
         self._start_server()
 
     def stop_server(self, port=None):
+        """
+        Sends a poison pill to the server and waits for shutdown response
+        """
         port = port or self.port
         address = "http://{}:{}".format(self.hostname, port)
         shutdown_address = "{}/shutdown".format(address)
@@ -96,16 +144,20 @@ class ProcessorsAPI(object):
 
         print("Starting processors-server ({}) on port {} ...".format(self.jar_path, self.port))
         print("\nWaiting for server...")
-        for i in range(self.timeout):
+
+        progressbar_length = int(self.timeout/self.wait_time)
+        for i in range(progressbar_length):
             try:
                 success = self.annotate("blah")
                 if success:
-                    print("Connection with processors-server established!")
+                    print("\n\nConnection with processors-server established ({})".format(self.address))
                     return True
+                sys.stdout.write("\r[{:{}}]".format('='*i, progressbar_length))
+                time.sleep(self.wait_time)
             except Exception as e:
+                raise(e)
                 #print(e)
-                # wait and try again
-                time.sleep(2)
+
         # if the server still hasn't started, raise an Exception
         raise Exception("Couldn't connect to processors-server. Is the port in use?")
 
