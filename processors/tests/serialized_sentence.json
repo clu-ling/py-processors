@@ -1,0 +1,134 @@
+{
+    "dependencies": {
+        "edges": [
+            {
+                "destination": 0,
+                "relation": "nsubj",
+                "source": 3
+            },
+            {
+                "destination": 1,
+                "relation": "aux",
+                "source": 3
+            },
+            {
+                "destination": 2,
+                "relation": "neg",
+                "source": 3
+            },
+            {
+                "destination": 4,
+                "relation": "dobj",
+                "source": 3
+            },
+            {
+                "destination": 5,
+                "relation": "punct",
+                "source": 3
+            },
+            {
+                "destination": 9,
+                "relation": "dep",
+                "source": 3
+            },
+            {
+                "destination": 10,
+                "relation": "punct",
+                "source": 3
+            },
+            {
+                "destination": 6,
+                "relation": "advmod",
+                "source": 7
+            },
+            {
+                "destination": 7,
+                "relation": "amod",
+                "source": 9
+            },
+            {
+                "destination": 8,
+                "relation": "amod",
+                "source": 9
+            }
+        ]
+    },
+    "endOffsets": [
+        2,
+        5,
+        8,
+        13,
+        22,
+        23,
+        28,
+        34,
+        41,
+        51,
+        52
+    ],
+    "entities": [
+        "O",
+        "O",
+        "O",
+        "O",
+        "O",
+        "O",
+        "O",
+        "O",
+        "O",
+        "O",
+        "O"
+    ],
+    "lemmas": [
+        "we",
+        "do",
+        "not",
+        "make",
+        "mistake",
+        ",",
+        "just",
+        "happy",
+        "little",
+        "accident",
+        "."
+    ],
+    "startOffsets": [
+        0,
+        3,
+        5,
+        9,
+        14,
+        22,
+        24,
+        29,
+        35,
+        42,
+        51
+    ],
+    "tags": [
+        "PRP",
+        "VBP",
+        "RB",
+        "VB",
+        "NNS",
+        ",",
+        "RB",
+        "JJ",
+        "JJ",
+        "NNS",
+        "."
+    ],
+    "words": [
+        "We",
+        "do",
+        "n't",
+        "make",
+        "mistakes",
+        ",",
+        "just",
+        "happy",
+        "little",
+        "accidents",
+        "."
+    ]
+}
