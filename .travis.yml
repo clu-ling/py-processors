@@ -26,7 +26,7 @@ before_install:
   # show java version
   - java -version
   # start server as an experiment
-  - java -Xmx3G -cp /home/travis/build/myedibleenso/py-processors/processors/processors-server.jar NLPServer 8886
+  - java -Xmx3G -jar /home/travis/build/myedibleenso/py-processors/processors/processors-server.jar NLPServer 8886
 
 # command to install dependencies
 install:
