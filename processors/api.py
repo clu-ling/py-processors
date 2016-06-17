@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 from pkg_resources import resource_filename
 from .processors import *
+from .sentiment import SentimentAnalysisAPI
 import os
 import shlex
 import os
@@ -29,6 +30,8 @@ class ProcessorsAPI(object):
         self.default = Processor(self.address)
         self.fastnlp = FastNLPProcessor(self.address)
         self.bionlp = BioNLPProcessor(self.address)
+        # sentiment
+        self.sentiment = SentimentAnalysisAPI(self.address)
         # use the os module's devnull for compatibility with python 2.7
         #self.DEVNULL = open(os.devnull, 'wb')
 
