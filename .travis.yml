@@ -26,9 +26,8 @@ python:
 
 before_install:
   # set to Java 8
-  - wget https://github.com/michaelklishin/jdk_switcher/blob/master/jdk_switcher.sh
-  - ./jdk_switcher.sh use oraclejdk8
-  - ./jdk_switcher.sh home oraclejdk8
+  - jdk_switcher use oraclejdk8
+  - jdk_switcher home oraclejdk8
   # update setuptools
   - pip install -U pip setuptools
   - pip install coveralls
