@@ -17,13 +17,14 @@ class ProcessorsAPI(object):
 
     PROC_VAR = 'PROCESSORS_SERVER'
 
-    def __init__(self, port, hostname="127.0.0.1", timeout=120, jar_path=None, log_file=None):
+    def __init__(self, port, hostname="127.0.0.1", timeout=120, jvm_mem="-Xmx3G", jar_path=None, log_file=None):
 
         self.hostname = hostname
         self.port = port
         self.make_address(hostname, port)
-        self._start_command = "java -cp {} NLPServer {}"
+        self._start_command = "java {} -cp {} NLPServer {}" # mem, jar path, port
         self.timeout = timeout
+        self.jvm_mem = jvm_mem
         # how long to wait between requests
         self.wait_time = 2
         # processors
@@ -137,8 +138,7 @@ class ProcessorsAPI(object):
         if port:
             self.port = port
         # build the command
-        cmd = self._start_command.format(self.jar_path, self.port)
-        #print(cmd)
+        cmd = self._start_command.format(self.jvm_mem, self.jar_path, self.port)
         self._process = sp.Popen(shlex.split(cmd),
                                  shell=False,
                                  stderr=open(self.log_file, 'wb'),
