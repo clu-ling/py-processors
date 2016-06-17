@@ -73,7 +73,7 @@ class ProcessorsAPI(object):
                 self._start_server()
             except Exception as e:
                 if not os.path.exists(self.jar_path):
-                    print("processors-server.jar not found.")
+                    print("\nprocessors-server.jar not found at {}.".format(self.jar_path))
                 print("Unable to start server. Please start the server manually with .start_server(\"path/to/processors-server.jar\")")
                 print("\n{}".format(e))
 
