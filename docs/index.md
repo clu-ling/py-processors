@@ -10,7 +10,7 @@ Though ([mostly](https://github.com/myedibleenso/py-processors/issues?q=is%3Aope
 - Java 7+
 - [`processor-sever`](http://github.com/myedibleenso/processors-server) (v2.2)
   - this dependency will be retrieved automatically during installation
-- run the server with at least 2GB of RAM (I recommend 3GB)
+- At least 2GB of RAM free for the server (I recommend 3GB)
 
 # Installation
 

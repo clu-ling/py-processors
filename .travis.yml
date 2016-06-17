@@ -25,8 +25,8 @@ before_install:
   - pip install coveralls
 # command to install dependencies
 install:
-#  - pip install .
-  - pip install git+https://github.com/myedibleenso/py-processors.git
+  - pip install .
+#  - pip install git+https://github.com/myedibleenso/py-processors.git
 # cache:
 #   pip: true
 #   timeout: 1000
