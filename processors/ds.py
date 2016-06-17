@@ -5,7 +5,9 @@
 
 from itertools import chain
 from collections import defaultdict
+import json
 import re
+
 
 class Document(object):
 
@@ -47,22 +49,30 @@ class Document(object):
     def __str__(self):
         return self.text
 
+    def to_JSON_dict(self):
+        doc_dict = dict()
+        doc_dict["sentences"] = [s.to_JSON_dict() for s in self.sentences]
+        doc_dict["text"] = self.text
+        return doc_dict
+
     def to_JSON(self):
-        return json.dumps(self, default=lambda o: o.__dict__,
-            sort_keys=True, indent=4)
+        return json.dumps(self.to_JSON_dict(), sort_keys=True, indent=4)
 
     @staticmethod
     def load_from_JSON(json_dict):
         sentences = []
         for s in json_dict["sentences"]:
-            sent = Sentence(
-                s["words"],
-                s.get("tags", None),
-                s.get("lemmas", None),
-                s.get("_entities", None),
-                s.get("text", None),
-                Dependencies.load_from_JSON(s.get("dependencies", dict()))
-            )
+            kwargs = {
+                "words": s["words"],
+                "startOffsets": s["startOffsets"],
+                "endOffsets": s["endOffsets"],
+                "tags": s.get("tags", None),
+                "lemmas": s.get("lemmas", None),
+                "entities": s.get("entities", None),
+                "text": s.get("text", None),
+                "dependencies": s.get("dependencies", None)
+            }
+            sent = Sentence(**kwargs)
             sentences.append(sent)
         return Document(sentences, json_dict.get("text", None))
 
@@ -72,15 +82,17 @@ class Sentence(object):
     # the O in IOB notation
     NONENTITY = "O"
 
-    def __init__(self, words, tags=None, lemmas=None, entities=None, text=None, dependencies=None):
-        self.words = words
+    def __init__(self, **kwargs):
+        self.words = kwargs["words"]
+        self.startOffsets = kwargs["startOffsets"]
+        self.endOffsets = kwargs["endOffsets"]
         self.length = len(self.words)
-        self.tags = self._set_toks(tags)
-        self.lemmas = self._set_toks(lemmas)
-        self._entities = self._set_toks(entities)
-        self.text = text if text else " ".join(self.words)
-        self.dependencies = dependencies
-        self.nes = self._set_nes(entities)
+        self.tags = self._set_toks(kwargs.get("tags", None))
+        self.lemmas = self._set_toks(kwargs.get("lemmas", None))
+        self._entities = self._set_toks(kwargs.get("entities", None))
+        self.text = kwargs.get("text", None) or " ".join(self.words)
+        self.dependencies = self._build_dependencies_from_dict(kwargs.get("dependencies", None))
+        self.nes = self._set_nes(self._entities)
 
     def _set_toks(self, toks):
         return toks if toks else [self.UNKNOWN]*self.length
@@ -129,6 +141,11 @@ class Sentence(object):
         # this might be empty
         return entity_dict
 
+    def _build_dependencies_from_dict(self, deps):
+        if deps and len(deps) > 0:
+            return Dependencies(deps, self.words)
+        return None
+
     def __str__(self):
         return self.text
 
@@ -172,6 +189,34 @@ class Sentence(object):
             unlabeled.append("{}_{}".format(head, dep))
         return unlabeled
 
+    def to_JSON_dict(self):
+        sentence_dict = dict()
+        sentence_dict["words"] = self.words
+        sentence_dict["startOffsets"] = self.startOffsets
+        sentence_dict["endOffsets"] = self.endOffsets
+        sentence_dict["tags"] = self.tags
+        sentence_dict["lemmas"] = self.lemmas
+        sentence_dict["entities"] = self._entities
+        sentence_dict["dependencies"] = self.dependencies.to_JSON_dict()
+        return sentence_dict
+
+    def to_JSON(self):
+        return json.dumps(self.to_JSON_dict(), sort_keys=True, indent=4)
+
+    @staticmethod
+    def load_from_JSON(json_dict):
+        sent = Sentence(
+                    words=json_dict["words"],
+                    startOffsets=json_dict["startOffsets"],
+                    endOffsets=json_dict["endOffsets"],
+                    lemmas=json_dict.get("lemmas", None),
+                    tags=json_dict.get("tags", None),
+                    entities=json_dict.get("entities", None),
+                    text=json_dict.get("text", None),
+                    dependencies=json_dict.get("dependencies", None)
+                    )
+        return sent
+
 
 class Dependencies(object):
     """
@@ -180,6 +225,7 @@ class Dependencies(object):
     def __init__(self, deps, words):
         self._words = [w.lower() for w in words]
         self.deps = self.unpack_deps(deps)
+        self.edges = deps["edges"]
         self.incoming = self._build_incoming(self.deps)
         self.outgoing = self._build_outgoing(self.deps)
         self.labeled = self._build_labeled()
@@ -190,10 +236,10 @@ class Dependencies(object):
 
     def unpack_deps(self, deps):
         dependencies = []
-        for dep in deps:
-            incoming = dep['incoming']
-            outgoing = dep['outgoing']
-            rel = dep['relation']
+        for edge in deps["edges"]:
+            outgoing = edge['source']
+            incoming = edge['destination']
+            rel = edge['relation']
             dependencies.append((incoming, outgoing, rel))
         return dependencies
 
@@ -223,16 +269,10 @@ class Dependencies(object):
                 unlabeled.append("{}_{}".format(self._words[out], self._words[dest]))
         return unlabeled
 
-    @staticmethod
-    def load_from_JSON(deps_dict):
-        """
-        Loads Dependencies from JSON
-        """
-        deps = Dependencies([], [])
-        deps.words = deps_dict.get("_words", [])
-        deps.deps = deps_dict.get("deps", [])
-        deps.incoming = deps_dict.get("incoming", [])
-        deps.outgoing = deps_dict.get("outgoing", [])
-        deps.labeled = deps_dict.get("labeled", [])
-        deps.unlabeled = deps_dict.get("unlabeled", [])
-        return deps
+    def to_JSON_dict(self):
+        deps_dict = dict()
+        deps_dict["edges"] = self.edges
+        return deps_dict
+
+    def to_JSON(self):
+        return json.dumps(self.to_JSON_dict(), sort_keys=True, indent=4)
