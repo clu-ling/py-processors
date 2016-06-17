@@ -6,52 +6,91 @@ from processors import *
 
 port = 8886
 # initialize the server
-api = ProcessorsAPI(port)
+API = ProcessorsAPI(port)
 
 class ProcessorsAPITests(unittest.TestCase):
 
     def test_api(self):
         "ProcessorsAPI instance should remember its port"
 
-        self.assertEqual(api.port, port, "Port was not {}".format(port))
+        self.assertEqual(API.port, port, "Port was not {}".format(port))
 
     def test_annotate(self):
-        "api.annotate should produce a Document when given text"
+        "API.annotate should produce a Document when given text"
 
         text = "This is sentence 1.  This is sentence 2."
         # .annotate should be successful
-        doc = api.annotate(text)
+        doc = API.annotate(text)
         self.assertNotEqual(doc, None, ".annotate failed to produce a Document")
         # should have two sentences
         num_sentences = 2
         self.assertEqual(len(doc.sentences), num_sentences, ".annotate did not produce a Document with {} Sentences for text \"{}\"".format(num_sentences, text))
 
     def test_fastnlp(self):
-        "api.fastnlp.annotate should produce a Document when given text"
+        "API.fastnlp.annotate should produce a Document when given text"
 
         text = "This is sentence 1.  This is sentence 2."
         # .annotate should be successful
-        doc = api.fastnlp.annotate(text)
+        doc = API.fastnlp.annotate(text)
         self.assertNotEqual(doc, None, "fastnlp.annotate failed to produce a Document")
         # should have two sentences
         num_sentences = 2
         self.assertEqual(len(doc.sentences), num_sentences, "fastnlp.annotate did not produce a Document with {} Sentences for text \"{}\"".format(num_sentences, text))
 
     def test_bionlp(self):
-        "api.bionlp.annotate should produce a Document when given text"
+        "API.bionlp.annotate should produce a Document when given text"
 
         text = "Ras phosphorylated Mek."
         # .annotate should be successful
-        doc = api.bionlp.annotate(text)
+        doc = API.bionlp.annotate(text)
         self.assertNotEqual(doc, None, "bionlp.annotate failed to produce a Document")
         # should have two sentences
         num_sentences = 1
         self.assertEqual(len(doc.sentences), num_sentences, "bionlp.annotate did not produce a Document with {} Sentences for text \"{}\"".format(num_sentences, text))
 
+    def test_sentiment_analysis_of_text(self):
+        "API.sentiment.corenlp.score_text should return scores for text"
+
+        scores = API.sentiment.corenlp.score_text("This is a very sad sentence.")
+        self.assertTrue(len(scores) > 0, "there were no sentiment scores returned for the text")
+
+    def test_sentiment_analysis_of_document(self):
+        "API.sentiment.corenlp.score_document should return scores for Document"
+
+        text = "This is a terribly sad sentence."
+        doc = API.annotate(text)
+        scores = API.sentiment.corenlp.score_document(doc)
+        self.assertTrue(len(scores) > 0, "there were no sentiment scores returned for the Document")
+
+    def test_sentiment_analysis_of_sentence(self):
+        "API.sentiment.corenlp.score_sentence should return a score for a Sentence"
+
+        text = "This is a terribly sad sentence."
+        doc = API.annotate(text)
+        s = doc.sentences[0]
+        score = API.sentiment.corenlp.score_sentence(s)
+        self.assertIsInstance(score, int, "score for Sentence should be of type int, but was of type {}".format(type(score)))
+
+    def test_sentiment_analysis_score_method(self):
+        "API.sentiment.corenlp.score should be able to determine the appropriate API endpoint for the given parameter"
+        # test with text
+        text = "This is a terribly sad sentence."
+        scores = API.sentiment.corenlp.score(text)
+        self.assertTrue(len(scores) > 0, "there were no sentiment scores returned for the text")
+        # test with Document
+        doc = API.annotate(text)
+        scores = API.sentiment.corenlp.score(doc)
+        self.assertTrue(len(scores) > 0, "there were no sentiment scores returned for the Document")
+        # test with Sentence
+        s = doc.sentences[0]
+        score = API.sentiment.corenlp.score(s)
+        self.assertIsInstance(score, int, "score for Sentence should be of type int, but was of type {}".format(type(score)))
+
+
     def test_shutdown(self):
         "api.stop_server() should stop processors-server.jar"
 
-        self.assertTrue(api.stop_server(), "Failed to shut down processors-server.jar")
+        self.assertTrue(API.stop_server(), "Failed to shut down processors-server.jar")
 
 if __name__ == "__main__":
     unittest.main()
