@@ -25,6 +25,9 @@ python:
   - "3.5"
 
 before_install:
+  # get jdk_switcher
+  - wget https://raw.githubusercontent.com/michaelklishin/jdk_switcher/master/jdk_switcher.sh
+  - source jdk_switcher.sh
   # set to Java 8
   - jdk_switcher use oraclejdk8
   - jdk_switcher home oraclejdk8
