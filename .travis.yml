@@ -2,12 +2,12 @@ sudo: false
 # sudo: required
 # dist: trusty
 
-language: python
+language: java
 
 # test the server on multiple JDKs
 jdk:
   - oraclejdk8
-  - oraclejdk7
+  #- oraclejdk7
 
 python:
   - "2.7"
