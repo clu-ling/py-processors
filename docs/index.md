@@ -8,8 +8,8 @@ Though ([mostly](https://github.com/myedibleenso/py-processors/issues?q=is%3Aope
 
 # Requirements
 - Java 7+
-- [`processor-sever`]((http://github.com/myedibleenso/processors-server) (v2.2)
-  - this dependency will be retrieved automatically with the library
+- [`processor-sever`](http://github.com/myedibleenso/processors-server) (v2.2)
+  - this dependency will be retrieved automatically during installation
 
 # Installation
 
