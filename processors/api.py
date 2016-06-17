@@ -17,13 +17,13 @@ class ProcessorsAPI(object):
 
     PROC_VAR = 'PROCESSORS_SERVER'
 
-    def __init__(self, port, hostname="127.0.0.1", jar_path=None, log_file=None):
+    def __init__(self, port, hostname="127.0.0.1", timeout=120, jar_path=None, log_file=None):
 
         self.hostname = hostname
         self.port = port
         self.make_address(hostname, port)
         self._start_command = "java -cp {} NLPServer {}"
-        self.timeout = 120
+        self.timeout = timeout
         # how long to wait between requests
         self.wait_time = 2
         # processors
