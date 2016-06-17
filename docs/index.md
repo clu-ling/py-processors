@@ -1,11 +1,6 @@
 [![Documentation Status](https://readthedocs.org/projects/py-processors/badge/?version=latest)](http://py-processors.readthedocs.io/en/latest/?badge=latest)
 [![Build Status](https://travis-ci.org/myedibleenso/py-processors.svg?branch=master)](https://travis-ci.org/myedibleenso/py-processors)[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/myedibleenso/py-processors/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/myedibleenso/py-processors/?branch=master)[![Coverage Status](https://coveralls.io/repos/github/myedibleenso/py-processors/badge.svg?branch=master)](https://coveralls.io/github/myedibleenso/py-processors?branch=master)[![Requirements Status](https://requires.io/github/myedibleenso/py-processors/requirements.svg?branch=master)](https://requires.io/github/myedibleenso/py-processors/requirements/?branch=master)[![Stories in Ready](https://badge.waffle.io/myedibleenso/py-processors.svg?label=ready&title=Ready)](http://waffle.io/myedibleenso/py-processors)
 
-# Contents
-* [API](api.md)
-* [About](about.md)
-* [Release Notes](release-notes.md)
-
 # What is it?
 `py-processors` is a Python wrapper for the CLU Lab's [`processors`](http://github.com/clulab/processors) NLP library.  `py-processors` relies on [`processors-server`](http://github.com/myedibleenso/processors-server).  
 
@@ -13,6 +8,8 @@ Though ([mostly](https://github.com/myedibleenso/py-processors/issues?q=is%3Aope
 
 # Requirements
 - Java 7+
+- [`processor-sever`]((http://github.com/myedibleenso/processors-server) (v2.2)
+  - this dependency will be retrieved automatically with the library
 
 # Installation
 
@@ -23,23 +20,22 @@ pip install git+https://github.com/myedibleenso/py-processors.git
 # How to use it?
 
 ```python
-
 from processors import *
 
 # The constructor requires you to specify a port for running the server.
 # You can also provide a jar path to the constructor, if you haven't already
 # set a PROCESSORS_SERVER environment variable.
-api = ProcessorsAPI(port=8886)
-
-# Start the server (optionally provide the path to the jar).
+API = ProcessorsAPI(port=8886)
+# If ProcessorsAPI is unable to find a valid path to a processors-server.jar,
+# you'll need to start the server manually (optionally provide the path to the jar).
 # It may take a minute or so to load the large model files.
-api.start_server("path/to/processors-server.jar")
+# API.start_server("path/to/processors-server.jar")
 
 # try annotating some text using FastNLPProcessor (a CoreNLP wrapper)
-doc = api.fastnlp.annotate("My name is Inigo Montoya.  You killed my father.  Prepare to die.")
+doc = API.fastnlp.annotate("My name is Inigo Montoya.  You killed my father.  Prepare to die.")
 
 # There should be 3 Sentence objects in this Document
-len(doc.sentences)
+doc.size
 
 # A Document contains the words, pos tags, lemmas, named entities, and syntactic dependencies of its component Sentences
 doc.bag_of_labeled_deps
@@ -90,7 +86,22 @@ with open(json_file, "w") as out:
 
 # load from JSON
 with open(json_file, "r") as jf:
-    d = Document.load_from_JSON(json.load(jf, 'utf-8'))    
+    d = Document.load_from_JSON(json.load(jf))    
+
+# get sentiment analysis scores
+review = "The humans are dead."
+doc = API.fastnlp.annotate(review)
+
+# try Stanford's tree-based sentiment analysis
+# you'll get a score for each Sentence
+# scores are between 1 (very negative) - 5 (very positive)
+scores = API.sentiment.corenlp.score_document(doc)
+
+# you can pass text directly
+scores = API.sentiment.corenlp.score_text(review)
+
+# ... or a single sentence
+score = API.sentiment.corenlp.score_sentence(doc.sentences[0])
 ```
 
 # Running the tests
