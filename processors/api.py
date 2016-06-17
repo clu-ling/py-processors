@@ -35,7 +35,6 @@ class ProcessorsAPI(object):
         self.sentiment = SentimentAnalysisAPI(self.address)
         # use the os module's devnull for compatibility with python 2.7
         #self.DEVNULL = open(os.devnull, 'wb')
-
         self.logger = logging.getLogger(__name__)
         self.log_file = self.prepare_log_file(log_file)
 
@@ -50,10 +49,20 @@ class ProcessorsAPI(object):
         """
         # log_file
         log_file = os.path.expanduser(os.path.join("~", ".py-processors.log")) if not lf else os.path.expanduser(lf)
-        # attach handler
-        handler = logging.FileHandler(log_file)
+        # configure logger
+        self.logger.setLevel(logging.DEBUG)
+        # create console handler and set level to info
+        handler = logging.StreamHandler()
+        handler.setLevel(logging.INFO)
+        formatter = logging.Formatter("%(levelname)s - %(message)s")
+        handler.setFormatter(formatter)
         self.logger.addHandler(handler)
-        self.logger.setLevel(logging.INFO)
+        # create debug file handler and set level to debug
+        handler = logging.FileHandler(log_file, "w")
+        handler.setLevel(logging.DEBUG)
+        formatter = logging.Formatter("%(levelname)s - %(message)s")
+        handler.setFormatter(formatter)
+        self.logger.addHandler(handler)
         return log_file
 
     def annotate(self, text):
@@ -145,7 +154,7 @@ class ProcessorsAPI(object):
                                  stdout=open(self.log_file, 'wb'),
                                  universal_newlines=True)
 
-        print("Starting processors-server ({}) on port {} ...".format(self.jar_path, self.port))
+        self.logger.info("Starting processors-server ({}) ...".format(cmd))
         print("\nWaiting for server...")
 
         progressbar_length = int(self.timeout/self.wait_time)
@@ -159,7 +168,6 @@ class ProcessorsAPI(object):
                 time.sleep(self.wait_time)
             except Exception as e:
                 raise(e)
-                #print(e)
 
         # if the server still hasn't started, raise an Exception
         raise Exception("Couldn't connect to processors-server. Is the port in use?")
@@ -188,5 +196,5 @@ class ProcessorsAPI(object):
             #self.DEVNULL.close()
             print("Successfully shut down processors-server!")
         except Exception as e:
-            #print(e)
+            self.logger.debug(e)
             print("Couldn't kill processors-server.  Was server started externally?")
