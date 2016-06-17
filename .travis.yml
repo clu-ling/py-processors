@@ -23,8 +23,11 @@ python:
 before_install:
   - pip install -U pip setuptools
   - pip install coveralls
+  # show java version
   - java -version
-  
+  # show available memory
+  - free -g
+
 # command to install dependencies
 install:
   - pip install .
