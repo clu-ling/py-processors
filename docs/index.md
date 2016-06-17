@@ -10,6 +10,7 @@ Though ([mostly](https://github.com/myedibleenso/py-processors/issues?q=is%3Aope
 - Java 7+
 - [`processor-sever`](http://github.com/myedibleenso/processors-server) (v2.2)
   - this dependency will be retrieved automatically during installation
+- run the server with at least 2GB of RAM (I recommend 3GB)
 
 # Installation
 
@@ -25,6 +26,8 @@ from processors import *
 # The constructor requires you to specify a port for running the server.
 # You can also provide a jar path to the constructor, if you haven't already
 # set a PROCESSORS_SERVER environment variable.
+# By default, the server will be run with 3G of RAM.  
+# If you only have 2G available, use jvm_mem="-Xmx2G"
 API = ProcessorsAPI(port=8886)
 # If ProcessorsAPI is unable to find a valid path to a processors-server.jar,
 # you'll need to start the server manually (optionally provide the path to the jar).
