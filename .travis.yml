@@ -15,7 +15,6 @@ language: python
 # test the server on multiple JDKs
 jdk:
   - oraclejdk8
-  #- oraclejdk7
 
 python:
   - "2.7"
@@ -40,17 +39,14 @@ before_install:
   # show java version
   - java -version
   # start server as an experiment
-  - wget http://www.cs.arizona.edu/~hahnpowell/processors-server/current/processors-server.jar
-  - export PROCESSORS_SERVER="$(pwd)/processors-server.jar"
+  #- wget http://www.cs.arizona.edu/~hahnpowell/processors-server/current/processors-server.jar
+  #- export PROCESSORS_SERVER="$(pwd)/processors-server.jar"
   #- java -Xmx3G -cp processors-server.jar NLPServer 8886
 
 # command to install dependencies
 install:
   - pip install .
 #  - pip install git+https://github.com/myedibleenso/py-processors.git
-# cache:
-#   pip: true
-#   timeout: 1000
 
 # command to run tests
 script:
