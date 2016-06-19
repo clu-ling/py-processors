@@ -15,13 +15,15 @@ class Processor(object):
     def annotate(self, text):
         try:
             # load json and build Sentences and Document
-            annotated_text = post_json(self.service, json.dumps({"text":"{}".format(text)}))
+            msg = Message(text)
+            annotated_text = post_json(self.service, msg.to_JSON())
             return Document.load_from_JSON(annotated_text)
 
         except Exception as e:
             #print(e)
             return None
             #raise Exception("Connection refused!  Is the server running?")
+
 
 class FastNLPProcessor(Processor):
 
@@ -31,6 +33,7 @@ class FastNLPProcessor(Processor):
     def annotate(self, text):
         return super(FastNLPProcessor, self).annotate(text)
 
+
 class BioNLPProcessor(Processor):
 
     def __init__(self, address):
@@ -38,3 +41,16 @@ class BioNLPProcessor(Processor):
 
     def annotate(self, text):
         return super(BioNLPProcessor, self).annotate(text)
+
+
+class Message(object):
+    def __init__(self, text):
+        self.text = text
+
+    def to_JSON_dict(self):
+        jdict = dict()
+        jdict["text"] = self.text
+        return jdict
+
+    def to_JSON(self):
+        return json.dumps(self.to_JSON_dict(), sort_keys=True, indent=4)
