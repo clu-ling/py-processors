@@ -53,7 +53,7 @@ with open('requirements.txt') as f:
     required = f.read().splitlines()
 
 # get readme
-with open('README.md', 'r', 'utf-8') as f:
+with open('docs/index.md', 'r', 'utf-8') as f:
     readme = f.read()
 
 # get version
