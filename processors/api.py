@@ -3,6 +3,7 @@
 from pkg_resources import resource_filename
 from .processors import *
 from .sentiment import SentimentAnalysisAPI
+from .odin import OdinAPI
 import os
 import shlex
 import os
@@ -33,6 +34,8 @@ class ProcessorsAPI(object):
         self.bionlp = BioNLPProcessor(self.address)
         # sentiment
         self.sentiment = SentimentAnalysisAPI(self.address)
+        # odin
+        self.odin = OdinAPI(self.address)
         # use the os module's devnull for compatibility with python 2.7
         #self.DEVNULL = open(os.devnull, 'wb')
         self.logger = logging.getLogger(__name__)
