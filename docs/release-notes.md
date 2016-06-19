@@ -1,5 +1,7 @@
 # Changes
-
+- v2.7:
+  - Added `Mention` class and support for rule-based information extraction with Odin
+  - Updated api to match [v.2.5 of `processors-server`](https://github.com/myedibleenso/processors-server/releases/tag/v2.5)
 - v2.6:
   - Added interface to [CoreNLP's tree-based sentiment analysis](http://nlp.stanford.edu/~socherr/EMNLP2013_RNTN.pdf)
   - Rewrote `json` serialization and loading to mirror changes in `processors-server` v2.2

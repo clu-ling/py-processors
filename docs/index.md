@@ -1,5 +1,13 @@
-[![Documentation Status](https://readthedocs.org/projects/py-processors/badge/?version=latest)](http://py-processors.readthedocs.io/en/latest/?badge=latest)
-[![Build Status](https://travis-ci.org/myedibleenso/py-processors.svg?branch=master)](https://travis-ci.org/myedibleenso/py-processors)[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/myedibleenso/py-processors/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/myedibleenso/py-processors/?branch=master)[![Coverage Status](https://coveralls.io/repos/github/myedibleenso/py-processors/badge.svg?branch=master)](https://coveralls.io/github/myedibleenso/py-processors?branch=master)[![Requirements Status](https://requires.io/github/myedibleenso/py-processors/requirements.svg?branch=master)](https://requires.io/github/myedibleenso/py-processors/requirements/?branch=master)[![Stories in Ready](https://badge.waffle.io/myedibleenso/py-processors.svg?label=ready&title=Ready)](http://waffle.io/myedibleenso/py-processors)
+[![Documentation Status](https://readthedocs.org/projects/py-processors/badge/?version=latest)](http://py-processors.readthedocs.io/en/latest/?badge=latest) [![Build Status](https://travis-ci.org/myedibleenso/py-processors.svg?branch=master)](https://travis-ci.org/myedibleenso/py-processors) [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/myedibleenso/py-processors/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/myedibleenso/py-processors/?branch=master) [![Coverage Status](https://coveralls.io/repos/github/myedibleenso/py-processors/badge.svg?branch=master)](https://coveralls.io/github/myedibleenso/py-processors?branch=master) [![Requirements Status](https://requires.io/github/myedibleenso/py-processors/requirements.svg?branch=master)](https://requires.io/github/myedibleenso/py-processors/requirements/?branch=master) [![Stories in Ready](https://badge.waffle.io/myedibleenso/py-processors.svg?label=ready&title=Ready)](http://waffle.io/myedibleenso/py-processors)
+
+# Contents
+- [Text processors](processors.md)
+- [Rule-based IE with Odin](odin.md)
+- [Annotating text](processors.md#annotating-text)
+- [A walkthrough example](example.md)
+- [Running the tests](dev.md#running-the-tests)
+- [FAQ](faq.md)
+- [History](release-notes.md)
 
 # What is it?
 `py-processors` is a Python wrapper for the CLU Lab's [`processors`](http://github.com/clulab/processors) NLP library.  `py-processors` relies on [`processors-server`](http://github.com/myedibleenso/processors-server).  
@@ -7,8 +15,8 @@
 Though ([mostly](https://github.com/myedibleenso/py-processors/issues?q=is%3Aopen+is%3Aissue+label%3Apython2.x)) compatible with Python 2.x, this library was developed with 3.x in mind.
 
 # Requirements
-- Java 7+
-- [`processor-sever`](http://github.com/myedibleenso/processors-server) (v2.2)
+- [Java 8](https://docs.oracle.com/javase/8/docs/technotes/guides/install/install_overview.html)
+- [`processor-sever`](http://github.com/myedibleenso/processors-server) (v2.5)
   - this dependency will be retrieved automatically during installation
 - At least 2GB of RAM free for the server (I recommend 3GB)
 
@@ -20,115 +28,4 @@ pip install git+https://github.com/myedibleenso/py-processors.git
 
 # How to use it?
 
-```python
-from processors import *
-
-# The constructor requires you to specify a port for running the server.
-# You can also provide a jar path to the constructor, if you haven't already
-# set a PROCESSORS_SERVER environment variable.
-# By default, the server will be run with 3G of RAM.  
-# If you only have 2G available, use jvm_mem="-Xmx2G"
-API = ProcessorsAPI(port=8886)
-# If ProcessorsAPI is unable to find a valid path to a processors-server.jar,
-# you'll need to start the server manually (optionally provide the path to the jar).
-# It may take a minute or so to load the large model files.
-# API.start_server("path/to/processors-server.jar")
-
-# try annotating some text using FastNLPProcessor (a CoreNLP wrapper)
-doc = API.fastnlp.annotate("My name is Inigo Montoya.  You killed my father.  Prepare to die.")
-
-# There should be 3 Sentence objects in this Document
-doc.size
-
-# A Document contains the words, pos tags, lemmas, named entities, and syntactic dependencies of its component Sentences
-doc.bag_of_labeled_deps
-
-# We can access the named entities for the Document as a dictionary mapping an NE label -> list of named entities
-doc.nes
-
-# A Sentence contains words, pos tags, lemmas, named entities, and syntactic dependencies
-doc.sentences[0].lemmas
-
-# get the first sentence
-s = doc.sentences[0]
-
-# the number of tokens in this sentence
-s.length
-
-# the named entities contained in this sentence
-s.nes
-
-# generate labeled dependencies using "words", "tags", "lemmas", "entities", or token index ("index")
-s.labeled_dependencies_using("tags")
-
-# generate unlabeled dependencies using "words", "tags", "lemmas", "entities", or token index ("index")
-s.unlabeled_dependencies_using("lemmas")
-
-# play around with the dependencies directly
-deps = s.dependencies
-
-# see what dependencies lead directly to the first token (i.e. token 0 is the dependent of what?)
-deps.incoming[0]
-
-# see what dependencies are originating from the first token (i.e. token 0 is the head of what?)
-deps.outgoing[0]
-
-# try using BioNLPProcessor
-biodoc = api.bionlp.annotate("We next considered the effect of Ras monoubiquitination on GAP-mediated hydrolysis")
-
-# check out the bio-specific entities
-biodoc.nes
-
-# serialize to/from JSON!
-json_file = "serialized_doc_example.json"
-ross_doc = api.fastnlp.annotate("We don't make mistakes, just happy little accidents.")
-
-# serialize to JSON
-with open(json_file, "w") as out:
-    out.write(ross_doc.to_JSON())
-
-# load from JSON
-with open(json_file, "r") as jf:
-    d = Document.load_from_JSON(json.load(jf))    
-
-# get sentiment analysis scores
-review = "The humans are dead."
-doc = API.fastnlp.annotate(review)
-
-# try Stanford's tree-based sentiment analysis
-# you'll get a score for each Sentence
-# scores are between 1 (very negative) - 5 (very positive)
-scores = API.sentiment.corenlp.score_document(doc)
-
-# you can pass text directly
-scores = API.sentiment.corenlp.score_text(review)
-
-# ... or a single sentence
-score = API.sentiment.corenlp.score_sentence(doc.sentences[0])
-```
-
-# Running the tests
-
-1. Clone and install the package locally:
-```bash
-git clone https://github.com/myedibleenso/py-processors.git
-cd py-processors
-pip install -e .
-```
-2. Run the tests
-```bash
-green -vv --run-coverage
-```
-
-# I want the latest `processors-server.jar`
-In that case, take a look over [here](https:github.com/myedibleenso/processors-server).
-
-# Issues
-### Something is already running on port `XXXX`, but I don't know what.  Help!
-
-Try running the following command:
-
-```bash
-lsof -i :<portnumber>
-```
-You can then kill the responsible process using the reported `PID`
+See [the walkthrough example](example.md#a-walkthrough-example)
