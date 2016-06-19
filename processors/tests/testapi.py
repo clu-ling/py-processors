@@ -15,6 +15,7 @@ class ProcessorsAPITests(unittest.TestCase):
 
         self.assertEqual(API.port, port, "Port was not {}".format(port))
 
+    # annotate tests
     def test_annotate(self):
         "API.annotate should produce a Document when given text"
 
@@ -48,6 +49,7 @@ class ProcessorsAPITests(unittest.TestCase):
         num_sentences = 1
         self.assertEqual(len(doc.sentences), num_sentences, "bionlp.annotate did not produce a Document with {} Sentences for text \"{}\"".format(num_sentences, text))
 
+    # sentiment analysis tests
     def test_sentiment_analysis_of_text(self):
         "API.sentiment.corenlp.score_text should return scores for text"
 
@@ -86,6 +88,68 @@ class ProcessorsAPITests(unittest.TestCase):
         score = API.sentiment.corenlp.score(s)
         self.assertIsInstance(score, int, "score for Sentence should be of type int, but was of type {}".format(type(score)))
 
+    # Odin tests
+    def test_odin_extract_from_text_method(self):
+        "API.odin.extract_from_text should return mentions whenever rules match the text"
+        rules = """
+        - name: "ner-person"
+          label: [Person, PossiblePerson, Entity]
+          priority: 1
+          type: token
+          pattern: |
+           [entity="PERSON"]+
+           |
+           [tag=/^N/]* [tag=/^N/ & outgoing="cop"] [tag=/^N/]*
+        """
+        text = 'Inigo Montoya should be flagged as a Person.'
+        mentions = API.odin.extract_from_text(text, rules)
+        self.assertTrue(len(mentions) == 1, "More than one mention found for text.")
+        m = mentions[0]
+        self.assertIsInstance(m, Mention, "m wasn't a Mention")
+        self.assertEqual(m.label, "Person", "Label of Mention was not \"Person\"")
+
+    def test_odin_extract_from_text_method2(self):
+        "API.odin.extract_from_text should be capable of handling a URL pointing to a yaml (rules) file"
+        rules_url = "https://raw.githubusercontent.com/clulab/reach/master/src/main/resources/edu/arizona/sista/demo/open/grammars/rules.yml"
+        text = 'Inigo Montoya should be flagged as a Person.'
+        mentions = API.odin.extract_from_text(text, rules_url)
+        self.assertTrue(len(mentions) != 0, "No mentions were found")
+        m = mentions[0]
+        self.assertIsInstance(m, Mention, "m wasn't a Mention")
+        person_mentions = [m for m in mentions if m.label == "Person"]
+        self.assertTrue(len(person_mentions) == 1, "{} \"Person\" Mentions found, but 1 expected.".format(len(person_mentions)))
+
+    def test_odin_extract_from_document_method(self):
+        "API.odin.extract_from_document should return mentions whenever rules match the text"
+        rules = """
+        - name: "ner-person"
+          label: [Person, PossiblePerson, Entity]
+          priority: 1
+          type: token
+          pattern: |
+           [entity="PERSON"]+
+           |
+           [tag=/^N/]* [tag=/^N/ & outgoing="cop"] [tag=/^N/]*
+        """
+        text = 'Inigo Montoya should be flagged as a Person.'
+        doc = API.annotate(text)
+        mentions = API.odin.extract_from_document(doc, rules)
+        self.assertTrue(len(mentions) == 1, "More than one mention found for text.")
+        m = mentions[0]
+        self.assertIsInstance(m, Mention, "m wasn't a Mention")
+        self.assertEqual(m.label, "Person", "Label of Mention was not \"Person\"")
+
+    def test_odin_extract_from_document_method2(self):
+        "API.odin.extract_from_document should be capable of handling a URL pointing to a yaml (rules) file"
+        rules_url = "https://raw.githubusercontent.com/clulab/reach/master/src/main/resources/edu/arizona/sista/demo/open/grammars/rules.yml"
+        text = 'Inigo Montoya should be flagged as a Person.'
+        doc = API.annotate(text)
+        mentions = API.odin.extract_from_document(doc, rules_url)
+        self.assertTrue(len(mentions) != 0, "No mentions were found")
+        m = mentions[0]
+        self.assertIsInstance(m, Mention,  "m wasn't a Mention")
+        person_mentions = [m for m in mentions if m.label == "Person"]
+        self.assertTrue(len(person_mentions) == 1, "{} \"Person\" Mentions found, but 1 expected.".format(len(person_mentions)))
 
     def test_shutdown(self):
         "api.stop_server() should stop processors-server.jar"
