@@ -1,0 +1,79 @@
+{
+  "label": "Person",
+  "labels": [
+    "Person",
+    "PossiblePerson",
+    "Entity"
+  ],
+  "arguments": {},
+  "start": 0,
+  "end": 1,
+  "sentence": 0,
+  "document": {
+    "text": "Odin has many names",
+    "sentences": [
+      {
+        "words": [
+          "Odin",
+          "has",
+          "many",
+          "names"
+        ],
+        "startOffsets": [
+          0,
+          5,
+          9,
+          14
+        ],
+        "endOffsets": [
+          4,
+          8,
+          13,
+          19
+        ],
+        "lemmas": [
+          "Odin",
+          "have",
+          "many",
+          "name"
+        ],
+        "tags": [
+          "NNP",
+          "VBZ",
+          "JJ",
+          "NNS"
+        ],
+        "entities": [
+          "PERSON",
+          "O",
+          "O",
+          "O"
+        ],
+        "dependencies": {
+          "edges": [
+            {
+              "destination": 0,
+              "source": 1,
+              "relation": "nsubj"
+            },
+            {
+              "destination": 3,
+              "source": 1,
+              "relation": "dobj"
+            },
+            {
+              "destination": 2,
+              "source": 3,
+              "relation": "amod"
+            }
+          ],
+          "roots": [
+            1
+          ]
+        }
+      }
+    ]
+  },
+  "keep": true,
+  "foundBy": "ner-person"
+}

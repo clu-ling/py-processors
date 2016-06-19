@@ -7,7 +7,7 @@ import os
 
 __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
 
-class DocumentSerializationTests(unittest.TestCase):
+class SerializationTests(unittest.TestCase):
 
     def test_doc_load_from_json(self):
         "Document.load_from_JSON should produce a Document from serialized_doc.json"
@@ -24,6 +24,14 @@ class DocumentSerializationTests(unittest.TestCase):
         with open(json_file, "r") as jf:
             s = Sentence.load_from_JSON(json.load(jf))
         self.assertTrue(isinstance(s, Sentence), "Sentence.load_from_JSON did not produce a Sentence from {}".format(json_file))
-        
+
+    def test_mention_load_from_json(self):
+        "Mention.load_from_JSON should produce a Mention from serialized_mention.json"
+        json_file = os.path.join(__location__, "serialized_mention.json")
+        print(json_file)
+        with open(json_file, "r") as jf:
+            m = Mention.load_from_JSON(json.load(jf))
+        self.assertTrue(isinstance(m, Mention), "Mention.load_from_JSON did not produce a Mention from {}".format(json_file))
+
 if __name__ == "__main__":
     unittest.main()
