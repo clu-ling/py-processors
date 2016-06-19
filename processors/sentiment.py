@@ -17,16 +17,18 @@ class SentimentAnalysisAPI(object):
 class SentimentAnalyzer(object):
 
     def __init__(self, address):
-        self._service = "{}/sentiment".format(address)
+        self._service = "{}/sentiment/score".format(address)
+        self._text_service = self._service
+        self._sentence_service = self._service
+        self._document_service = self._service
 
     def score_document(self, doc):
         """
         Sends a Document to the server for sentiment scoring
         Returns a list of scores (one for each sentence)
         """
-        service = "{}/document".format(self._service)
         try:
-            sentiment_scores = post_json(service, doc.to_JSON())
+            sentiment_scores = post_json(self._document_service, doc.to_JSON())
             return sentiment_scores["scores"]
 
         except Exception as e:
@@ -39,9 +41,8 @@ class SentimentAnalyzer(object):
         Sends a Sentence to the server for sentiment scoring
         Returns a single score
         """
-        service = "{}/sentence".format(self._service)
         try:
-            sentiment_scores = post_json(service, sentence.to_JSON())
+            sentiment_scores = post_json(self._sentence_service, sentence.to_JSON())
             return sentiment_scores["scores"][0]
 
         except Exception as e:
@@ -54,9 +55,9 @@ class SentimentAnalyzer(object):
         Sends text to the server for sentiment scoring
         Returns a list of scores (one for each sentence)
         """
-        service = "{}/text".format(self._service)
+        service = self._text_service
         try:
-            sentiment_scores = post_json(service, json.dumps({"text":"{}".format(text)}))
+            sentiment_scores = post_json(self._text_service, json.dumps({"text":"{}".format(text)}))
             return sentiment_scores["scores"]
 
         except Exception as e:
@@ -83,4 +84,7 @@ class CoreNLPSentimentAnalyzer(SentimentAnalyzer):
     Bridge to CoreNLP's tree-based sentiment analysis
     """
     def __init__(self, address):
-        self._service = "{}/corenlp/sentiment".format(address)
+        self._service = "{}/sentiment/corenlp/score".format(address)
+        self._text_service = self._service
+        self._sentence_service = self._service
+        self._document_service = self._service
