@@ -1,23 +1,29 @@
 # A walkthrough example
 
-The following bit of code gives an overview of `py-processors`.
+The following examples give an overview of how to use `py-processors`.
+
+## Getting started
+
+First let's look at how to connect to the server.
+
+As part of the installation process, `py-processors` will retrieve a compatible `processors-server.jar`.
 
 ```python
 from processors import *
-
 # The constructor requires you to specify a port for running the server.
-# You can also provide a jar path to the constructor, if you haven't already
-# set a PROCESSORS_SERVER environment variable.
-# By default, the server will be run with 3G of RAM.  
-# If you only have 2G available, use jvm_mem="-Xmx2G"
 API = ProcessorsAPI(port=8886)
-# If ProcessorsAPI is unable to find a valid path to a processors-server.jar,
-# you'll need to start the server manually (optionally provide the path to the jar).
-# It may take a minute or so to load the large model files.
-# API.start_server("path/to/processors-server.jar")
+```
+_NOTE: It may take a minute or so for the server to initialize as there are some large model files that need to be loaded._
 
+## Annotating text
+
+Text can be annotated automatically with [these linguistic attributes](procesors.md#annotating-text).
+```python
 # try annotating some text using FastNLPProcessor (a CoreNLP wrapper)
 doc = API.fastnlp.annotate("My name is Inigo Montoya.  You killed my father.  Prepare to die.")
+
+# you can also annotate text already segmented into sentences
+doc = API.fastnlp.annotate(["My name is Inigo Montoya.", "You killed my father.", "Prepare to die."])
 
 # There should be 3 Sentence objects in this Document
 doc.size
@@ -60,7 +66,13 @@ biodoc = api.bionlp.annotate("We next considered the effect of Ras monoubiquitin
 
 # check out the bio-specific entities
 biodoc.nes
+```
 
+## Serializing to/from `json`
+
+Once you've annotated text, you can serialize it to `json` for later loading.
+
+```python
 # serialize to/from JSON!
 json_file = "serialized_doc_example.json"
 ross_doc = api.fastnlp.annotate("We don't make mistakes, just happy little accidents.")
@@ -72,7 +84,13 @@ with open(json_file, "w") as out:
 # load from JSON
 with open(json_file, "r") as jf:
     d = Document.load_from_JSON(json.load(jf))    
+```
 
+## Perform sentiment analysis
+
+You can perform sentiment analysis using `CoreNLP`'s tree-based system.
+
+```python
 # get sentiment analysis scores
 review = "The humans are dead."
 doc = API.fastnlp.annotate(review)
@@ -88,6 +106,15 @@ scores = API.sentiment.corenlp.score_text(review)
 # ... or a single sentence
 score = API.sentiment.corenlp.score_sentence(doc.sentences[0])
 
+# ... or from text already segmented into sentences
+lyrics = ["My sugalumps are two of a kind", "Sweet and white and highly refined", "Honeys try all kinds of tomfoolery", "to steel a feel of my family jewlery"]
+scores = API.sentiment.corenlp.score_segmented_text(lyrics)
+```
+
+## Rule-based information extraction (IE) with `Odin`  
+If you're unfamiliar with writing `Odin` rules, see our manual for a primer on the language: http://arxiv.org/pdf/1509.07513v1.pdf
+
+```python
 # Do rule-based IE with Odin!
 # see http://arxiv.org/pdf/1509.07513v1.pdf for details
 example_rule = """
@@ -120,3 +147,57 @@ mentions = API.odin.extract_from_text(example_text, rules_url)
 barack_doc = API.annotate(example_text)
 mentions = API.odin.extract_from_document(barack_doc, rules_url)
 ```
+
+
+# Other ways of initializing the server
+
+## Using a custom `processors-server`
+
+When initializing the API, you can specify a path to a custom `processors-server.jar` using the `jar_path` parameter:
+
+```python
+from processors import *
+
+API = ProcessorsAPI(port=8886, jar_path="path/to/processors-server.jar")
+```
+
+Alternatively, you can set an environment variable, `PROCESSORS_SERVER`, with the path to the `jar` you wish to use.  In your `.bashrc` (or equivalent), add this line with the path to the `jar` you wish to use with `py-processors`:
+
+```bash
+export PROCESSORS_SERVER="path/to/processors-server.jar"
+```
+
+Remember to `source` your `profile`:
+```bash
+source path/to/your/.profile
+```
+
+`py-processors` will now prefer this jar whenever a new API is initialized.
+
+_NOTE: If you decide that you no longer want to use this enivronment variable, remember to both remove it from your profile and run_ `unset PROCESSORS_SERVER` _from the shell._
+
+## Allocating memory
+
+By default, the server will be run with 3GB of RAM. You might be able to get be with a little less, though.  You can start the server with a different amount of memory with the `jvm_mem` parameter:
+
+```python
+from processors import *
+# run the sever with 2GB of memory
+API = ProcessorsAPI(port=8886, jvm_mem="-Xmx2G")
+```
+
+_NOTE: This won't have any effect if the server is already running on the given port._
+
+# Keeping the server running
+
+By default, `py-processors` will attempt to shut down the server whenever an API instance goes out of scope (ex. your script finishes or you exit the interpreter).  
+
+If you'd prefer to keep the server alive, you'll need to initialize the API with `keep_alive=True`:
+
+```python
+from processors import *
+
+API = ProcessorsAPI(port=8886, keep_alive=True)
+```
+
+This is useful if you're sharing access to the server on a network, or if you have a bunch of independent tasks and would prefer to avoid the waiting for the server to initialize again and again.

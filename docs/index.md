@@ -12,11 +12,11 @@
 # What is it?
 `py-processors` is a Python wrapper for the CLU Lab's [`processors`](http://github.com/clulab/processors) NLP library.  `py-processors` relies on [`processors-server`](http://github.com/myedibleenso/processors-server).  
 
-Though ([mostly](https://github.com/myedibleenso/py-processors/issues?q=is%3Aopen+is%3Aissue+label%3Apython2.x)) compatible with Python 2.x, this library was developed with 3.x in mind.
+Though [compatible*](https://github.com/myedibleenso/py-processors/issues?q=is%3Aopen+is%3Aissue+label%3Apython2.x) with Python 2.x, this library was developed with 3.x in mind.
 
 # Requirements
 - [Java 8](https://docs.oracle.com/javase/8/docs/technotes/guides/install/install_overview.html)
-- [`processor-sever`](http://github.com/myedibleenso/processors-server) (v2.5)
+- [`processor-sever`](http://github.com/myedibleenso/processors-server) (v2.7)
   - this dependency will be retrieved automatically during installation
 - At least 2GB of RAM free for the server (I recommend 3GB)
 
