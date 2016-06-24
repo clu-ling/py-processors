@@ -231,6 +231,7 @@ class Dependencies(object):
     def __init__(self, deps, words):
         self._words = [w.lower() for w in words]
         self.deps = self.unpack_deps(deps)
+        self.roots = deps.get("roots", [])
         self.edges = deps["edges"]
         self.incoming = self._build_incoming(self.deps)
         self.outgoing = self._build_outgoing(self.deps)
@@ -278,6 +279,7 @@ class Dependencies(object):
     def to_JSON_dict(self):
         deps_dict = dict()
         deps_dict["edges"] = self.edges
+        deps_dict["roots"] = self.roots
         return deps_dict
 
     def to_JSON(self):
