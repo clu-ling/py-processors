@@ -19,7 +19,7 @@ class ProcessorsAPI(object):
 
     PROC_VAR = 'PROCESSORS_SERVER'
 
-    def __init__(self, port, hostname="127.0.0.1", timeout=120, jvm_mem="-Xmx3G", jar_path=None, log_file=None):
+    def __init__(self, port, hostname="127.0.0.1", timeout=120, jvm_mem="-Xmx3G", jar_path=None, keep_alive=False, log_file=None):
 
         self.hostname = hostname
         self.port = port
@@ -27,6 +27,8 @@ class ProcessorsAPI(object):
         self._start_command = "java {} -cp {} NLPServer {}" # mem, jar path, port
         self.timeout = timeout
         self.jvm_mem = jvm_mem
+        # whether or not to stop the server when the object is destroyed
+        self.keep_alive = keep_alive
         # how long to wait between requests
         self.wait_time = 2
         # processors
@@ -192,13 +194,14 @@ class ProcessorsAPI(object):
 
     def __del__(self):
         """
-        Stop server
+        Stop server unless otherwise specified
         """
-        try:
-            self.stop_server()
-            # close our file object
-            #self.DEVNULL.close()
-            print("Successfully shut down processors-server!")
-        except Exception as e:
-            self.logger.debug(e)
-            print("Couldn't kill processors-server.  Was server started externally?")
+        if not self.keep_alive:
+            try:
+                self.stop_server()
+                # close our file object
+                #self.DEVNULL.close()
+                print("Successfully shut down processors-server!")
+            except Exception as e:
+                self.logger.debug(e)
+                print("Couldn't kill processors-server.  Was server started externally?")
