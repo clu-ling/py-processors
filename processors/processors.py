@@ -13,17 +13,22 @@ class Processor(object):
     def __init__(self, address):
         self.service = "{}/annotate".format(address)
 
+    def _message_to_json_dict(self, msg):
+        return post_json(self.service, msg.to_JSON())
+
+    def _annotate_message(self, msg):
+        annotated_text = post_json(self.service, msg.to_JSON())
+        return Document.load_from_JSON(annotated_text)
+
     def annotate(self, text):
         try:
             # load json and build Sentences and Document
             msg = Message(text)
-            annotated_text = post_json(self.service, msg.to_JSON())
-            return Document.load_from_JSON(annotated_text)
+            return self._annotate_message(msg)
 
         except Exception as e:
             #print(e)
             return None
-            #raise Exception("Connection refused!  Is the server running?")
 
 
 class FastNLPProcessor(Processor):
