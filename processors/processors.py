@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # use data structures
+from __future__ import unicode_literals
 from .ds import Document, Sentence, Dependencies
 from .utils import post_json
 import json
