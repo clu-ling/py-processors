@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
+from __future__ import unicode_literals
 from codecs import open
 from setuptools.command.install import install
 from setuptools.command.develop import develop

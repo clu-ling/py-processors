@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
+from __future__ import unicode_literals
 import unittest
 from processors import *
+
 
 port = 8886
 # initialize the server
@@ -26,6 +27,13 @@ class ProcessorsAPITests(unittest.TestCase):
         # should have two sentences
         num_sentences = 2
         self.assertEqual(len(doc.sentences), num_sentences, ".annotate did not produce a Document with {} Sentences for text \"{}\"".format(num_sentences, text))
+
+    def test_unicode(self):
+        "API.annotate should produce a Document when given text containg unicode"
+        # the server will do a poor job with non-English text, but it should still produce something...
+        text = "頑張らなきゃならい"
+        doc = API.annotate(text)
+        self.assertNotEqual(doc, None, ".annotate failed to produce a Document")
 
     def test_fastnlp(self):
         "API.fastnlp.annotate should produce a Document when given text"

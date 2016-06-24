@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 from .utils import post_json
 from .ds import Document
 import re
@@ -10,7 +11,7 @@ class OdinAPI(object):
     """
     API for performing sentiment analysis
     """
-    
+
     validator = re.compile("^(https?|ftp):.+?\.?ya?ml$")
 
     def __init__(self, address):

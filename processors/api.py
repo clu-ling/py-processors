@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 from pkg_resources import resource_filename
 from .processors import *
 from .sentiment import SentimentAnalysisAPI

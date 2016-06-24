@@ -1,10 +1,13 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 # Gus Hahn-Powell 2015
 # data structures for storing processors-server output
 # based on conventions from the CLU lab's processors library (https://github.com/clulab/processors)
-
+from __future__ import unicode_literals
 from itertools import chain
 from collections import defaultdict
+#from six import text_type
 import json
 import re
 
@@ -46,8 +49,11 @@ class Document(object):
                 nes_dict[e] = entities
             return nes_dict
 
-    def __str__(self):
+    def __unicode__(self):
         return self.text
+
+    def __str__(self):
+        return "Document w/ {} Sentence{}".format(self.size, "" if self.size == 1 else "s")
 
     def to_JSON_dict(self):
         doc_dict = dict()
@@ -146,7 +152,7 @@ class Sentence(object):
             return Dependencies(deps, self.words)
         return None
 
-    def __str__(self):
+    def __unicode__(self):
         return self.text
 
     def to_string(self):
@@ -231,7 +237,7 @@ class Dependencies(object):
         self.labeled = self._build_labeled()
         self.unlabeled = self._build_unlabeled()
 
-    def __str__(self):
+    def __unicode__(self):
         return self.deps
 
     def unpack_deps(self, deps):
