@@ -1,4 +1,10 @@
 # Changes
+- v2.8:
+  - `Dependencies` bug fix related to initializing from `json`
+  - Added `keep_alive` boolean parameter to `ProcessorsAPI` constructor to provide a way to keep the server running when instance goes out of scope
+  - Compatibility fixes for 2.x
+  - Updated api to match [v.2.7 of `processors-server`](https://github.com/myedibleenso/processors-server/releases/tag/v2.7)
+    - handle pre-segmented text (preserve provided sentence segmentation in `.annotate` and `.sentiment.corenlp.score_segmented_text` calls)
 - v2.7:
   - Added `Mention` class and support for rule-based information extraction with Odin
   - Updated api to match [v.2.5 of `processors-server`](https://github.com/myedibleenso/processors-server/releases/tag/v2.5)
