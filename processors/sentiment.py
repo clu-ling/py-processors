@@ -3,6 +3,7 @@
 from __future__ import unicode_literals
 from .utils import post_json
 from .ds import Sentence, Document
+from .processors import Message, SentencesMessage
 import json
 import six
 
@@ -21,6 +22,7 @@ class SentimentAnalyzer(object):
     def __init__(self, address):
         self._service = "{}/sentiment/score".format(address)
         self._text_service = self._service
+        self._segmented_service = self._service
         self._sentence_service = self._service
         self._document_service = self._service
 
@@ -34,9 +36,8 @@ class SentimentAnalyzer(object):
             return sentiment_scores["scores"]
 
         except Exception as e:
-            print(e)
+            #print(e)
             return None
-            #raise Exception("Connection refused!  Is the server running?")
 
     def score_sentence(self, sentence):
         """
@@ -50,7 +51,20 @@ class SentimentAnalyzer(object):
         except Exception as e:
             print(e)
             return None
-            #raise Exception("Connection refused!  Is the server running?")
+
+    def score_segmented_text(self, sentences):
+        """
+        Sends segmented text to the server for sentiment scoring
+        Returns a score for each sentence
+        """
+        try:
+            msg = SentencesMessage(sentences)
+            sentiment_scores = post_json(self._segmented_service, msg.to_JSON())
+            return sentiment_scores["scores"]
+
+        except Exception as e:
+            #print(e)
+            return None
 
     def score_text(self, text):
         """
@@ -92,5 +106,6 @@ class CoreNLPSentimentAnalyzer(SentimentAnalyzer):
     def __init__(self, address):
         self._service = "{}/sentiment/corenlp/score".format(address)
         self._text_service = self._service
+        self._segmented_service = "{}/segmented".format(self._service)
         self._sentence_service = self._service
         self._document_service = self._service

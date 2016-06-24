@@ -30,6 +30,18 @@ class Processor(object):
             #print(e)
             return None
 
+    def annotate_from_sentences(self, sentences):
+        """
+        Annotate text that has already been segmented into sentences.
+        """
+        try:
+            # load json from str interable and build Sentences and Document
+            msg = SentencesMessage(sentences)
+            return self._annotate_message(msg)
+
+        except Exception as e:
+            #print(e)
+            return None
 
 class FastNLPProcessor(Processor):
 
@@ -56,6 +68,19 @@ class Message(object):
     def to_JSON_dict(self):
         jdict = dict()
         jdict["text"] = self.text
+        return jdict
+
+    def to_JSON(self):
+        return json.dumps(self.to_JSON_dict(), sort_keys=True, indent=4)
+
+
+class SentencesMessage(object):
+    def __init__(self, sentences):
+        self.sentences = sentences
+
+    def to_JSON_dict(self):
+        jdict = dict()
+        jdict["sentences"] = self.sentences
         return jdict
 
     def to_JSON(self):

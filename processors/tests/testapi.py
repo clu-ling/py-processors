@@ -7,7 +7,7 @@ from processors import *
 
 port = 8886
 # initialize the server
-API = ProcessorsAPI(port=port, timeout=180)
+API = ProcessorsAPI(port=port, timeout=180, keep_alive=True)
 
 class ProcessorsAPITests(unittest.TestCase):
 
@@ -34,6 +34,17 @@ class ProcessorsAPITests(unittest.TestCase):
         text = "頑張らなきゃならい"
         doc = API.annotate(text)
         self.assertNotEqual(doc, None, ".annotate failed to produce a Document")
+
+    # annotate_from_sentences tests
+    def test_annotate_from_sentences(self):
+        "API.annotate_from_sentences should produce a Document that preserves the provided sentence segmentation"
+
+        sentences = ["This is sentence 1.", "This is sentence 2."]
+        # .annotate should be successful
+        doc = API.annotate_from_sentences(sentences)
+        self.assertNotEqual(doc, None, ".annotate_from_sentences failed to produce a Document")
+        # should have two sentences
+        self.assertEqual(len(doc.sentences), len(sentences), ".annotate_from_sentences did not produce a Document with the correct number of sentences")
 
     def test_fastnlp(self):
         "API.fastnlp.annotate should produce a Document when given text"
@@ -80,6 +91,13 @@ class ProcessorsAPITests(unittest.TestCase):
         s = doc.sentences[0]
         score = API.sentiment.corenlp.score_sentence(s)
         self.assertIsInstance(score, int, "score for Sentence should be of type int, but was of type {}".format(type(score)))
+
+    def test_sentiment_analysis_of_segemented_text(self):
+        "API.sentiment.corenlp.score_segemented_text should return a score for each sentence its provided"
+
+        sentences = ["This is a terribly sad sentence.", "I'm pretty happy, though :) !"]
+        scores = API.sentiment.corenlp.score_segmented_text(sentences)
+        self.assertTrue(len(scores) == len(sentences), "there should be {} scores, but only {} were produced :(".format(len(sentences), len(scores)))
 
     def test_sentiment_analysis_score_method(self):
         "API.sentiment.corenlp.score should be able to determine the appropriate API endpoint for the given parameter"

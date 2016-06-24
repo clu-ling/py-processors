@@ -77,6 +77,12 @@ class ProcessorsAPI(object):
         """
         return self.default.annotate(text)
 
+    def annotate_from_sentences(self, sentences):
+        """
+        Uses default processor (CoreNLP) to annotate a list of segmented sentences.
+        """
+        return self.default.annotate_from_sentences(sentences)
+
     def establish_connection(self):
         """
         Attempt to connect to a server (assumes server is running)
