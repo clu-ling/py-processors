@@ -49,7 +49,7 @@ class PyProcessorsInstall(install):
         install.run(self)
 
 # use requirements.txt as deps list
-with open('requirements.txt') as f:
+with open('requirements.txt', 'r', 'utf-8') as f:
     required = f.read().splitlines()
 
 # get readme
@@ -57,20 +57,21 @@ with open('docs/index.md', 'r', 'utf-8') as f:
     readme = f.read()
 
 # get version
-with open('processors/__init__.py', 'r') as fd:
+with open('processors/__init__.py', 'r', 'utf-8') as fd:
     version = re.search(r'^__version__\s*=\s*[\'"]([^\'"]*)[\'"]',
                         fd.read(), re.MULTILINE).group(1)
 
 setup(name='py-processors',
+      packages=["processors"],
       version=version,
       keywords=['nlp', 'processors', 'jvm'],
       description="A wrapper for interacting with the CLU Lab's processors library.",
       long_description=readme,
       url='http://github.com/myedibleenso/py-processors',
+      download_url="https://github.com/myedibleenso/py-processors/archive/v{}.zip".format(version),
       author='myedibleenso',
       author_email='gushahnpowell@gmail.com',
       license='Apache 2.0',
-      packages=["processors"],
       install_requires=required,
       cmdclass={
         'install': PyProcessorsInstall,

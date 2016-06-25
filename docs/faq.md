@@ -19,5 +19,5 @@ Yep!  By default, it will write to `~/py-processors.log`.  You can specify a dif
 ```python
 from processors import *
 
-API + ProcessorsAPI(port=8886, log_file="my/desired/log/file.log")
+API = ProcessorsAPI(port=8886, log_file="my/desired/log/file.log")
 ```
