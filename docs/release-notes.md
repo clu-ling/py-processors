@@ -1,4 +1,8 @@
 # Changes
+- v2.9:
+  - `Mention.arguments` bug fix related to creating Mentions for each arg corresponding to each role
+  - `Dependencies.incoming` and `Dependencies.outgoing` bug fixes
+  - Implemented custom  __eq__ and __ne__ for core data structures
 - v2.8:
   - `Dependencies` bug fix related to initializing from `json`
   - Added `keep_alive` boolean parameter to `ProcessorsAPI` constructor to provide a way to keep the server running when instance goes out of scope
