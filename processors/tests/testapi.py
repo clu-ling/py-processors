@@ -28,6 +28,37 @@ class ProcessorsAPITests(unittest.TestCase):
         num_sentences = 2
         self.assertEqual(len(doc.sentences), num_sentences, ".annotate did not produce a Document with {} Sentences for text \"{}\"".format(num_sentences, text))
 
+    def test_doc_equality(self):
+        "Two calls to API.annotate using the same text should produce equivalent Documents"
+
+        text = "My name is Inigo Montoya."
+        doc1 = API.annotate(text)
+        doc2 = API.annotate(text)
+        self.assertEqual(doc1, doc2, "two .annotate calls on same text did not produce equivalent Documents")
+        self.assertEqual(doc1, Document.load_from_JSON(json.loads(doc2.to_JSON())), "loading JSON dumped from one Document should produce an equivalent Document")
+
+    def test_sentence_equality(self):
+        "Two calls to API.annotate using the same text should produce equivalent Sentences"
+
+        text = "My name is Inigo Montoya."
+        doc1 = API.annotate(text)
+        d1s1 = doc1.sentences[0]
+        doc2 = API.annotate(text)
+        d2s1 = doc2.sentences[0]
+        self.assertEqual(d1s1, d2s1, "two .annotate calls on same text did not produce equivalent Sentences")
+        self.assertEqual(d1s1, Sentence.load_from_JSON(json.loads(d1s1.to_JSON())), "loading JSON dumped from one Sentence should produce an equivalent Sentence")
+
+    def test_dependencies_equality(self):
+        "Two calls to API.annotate using the same text should produce equivalent syntactic Dependencies"
+
+        text = "My name is Inigo Montoya."
+        doc1 = API.annotate(text)
+        d1s1 = doc1.sentences[0]
+        doc2 = API.annotate(text)
+        d2s1 = doc2.sentences[0]
+        self.assertEqual(d1s1.dependencies, d2s1.dependencies, "two .annotate calls on same text did not produce equivalent Dependencies")
+        self.assertEqual(d1s1.dependencies, Dependencies(deps=json.loads(d1s1.dependencies.to_JSON()), words=d1s1.words), "loading JSON dumped from one Dependencies instance should produce an equivalent Dependencies instance")
+
     def test_unicode(self):
         "API.annotate should produce a Document when given text containg unicode"
         # the server will do a poor job with non-English text, but it should still produce something...
