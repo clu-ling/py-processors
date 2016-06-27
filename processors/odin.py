@@ -141,7 +141,8 @@ class Mention(object):
         self.sentence = sentence
         self.document = document
         self.trigger = trigger
-        self.arguments = arguments
+        # unpack args
+        self.arguments = {role:[Mention.load_from_JSON(a) for a in args] for role, args in arguments.items()}
         self.keep = keep
         self.foundBy = foundBy
         # other
