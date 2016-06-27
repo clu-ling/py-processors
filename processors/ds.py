@@ -253,13 +253,13 @@ class Dependencies(object):
     def _build_incoming(self, deps):
         dep_dict = defaultdict(list)
         for (incoming, outgoing, rel) in deps:
-            dep_dict[outgoing].append((incoming, rel))
+            dep_dict[incoming].append((outgoing, rel))
         return dep_dict
 
     def _build_outgoing(self, deps):
         dep_dict = defaultdict(list)
         for (incoming, outgoing, rel) in deps:
-            dep_dict[incoming].append((outgoing, rel))
+            dep_dict[outgoing].append((incoming, rel))
         return dep_dict
 
     def _build_labeled(self):
