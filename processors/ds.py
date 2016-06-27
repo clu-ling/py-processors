@@ -27,6 +27,21 @@ class Document(object):
         self.bag_of_unlabeled_deps = list(chain(*[s.dependencies.unlabeled for s in self.sentences]))
         self.text = text if text else " ".join(self.words)
 
+    def __unicode__(self):
+        return self.text
+
+    def __str__(self):
+        return "Document w/ {} Sentence{}".format(self.size, "" if self.size == 1 else "s")
+
+    def __eq__(self, other):
+        if isinstance(other, self.__class__):
+            return self.__dict__ == other.__dict__
+        else:
+            return False
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
     def bag_of_labeled_dependencies_using(self, form):
         return list(chain(*[s.labeled_dependencies_using(form) for s in self.sentences]))
 
@@ -48,12 +63,6 @@ class Document(object):
                     entities += s.nes[e]
                 nes_dict[e] = entities
             return nes_dict
-
-    def __unicode__(self):
-        return self.text
-
-    def __str__(self):
-        return "Document w/ {} Sentence{}".format(self.size, "" if self.size == 1 else "s")
 
     def to_JSON_dict(self):
         doc_dict = dict()
@@ -99,6 +108,15 @@ class Sentence(object):
         self.text = kwargs.get("text", None) or " ".join(self.words)
         self.dependencies = self._build_dependencies_from_dict(kwargs.get("dependencies", None))
         self.nes = self._set_nes(self._entities)
+
+    def __eq__(self, other):
+        if isinstance(other, self.__class__):
+            return self.__dict__ == other.__dict__
+        else:
+            return False
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
 
     def _set_toks(self, toks):
         return toks if toks else [self.UNKNOWN]*self.length
@@ -240,6 +258,15 @@ class Dependencies(object):
 
     def __unicode__(self):
         return self.deps
+
+    def __eq__(self, other):
+        if isinstance(other, self.__class__):
+            return self.__dict__ == other.__dict__
+        else:
+            return False
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
 
     def unpack_deps(self, deps):
         dependencies = []
