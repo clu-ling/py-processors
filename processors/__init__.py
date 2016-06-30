@@ -10,6 +10,6 @@ import json
 
 
 __title__ = 'py-processors'
-__version__ = '2.9.3'
+__version__ = '2.9.4'
 __author__ = 'Gus Hahn-Powell'
 __copyright__ = 'Copyright 2016 Gus Hahn-Powell'

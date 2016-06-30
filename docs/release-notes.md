@@ -1,4 +1,6 @@
 # Changes
+- v2.9.4:
+  - `jar` is now downloaded when first used
 - v2.9.3:
   - Pass hostname to command for starting server
   - Fixed an Odin test and added needed resources
