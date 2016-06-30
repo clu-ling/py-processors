@@ -1,0 +1,108 @@
+taxonomy:
+  - ExpandedEntity:
+    - Entity:
+      - Subject
+      - Object
+      - PossiblePerson:
+        - Person
+      - Organization
+      - Location
+      - Date
+      - Unknown
+      - PoS:
+        - Noun
+        - Verb
+  - Triple
+
+rules:
+  - name: "ner-unknown"
+    label: Unknown
+    priority: 1
+    type: token
+    pattern: |
+      # inspect the sequence of named entity labels
+      # produced by the named entity recognizer
+      [entity="MISC"]+
+
+  - name: "ner-person"
+    label: Person
+    priority: 1
+    type: token
+    pattern: |
+     [entity="PERSON"]+
+
+  - name: "possible-person"
+    label: PossiblePerson
+    priority: 1
+    type: token
+    pattern: |
+     [tag=/^N/]* [tag=/^N/ & outgoing="cop"] [tag=/^N/]*
+
+  - name: "ner-location"
+    label: Location
+    priority: 1
+    type: token
+    pattern: |
+      [entity="LOCATION"]+
+
+  - name: "ner-org"
+    label: Organization
+    priority: 1
+    type: token
+    pattern: |
+      [entity="ORGANIZATION"]+
+
+  - name: "ner-date"
+    label: Date
+    priority: 1
+    type: token
+    pattern: |
+      [entity="DATE"]+
+
+  - name: subj
+    label: Subject
+    priority: 1
+    type: token
+    unit: "tag"
+    pattern: |
+      /^N/* [incoming=/^nsubj/] /^N/*
+
+  - name: obj
+    label: Object
+    priority: 1
+    type: token
+    unit: "tag"
+    pattern: |
+      /^N/* [incoming=/obj/] /^N/*
+
+  - name: verb
+    label: Verb
+    priority: 1
+    type: token
+    unit: "tag"
+    pattern: |
+      # inspect the PoS tags
+      # find a seq of 1 or more verbs
+      /^V/+
+
+  - name: "expanded-entity"
+    label: Entity
+    example: "Democratic primary"
+    priority: 2
+    type: token
+    pattern: |
+      # some entity
+      # followed by 1 or more nouns or adjectives
+      @Entity [tag=/^(J|N)/]*
+
+  #
+  # Rules for filling triples
+  #
+  - name: triples
+    label: Triple
+    priority: 10
+    type: dependency
+    pattern: |
+      trigger = @Verb
+      subject:ExpandedEntity = (<xcomp|<cop)? nsubj|nsubjpass
+      object:ExpandedEntity = dobj
