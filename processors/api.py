@@ -19,12 +19,12 @@ class ProcessorsAPI(object):
 
     PROC_VAR = 'PROCESSORS_SERVER'
 
-    def __init__(self, port, hostname="127.0.0.1", timeout=120, jvm_mem="-Xmx3G", jar_path=None, keep_alive=False, log_file=None):
+    def __init__(self, port, hostname="localhost", timeout=120, jvm_mem="-Xmx3G", jar_path=None, keep_alive=False, log_file=None):
 
         self.hostname = hostname
         self.port = port
         self.make_address(hostname, port)
-        self._start_command = "java {} -cp {} NLPServer {}" # mem, jar path, port
+        self._start_command = "java {} -cp {} NLPServer --port {port} --host {host}" # mem, jar path, port, host
         self.timeout = timeout
         self.jvm_mem = jvm_mem
         # whether or not to stop the server when the object is destroyed
@@ -159,7 +159,7 @@ class ProcessorsAPI(object):
         if port:
             self.port = port
         # build the command
-        cmd = self._start_command.format(self.jvm_mem, self.jar_path, self.port)
+        cmd = self._start_command.format(self.jvm_mem, self.jar_path, port=self.port, host=self.hostname)
         self._process = sp.Popen(shlex.split(cmd),
                                  shell=False,
                                  stderr=open(self.log_file, 'wb'),
