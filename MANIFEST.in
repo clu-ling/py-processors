@@ -1,7 +1,13 @@
 include processors/*.py
 include processors/*.jar
+
 include processors/tests/*.json
+include processors/tests/*.yml
+include processors/tests/*.txt
+
 include requirements.txt
+
 recursive-include docs *.rst *.md conf.py *.css Makefile
+
 recursive-exclude * __pycache__
 recursive-exclude * *.py[co]
