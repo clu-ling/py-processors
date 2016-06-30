@@ -1,4 +1,6 @@
 # Changes
+- v2.9.1:
+  - Create `Mention` from `Mention.trigger` when `trigger` is not `None`
 - v2.9:
   - `Mention.arguments` bug fix related to creating Mentions for each arg corresponding to each role
   - `Dependencies.incoming` and `Dependencies.outgoing` bug fixes
