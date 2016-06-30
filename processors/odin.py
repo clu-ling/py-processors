@@ -140,7 +140,7 @@ class Mention(object):
         self.end = end
         self.sentence = sentence
         self.document = document
-        self.trigger = trigger
+        self.trigger = Mention.load_from_JSON(trigger) if trigger else None
         # unpack args
         self.arguments = {role:[Mention.load_from_JSON(a) for a in args] for role, args in arguments.items()}
         self.keep = keep
