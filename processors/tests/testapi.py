@@ -223,10 +223,10 @@ class ProcessorsAPITests(unittest.TestCase):
         self.assertNotEqual(triples, None, "Didn't find any mentions with the label \"Triple\" when using {} with {}".format(rule_file, text_file))
         self.assertIsInstance(triple[0].trigger, Mention, "triple[0].trigger was not a Mention")
 
-    # def test_shutdown(self):
-    #     "api.stop_server() should stop processors-server.jar"
-    #
-    #     self.assertTrue(API.stop_server(), "Failed to shut down processors-server.jar")
+    def test_shutdown(self):
+        "api.stop_server() should stop processors-server.jar"
+
+        self.assertTrue(API.stop_server(), "Failed to shut down processors-server.jar")
 
 if __name__ == "__main__":
     unittest.main()

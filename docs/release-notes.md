@@ -1,4 +1,6 @@
 # Changes
+- v2.9.2:
+  - Added `.stop_server()` test
 - v2.9.1:
   - Create `Mention` from `Mention.trigger` when `trigger` is not `None`
 - v2.9:
