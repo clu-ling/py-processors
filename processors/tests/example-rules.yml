@@ -104,5 +104,5 @@ rules:
     type: dependency
     pattern: |
       trigger = @Verb
-      subject:ExpandedEntity = (<xcomp|<cop)? nsubj|nsubjpass
+      subject:ExpandedEntity = (<xcomp|<cop)? (nsubj|nsubjpass)
       object:ExpandedEntity = dobj
