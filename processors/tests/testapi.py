@@ -4,7 +4,10 @@ from __future__ import unicode_literals
 from codecs import open
 import unittest
 from processors import *
+import os
 
+# used to load resources under /tests
+test_dir = os.path.dirname(__file__)
 
 port = 8886
 # initialize the server
@@ -209,19 +212,19 @@ class ProcessorsAPITests(unittest.TestCase):
         person_mentions = [m for m in mentions if m.label == "Person"]
         self.assertTrue(len(person_mentions) == 1, "{} \"Person\" Mentions found, but 1 expected.".format(len(person_mentions)))
 
-    def text_odin_mentions_with_triggers(self):
+    def test_odin_mentions_with_triggers(self):
         "the trigger of a Mention should be a Mention"
-        text_file = 'obama.txt'
-        rule_file = 'example-rules.yml'
+        text_file = os.path.join(test_dir, 'obama.txt')
+        rule_file = os.path.join(test_dir, 'example-rules.yml')
         with open(text_file, 'r', 'utf-8') as f:
             text = f.read().strip()
         with open(rule_file, 'r', 'utf-8') as f:
-            rules = f.read.strip()
-        mentions = API.odin.extract_from_text(text, rules_url)
+            rules = f.read().strip()
+        mentions = API.odin.extract_from_text(text, rules)
         self.assertNotEqual(mentions, None, "Didn't find any mentions")
         triples = [m for m in mentions if m.label == "Triple"]
         self.assertNotEqual(triples, None, "Didn't find any mentions with the label \"Triple\" when using {} with {}".format(rule_file, text_file))
-        self.assertIsInstance(triple[0].trigger, Mention, "triple[0].trigger was not a Mention")
+        self.assertIsInstance(triples[0].trigger, Mention, "triple[0].trigger was not a Mention")
 
     def test_shutdown(self):
         "api.stop_server() should stop processors-server.jar"
