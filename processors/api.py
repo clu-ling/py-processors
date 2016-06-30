@@ -1,7 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-from pkg_resources import resource_filename
+#from pkg_resources import resource_filename
+try:
+    from urllib import urlretrieve
+except:
+    from urllib.request import urlretrieve
 from .processors import *
 from .sentiment import SentimentAnalysisAPI
 from .odin import OdinAPI
@@ -18,6 +22,9 @@ import logging
 class ProcessorsAPI(object):
 
     PROC_VAR = 'PROCESSORS_SERVER'
+    # save to lib loc
+    DEFAULT_JAR = os.path.join(os.path.dirname(os.path.realpath(__file__)), "processors-server.jar")
+    #print(resource_filename(__name__, "processors-server.jar"))
 
     def __init__(self, port, hostname="localhost", timeout=120, jvm_mem="-Xmx3G", jar_path=None, keep_alive=False, log_file=None):
 
@@ -119,11 +126,15 @@ class ProcessorsAPI(object):
                 if os.path.exists(jp):
                     self.jar_path = jp
                 else:
+                    self.jar_path = None
                     print("WARNING: {0} path is invalid.  \nPlease verify this entry in your environment:\n\texport {0}=/path/to/processors-server.jar".format(ProcessorsAPI.PROC_VAR))
-            # Preference 3: attempt to use the processors-sever.jar downloaded when this package was installed
+            # Preference 3: attempt to use the processors-sever.jar (download if not found)
             else:
                 print("Using default")
-                self.jar_path = resource_filename(__name__, "processors-server.jar")
+                # check if jar exists
+                if not os.path.exists(ProcessorsAPI.DEFAULT_JAR):
+                    ProcessorsAPI.download_jar()
+                self.jar_path = ProcessorsAPI.DEFAULT_JAR
 
     def start_server(self, jar_path=None, timeout=120):
         """
@@ -152,10 +163,18 @@ class ProcessorsAPI(object):
             pass
         return False
 
+    def _ensure_jar_path_exists(self):
+        # check if jar exists
+        if not os.path.exists(self.jar_path):
+            raise Exception("jar not found at {}".format(self.jar_path))
+
     def _start_server(self, port=None):
         """
         "Private" method called by start_server()
         """
+
+        self._ensure_jar_path_exists()
+
         if port:
             self.port = port
         # build the command
@@ -191,6 +210,21 @@ class ProcessorsAPI(object):
         self.port = port
         # update address
         self.address = "http://{}:{}".format(self.hostname, self.port)
+
+    @staticmethod
+    def download_jar(jar_url="http://www.cs.arizona.edu/~hahnpowell/processors-server/current/processors-server.jar"):
+        # download processors-server.jar
+        ppjar = ProcessorsAPI.DEFAULT_JAR
+        percent = 0
+        def dlProgress(count, blockSize, totalSize):
+            percent = int(count*blockSize*100/totalSize)
+            sys.stdout.write("\r{}% complete".format(percent))
+            sys.stdout.flush()
+
+        print("Downloading {} from {} ...".format(ppjar, jar_url))
+        urlretrieve(jar_url, ppjar, reporthook=dlProgress)
+        print("\nDownload Complete! {}".format(ppjar))
+
 
     def _get_path(self, p):
         """

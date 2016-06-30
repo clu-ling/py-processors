@@ -36,7 +36,7 @@ class PyProcessorsDevelop(develop):
 
     def run(self):
         # download processors-server.jar
-        JarManager.download_jar()
+        #JarManager.download_jar()
         develop.run(self)
 
 class PyProcessorsInstall(install):
@@ -44,7 +44,7 @@ class PyProcessorsInstall(install):
 
     def run(self):
         # download processors-server.jar
-        JarManager.download_jar()
+        #JarManager.download_jar()
         # install everything else
         install.run(self)
 
