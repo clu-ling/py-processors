@@ -1,4 +1,4 @@
-[![Documentation Status](https://readthedocs.org/projects/py-processors/badge/?version=latest)](http://py-processors.readthedocs.io/en/latest/?badge=latest) [![Pypi version](https://img.shields.io/pypi/v/py-processors.svg)](https://pypi.python.org/pypi/py-processors)  [![Build Status](https://travis-ci.org/myedibleenso/py-processors.svg?branch=master)](https://travis-ci.org/myedibleenso/py-processors) [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/myedibleenso/py-processors/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/myedibleenso/py-processors/?branch=master) [![Coverage Status](https://coveralls.io/repos/github/myedibleenso/py-processors/badge.svg?branch=master)](https://coveralls.io/github/myedibleenso/py-processors?branch=master) [![Requirements Status](https://requires.io/github/myedibleenso/py-processors/requirements.svg?branch=master)](https://requires.io/github/myedibleenso/py-processors/requirements/?branch=master) 
+[![Documentation Status](https://readthedocs.org/projects/py-processors/badge/?version=latest)](http://py-processors.readthedocs.io/en/latest/?badge=latest) [![Pypi version](https://img.shields.io/pypi/v/py-processors.svg)](https://pypi.python.org/pypi/py-processors)  [![Build Status](https://travis-ci.org/myedibleenso/py-processors.svg?branch=master)](https://travis-ci.org/myedibleenso/py-processors) [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/myedibleenso/py-processors/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/myedibleenso/py-processors/?branch=master) [![Coverage Status](https://coveralls.io/repos/github/myedibleenso/py-processors/badge.svg?branch=master)](https://coveralls.io/github/myedibleenso/py-processors?branch=master) [![Requirements Status](https://requires.io/github/myedibleenso/py-processors/requirements.svg?branch=master)](https://requires.io/github/myedibleenso/py-processors/requirements/?branch=master)
 
 # Contents
 - [Text processors](processors.md)
@@ -16,7 +16,7 @@ Though [compatible*](https://github.com/myedibleenso/py-processors/issues?q=is%3
 
 # Requirements
 - [Java 8](https://docs.oracle.com/javase/8/docs/technotes/guides/install/install_overview.html)
-- [`processor-sever`](http://github.com/myedibleenso/processors-server) (v2.7)
+- [`processor-sever`](http://github.com/myedibleenso/processors-server) (v2.8)
   - this dependency will be retrieved automatically during installation
 - At least 2GB of RAM free for the server (I recommend 3GB)
 

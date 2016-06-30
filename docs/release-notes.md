@@ -1,4 +1,7 @@
 # Changes
+- v2.9.3:
+  - Pass hostname to command for starting server
+  - Fixed an Odin test and added needed resources
 - v2.9.2:
   - Added `.stop_server()` test
 - v2.9.1:
