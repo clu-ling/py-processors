@@ -173,8 +173,6 @@ class ProcessorsAPI(object):
                 # Attempt to start the server
                 self._start_server()
             except Exception as e:
-                if not os.path.exists(self.jar_path):
-                    self.logger.warn("\nprocessors-server.jar not found at {}.".format(self.jar_path))
                 self.logger.warn("Unable to start server. Please start the server manually with .start_server(jar_path=\"path/to/processors-server.jar\")")
                 self.logger.warn("\n{}".format(e))
 
@@ -188,24 +186,23 @@ class ProcessorsAPI(object):
             # check if path is valid
             if os.path.exists(jp):
                 self.jar_path = jp
-        else:
-            # Preference 2: if a PROCESSORS_SERVER environment variable is defined, check its validity
-            if ProcessorsAPI.PROC_VAR in os.environ:
-                print("Using path given via $PROCESSORS_SERVER")
-                jp = full_path(os.environ[ProcessorsAPI.PROC_VAR])
-                # check if path is valid
-                if os.path.exists(jp):
-                    self.jar_path = jp
-                else:
-                    self.jar_path = None
-                    print("WARNING: {0} path is invalid.  \nPlease verify this entry in your environment:\n\texport {0}=/path/to/processors-server.jar".format(ProcessorsAPI.PROC_VAR))
-            # Preference 3: attempt to use the processors-sever.jar (download if not found)
+        # Preference 2: if a PROCESSORS_SERVER environment variable is defined, check its validity
+        elif ProcessorsAPI.PROC_VAR in os.environ:
+            self.logger.info("Using path given via $PROCESSORS_SERVER")
+            jp = full_path(os.environ[ProcessorsAPI.PROC_VAR])
+            # check if path is valid
+            if os.path.exists(jp):
+                self.jar_path = jp
             else:
-                print("Using default")
-                # check if jar exists
-                if not os.path.exists(ProcessorsAPI.DEFAULT_JAR):
-                    ProcessorsAPI._download_jar()
-                self.jar_path = ProcessorsAPI.DEFAULT_JAR
+                self.jar_path = None
+                print("WARNING: {0} path is invalid.  \nPlease verify this entry in your environment:\n\texport {0}=/path/to/processors-server.jar".format(ProcessorsAPI.PROC_VAR))
+        # Preference 3: attempt to use the processors-sever.jar (download if not found)
+        else:
+            # check if jar exists
+            if not os.path.exists(ProcessorsAPI.DEFAULT_JAR):
+                ProcessorsAPI._download_jar()
+            self.jar_path = ProcessorsAPI.DEFAULT_JAR
+            self.logger.info("Using default ({})".format(self.jar_path))
 
     def start_server(self, jar_path, **kwargs):
         """
