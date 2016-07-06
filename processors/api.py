@@ -110,7 +110,24 @@ class ProcessorsAPI(object):
         # attempt to establish connection with server
         self.establish_connection()
 
-    def prepare_log_file(self, lf):
+    def _check_server_version(self):
+        """
+        Checks server version to see if it meets the recommendations
+        """
+        # avoid circular imports by delaying this import
+        from .__init__ import __ps_rec__
+        try:
+            service_address = "{}/version".format(self.address)
+            server_version = post_json(service_address, None)["version"]
+            if float(__ps_rec__) != float(server_version):
+                warnings.warn("Recommended server version is {}, but server version is {}".format(__ps_rec__, server_version))
+            else:
+                self.logger.info("Server version meets recommendations (v{})".format(__ps_rec__))
+        except:
+            warnings.warn("Unable to determine server version.  Recommended version is {}".format(__ps_rec__))
+
+
+    def _prepare_log_file(self, lf):
         """
         Configure logger and return file path for logging
         """
