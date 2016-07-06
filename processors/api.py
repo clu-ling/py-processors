@@ -104,7 +104,7 @@ class ProcessorsAPI(object):
         #self.DEVNULL = open(os.devnull, 'wb')
         self.logger = logging.getLogger(__name__)
         self.log_file = self._prepare_log_file(kwargs.get("log_file", ProcessorsAPI.LOG))
-
+        self.jar_path = None
         # resolve jar path
         self.resolve_jar_path(kwargs.get("jar_path", ProcessorsAPI.DEFAULT_JAR))
         # attempt to establish connection with server
@@ -195,12 +195,11 @@ class ProcessorsAPI(object):
                 self.jar_path = jp
             else:
                 self.jar_path = None
-                print("WARNING: {0} path is invalid.  \nPlease verify this entry in your environment:\n\texport {0}=/path/to/processors-server.jar".format(ProcessorsAPI.PROC_VAR))
+                self.logger.warn("WARNING: {0} path is invalid.  \nPlease verify this entry in your environment:\n\texport {0}=/path/to/processors-server.jar".format(ProcessorsAPI.PROC_VAR))
         # Preference 3: attempt to use the processors-sever.jar (download if not found)
-        else:
-            # check if jar exists
-            if not os.path.exists(ProcessorsAPI.DEFAULT_JAR):
-                ProcessorsAPI._download_jar()
+        # check if jar exists
+        if not self.jar_path or os.path.exists(self.jar_path):
+            ProcessorsAPI._download_jar()
             self.jar_path = ProcessorsAPI.DEFAULT_JAR
             self.logger.info("Using default ({})".format(self.jar_path))
 
