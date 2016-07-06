@@ -104,9 +104,7 @@ class ProcessorsAPI(object):
         #self.DEVNULL = open(os.devnull, 'wb')
         self.logger = logging.getLogger(__name__)
         self.log_file = self._prepare_log_file(kwargs.get("log_file", ProcessorsAPI.LOG))
-        self.jar_path = None
-        # resolve jar path
-        self.resolve_jar_path(kwargs.get("jar_path", ProcessorsAPI.DEFAULT_JAR))
+        self.jar_path = kwargs.get("jar_path", ProcessorsAPI.DEFAULT_JAR)
         # attempt to establish connection with server
         self.establish_connection()
 
@@ -161,22 +159,27 @@ class ProcessorsAPI(object):
         """
         return self.default.annotate_from_sentences(sentences)
 
+    def is_running(self):
+        return True if self.annotate("Blah") else False
+
     def establish_connection(self):
         """
         Attempt to connect to a server (assumes server is running)
         """
-        if self.annotate("Blah"):
+        if self.is_running():
             self.logger.info("Connection with server established!")
             self._check_server_version()
         else:
             try:
+                # resolve jar path if server is not already running
+                self._resolve_jar_path(self.jar_path)
                 # Attempt to start the server
                 self._start_server()
             except Exception as e:
                 self.logger.warn("Unable to start server. Please start the server manually with .start_server(jar_path=\"path/to/processors-server.jar\")")
                 self.logger.warn("\n{}".format(e))
 
-    def resolve_jar_path(self, jar_path):
+    def _resolve_jar_path(self, jar_path=None):
         """
         Attempts to preferentially set value of self.jar_path
         """
@@ -198,10 +201,10 @@ class ProcessorsAPI(object):
                 self.logger.warn("WARNING: {0} path is invalid.  \nPlease verify this entry in your environment:\n\texport {0}=/path/to/processors-server.jar".format(ProcessorsAPI.PROC_VAR))
         # Preference 3: attempt to use the processors-sever.jar (download if not found)
         # check if jar exists
-        if not self.jar_path or os.path.exists(self.jar_path):
+        if not self.jar_path or not os.path.exists(self.jar_path):
+            self.logger.info("No jar found.  Downloading to {} ...".format(ProcessorsAPI.DEFAULT_JAR))
             ProcessorsAPI._download_jar()
             self.jar_path = ProcessorsAPI.DEFAULT_JAR
-            self.logger.info("Using default ({})".format(self.jar_path))
 
     def start_server(self, jar_path, **kwargs):
         """
