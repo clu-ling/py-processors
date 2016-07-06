@@ -2,10 +2,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 #from pkg_resources import resource_filename
-try:
-    from urllib import urlretrieve
-except:
-    from urllib.request import urlretrieve
+from six.moves.urllib.request import urlretrieve
+from .utils import *
 from .processors import *
 from .sentiment import SentimentAnalysisAPI
 from .odin import OdinAPI
@@ -17,25 +15,81 @@ import requests
 import time
 import sys
 import logging
+import warnings
 
 
 class ProcessorsAPI(object):
 
+    """
+    Manages a connection with the processors-server jar and provides an interface to the API.
+
+    Parameters
+    ----------
+    port : int
+        The port the server is running on or should be started on.  Default is 8886.
+    hostname : str
+        The host name to use for the server.  Default is "localhost".
+    timeout : int
+        The number of seconds to wait for the server to initialize.  Default is 120.
+    jvm_mem : str
+        The maximum amount of memory to allocate to the JVM for the server.  Default is "-Xmx3G".
+    jar_path : str
+        The path to the processors-server jar.  Default is the jar installed with the package.
+    kee_alive : bool
+        Whether or not to keep the server running when ProcessorsAPI instance goes out of scope.  Default is false (server is shut down).
+    log_file: str
+        The path for the log file.  Default is .py-processors.log in the user's home directory.
+
+    Methods
+    -------
+    annotate(text)
+        Produces a Document from the provided `text` using the default processor.
+    fastnlp.annotate(text)
+        Produces a Document from the provided `text` using FastNLPProcessor.
+    bionlp.annotate(text)
+        Produces a Document from the provided `text` using BioNLPProcessor.
+    annotate_from_sentences(sentences)
+        Produces a Document from `sentences` (a list of text split into sentences). Uses the default processor.
+    fastnlp.annotate_from_sentences(sentences)
+        Produces a Document from `sentences` (a list of text split into sentences). Uses FastNLPProcessor.
+    bionlp.annotate_from_sentences(sentences)
+        Produces a Document from `sentences` (a list of text split into sentences). Uses BioNLPProcessor.
+    corenlp.sentiment.score_sentence(sentence)
+        Produces a sentiment score for the provided `sentence` (an instance of Sentence).
+    corenlp.sentiment.score_document(doc)
+        Produces sentiment scores for the provided `doc` (an instance of Document).  One score is produced for each sentence.
+    corenlp.sentiment.score_segmented_text
+        Produces sentiment scores for the provided `sentences` (a list of text segmented into sentences).  One score is produced for item in `sentences`.
+    odin.extract_from_text(text, rules)
+        Produces a list of Mentions for matches of the provided `rules` on the `text`.  `rules` can be a string of Odin rules, or a url ending in .yml or yaml.
+    odin.extract_from_document(doc, rules)
+        Produces a list of Mentions for matches of the provided `rules` on the `doc` (an instance of Document).  `rules` can be a string of Odin rules, or a url ending in .yml or yaml.
+    start_server(jar_path, **kwargs)
+        Starts the server using the provided `jar_path`.  Optionally takes hostname, port, jvm_mem, and timeout.
+    stop_server()
+        Attempts to stop the server running at self.address.
+    """
+
     PROC_VAR = 'PROCESSORS_SERVER'
+    TIMEOUT = 120
     # save to lib loc
     DEFAULT_JAR = os.path.join(os.path.dirname(os.path.realpath(__file__)), "processors-server.jar")
+    PORT = 8886
+    JVM_MEM = "-Xmx3G"
+    HOST = "localhost"
+    LOG = full_path(os.path.join("~", ".py-processors.log"))
     #print(resource_filename(__name__, "processors-server.jar"))
 
-    def __init__(self, port, hostname="localhost", timeout=120, jvm_mem="-Xmx3G", jar_path=None, keep_alive=False, log_file=None):
+    def __init__(self, **kwargs):
 
-        self.hostname = hostname
-        self.port = port
-        self.make_address(hostname, port)
-        self._start_command = "java {} -cp {} NLPServer --port {port} --host {host}" # mem, jar path, port, host
-        self.timeout = timeout
-        self.jvm_mem = jvm_mem
+        self.hostname = kwargs.get("hostname", ProcessorsAPI.HOST)
+        self.port = kwargs.get("port", ProcessorsAPI.PORT)
+        self.make_address(self.hostname, self.port)
+        self.timeout = kwargs.get("timeout", ProcessorsAPI.TIMEOUT)
+        self.jvm_mem = kwargs.get("jvm_mem", ProcessorsAPI.JVM_MEM)
+        self._start_command = "java {mem} -cp {jp} NLPServer --port {port} --host {host}" # mem, jar path, port, host
         # whether or not to stop the server when the object is destroyed
-        self.keep_alive = keep_alive
+        self.keep_alive = kwargs.get("keep_alive", False)
         # how long to wait between requests
         self.wait_time = 2
         # processors
@@ -49,10 +103,10 @@ class ProcessorsAPI(object):
         # use the os module's devnull for compatibility with python 2.7
         #self.DEVNULL = open(os.devnull, 'wb')
         self.logger = logging.getLogger(__name__)
-        self.log_file = self.prepare_log_file(log_file)
+        self.log_file = self._prepare_log_file(kwargs.get("log_file", ProcessorsAPI.LOG))
 
         # resolve jar path
-        self.resolve_jar_path(jar_path)
+        self.resolve_jar_path(kwargs.get("jar_path", ProcessorsAPI.DEFAULT_JAR))
         # attempt to establish connection with server
         self.establish_connection()
 
@@ -61,7 +115,7 @@ class ProcessorsAPI(object):
         Configure logger and return file path for logging
         """
         # log_file
-        log_file = os.path.expanduser(os.path.join("~", ".py-processors.log")) if not lf else os.path.expanduser(lf)
+        log_file = ProcessorsAPI.LOG if not lf else os.path.expanduser(lf)
         # configure logger
         self.logger.setLevel(logging.DEBUG)
         # create console handler and set level to info
@@ -95,16 +149,17 @@ class ProcessorsAPI(object):
         Attempt to connect to a server (assumes server is running)
         """
         if self.annotate("Blah"):
-            print("Connection with server established!")
+            self.logger.info("Connection with server established!")
+            self._check_server_version()
         else:
             try:
                 # Attempt to start the server
                 self._start_server()
             except Exception as e:
                 if not os.path.exists(self.jar_path):
-                    print("\nprocessors-server.jar not found at {}.".format(self.jar_path))
-                print("Unable to start server. Please start the server manually with .start_server(\"path/to/processors-server.jar\")")
-                print("\n{}".format(e))
+                    self.logger.warn("\nprocessors-server.jar not found at {}.".format(self.jar_path))
+                self.logger.warn("Unable to start server. Please start the server manually with .start_server(jar_path=\"path/to/processors-server.jar\")")
+                self.logger.warn("\n{}".format(e))
 
     def resolve_jar_path(self, jar_path):
         """
@@ -112,8 +167,7 @@ class ProcessorsAPI(object):
         """
         # Preference 1: if a .jar is given, check to see if the path is valid
         if jar_path:
-            print("Using provided path")
-            jp = os.path.expanduser(jar_path)
+            jp = full_path(jar_path)
             # check if path is valid
             if os.path.exists(jp):
                 self.jar_path = jp
@@ -121,7 +175,7 @@ class ProcessorsAPI(object):
             # Preference 2: if a PROCESSORS_SERVER environment variable is defined, check its validity
             if ProcessorsAPI.PROC_VAR in os.environ:
                 print("Using path given via $PROCESSORS_SERVER")
-                jp = os.path.expanduser(os.environ[ProcessorsAPI.PROC_VAR])
+                jp = full_path(os.environ[ProcessorsAPI.PROC_VAR])
                 # check if path is valid
                 if os.path.exists(jp):
                     self.jar_path = jp
@@ -133,17 +187,23 @@ class ProcessorsAPI(object):
                 print("Using default")
                 # check if jar exists
                 if not os.path.exists(ProcessorsAPI.DEFAULT_JAR):
-                    ProcessorsAPI.download_jar()
+                    ProcessorsAPI._download_jar()
                 self.jar_path = ProcessorsAPI.DEFAULT_JAR
 
-    def start_server(self, jar_path=None, timeout=120):
+    def start_server(self, jar_path, **kwargs):
         """
         Starts processors-sever.jar
         """
-        self.timeout = int(float(timeout)/2)
-        if jar_path:
-            self.jar_path = jar_path
-        self._start_server()
+        self.port = kwargs.get("port", self.port)
+        self.hostname = kwargs.get("hostname", self.hostname)
+        self.jvm_mem = kwargs.get("jvm_mem", self.jvm_mem)
+        self.timeout = int(float(kwargs.get("timeout", self.jvm_mem))/2)
+        jp = full_path(jar_path)
+        if jp:
+            self.jar_path = jp
+            self._start_server()
+        else:
+            raise Exception("Please provide jar_path=\"path/to/processors-server.jar\"")
 
     def stop_server(self, port=None):
         """
@@ -173,12 +233,13 @@ class ProcessorsAPI(object):
         "Private" method called by start_server()
         """
 
+        # does the jar exist?
         self._ensure_jar_path_exists()
 
         if port:
             self.port = port
         # build the command
-        cmd = self._start_command.format(self.jvm_mem, self.jar_path, port=self.port, host=self.hostname)
+        cmd = self._start_command.format(mem=self.jvm_mem, jp=self.jar_path, port=self.port, host=self.hostname)
         self._process = sp.Popen(shlex.split(cmd),
                                  shell=False,
                                  stderr=open(self.log_file, 'wb'),
@@ -212,7 +273,7 @@ class ProcessorsAPI(object):
         self.address = "http://{}:{}".format(self.hostname, self.port)
 
     @staticmethod
-    def download_jar(jar_url="http://www.cs.arizona.edu/~hahnpowell/processors-server/current/processors-server.jar"):
+    def _download_jar(jar_url="http://www.cs.arizona.edu/~hahnpowell/processors-server/current/processors-server.jar"):
         # download processors-server.jar
         ppjar = ProcessorsAPI.DEFAULT_JAR
         percent = 0

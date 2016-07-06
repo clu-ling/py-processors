@@ -2,16 +2,13 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 from codecs import open
+from six.moves.urllib.request import urlretrieve
 from setuptools.command.install import install
 from setuptools.command.develop import develop
 from setuptools import setup
 import re
 import os
 import sys
-try:
-    from urllib import urlretrieve
-except:
-    from urllib.request import urlretrieve
 
 
 class JarManager(object):

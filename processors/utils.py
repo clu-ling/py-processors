@@ -3,6 +3,7 @@
 from __future__ import unicode_literals
 import requests
 import json
+import os
 
 def post_json(service, json_data):
     # POST json to the server API
@@ -19,3 +20,6 @@ def post_json(service, json_data):
     content = response.content.decode("utf-8")
     #print("CONTENT: {}".format(content))
     return json.loads(content)
+
+def full_path(p):
+    return os.path.abspath(os.path.expanduser(p))
