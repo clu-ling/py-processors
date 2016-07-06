@@ -65,6 +65,7 @@ class ProcessorsAPITests(unittest.TestCase):
 
     def test_unicode(self):
         "API.annotate should produce a Document when given text containg unicode"
+        
         # the server will do a poor job with non-English text, but it should still produce something...
         text = "頑張らなきゃならい"
         doc = API.annotate(text)
@@ -136,6 +137,7 @@ class ProcessorsAPITests(unittest.TestCase):
 
     def test_sentiment_analysis_score_method(self):
         "API.sentiment.corenlp.score should be able to determine the appropriate API endpoint for the given parameter"
+
         # test with text
         text = "This is a terribly sad sentence."
         scores = API.sentiment.corenlp.score(text)
@@ -152,6 +154,7 @@ class ProcessorsAPITests(unittest.TestCase):
     # Odin tests
     def test_odin_extract_from_text_method(self):
         "API.odin.extract_from_text should return mentions whenever rules match the text"
+
         rules = """
         - name: "ner-person"
           label: [Person, PossiblePerson, Entity]
@@ -171,6 +174,7 @@ class ProcessorsAPITests(unittest.TestCase):
 
     def test_odin_extract_from_text_method2(self):
         "API.odin.extract_from_text should be capable of handling a URL pointing to a yaml (rules) file"
+
         rules_url = "https://gist.githubusercontent.com/myedibleenso/6eb94696be6e31c46597759387993baf/raw/b9476eba888567597ff7e8bc2f7aa018561fad6c/py-processors-test.yml"
         text = 'Inigo Montoya should be flagged as a Person.'
         mentions = API.odin.extract_from_text(text, rules_url)
@@ -182,6 +186,7 @@ class ProcessorsAPITests(unittest.TestCase):
 
     def test_odin_extract_from_document_method(self):
         "API.odin.extract_from_document should return mentions whenever rules match the text"
+
         rules = """
         - name: "ner-person"
           label: [Person, PossiblePerson, Entity]
@@ -202,6 +207,7 @@ class ProcessorsAPITests(unittest.TestCase):
 
     def test_odin_extract_from_document_method2(self):
         "API.odin.extract_from_document should be capable of handling a URL pointing to a yaml (rules) file"
+
         rules_url = "https://gist.githubusercontent.com/myedibleenso/6eb94696be6e31c46597759387993baf/raw/b9476eba888567597ff7e8bc2f7aa018561fad6c/py-processors-test.yml"
         text = 'Inigo Montoya should be flagged as a Person.'
         doc = API.annotate(text)
@@ -214,6 +220,7 @@ class ProcessorsAPITests(unittest.TestCase):
 
     def test_odin_mentions_with_triggers(self):
         "the trigger of a Mention should be a Mention"
+
         text_file = os.path.join(test_dir, 'obama.txt')
         rule_file = os.path.join(test_dir, 'example-rules.yml')
         with open(text_file, 'r', 'utf-8') as f:
