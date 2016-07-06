@@ -1,4 +1,9 @@
 # Changes
+- v2.9.5:
+  - Docstring for `ProcessorsAPI`
+  - Updated Odin rules url for tests
+  - Check version of jar against recommended version
+  - Cleanup (kwargs usage, path resolution, etc.)
 - v2.9.4:
   - `jar` is now downloaded when first used
 - v2.9.3:
