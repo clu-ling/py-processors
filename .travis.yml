@@ -50,7 +50,6 @@ install:
 
 # command to run tests
 script:
-  #- green -vv --run-coverage processors/tests/testserialization.py
   - green -vv --run-coverage
 
 after_success:
