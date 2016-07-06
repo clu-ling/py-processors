@@ -171,7 +171,7 @@ class ProcessorsAPITests(unittest.TestCase):
 
     def test_odin_extract_from_text_method2(self):
         "API.odin.extract_from_text should be capable of handling a URL pointing to a yaml (rules) file"
-        rules_url = "https://raw.githubusercontent.com/clulab/reach/master/src/main/resources/edu/arizona/sista/demo/open/grammars/rules.yml"
+        rules_url = "https://gist.githubusercontent.com/myedibleenso/6eb94696be6e31c46597759387993baf/raw/b9476eba888567597ff7e8bc2f7aa018561fad6c/py-processors-test.yml"
         text = 'Inigo Montoya should be flagged as a Person.'
         mentions = API.odin.extract_from_text(text, rules_url)
         self.assertTrue(len(mentions) != 0, "No mentions were found")
@@ -202,7 +202,7 @@ class ProcessorsAPITests(unittest.TestCase):
 
     def test_odin_extract_from_document_method2(self):
         "API.odin.extract_from_document should be capable of handling a URL pointing to a yaml (rules) file"
-        rules_url = "https://raw.githubusercontent.com/clulab/reach/master/src/main/resources/edu/arizona/sista/demo/open/grammars/rules.yml"
+        rules_url = "https://gist.githubusercontent.com/myedibleenso/6eb94696be6e31c46597759387993baf/raw/b9476eba888567597ff7e8bc2f7aa018561fad6c/py-processors-test.yml"
         text = 'Inigo Montoya should be flagged as a Person.'
         doc = API.annotate(text)
         mentions = API.odin.extract_from_document(doc, rules_url)
