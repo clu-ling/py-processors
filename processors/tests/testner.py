@@ -45,7 +45,7 @@ class NERTests(unittest.TestCase):
 		s = doc.sentences[0]
 		print(s.nes)
 		s1_gold_dict = {'ORDINAL': ['44th'], 'DATE': ['August 4 , 1961'], 'NUMBER': ['1', '2'], 'LOCATION': ['US', 'United States'], 'ORGANIZATION': [], 'MISC': ['American'], 'PERSON': ['Barack Hussein Obama II']}
-		self.assertEqual(s1_gold_dict, s.nes, "sentence-level nes dict for IOB entities was ill-formed")
+		self.assertEqual(s1_gold_dict, s.nes, "sentence-level nes dict for non-IOB entities was ill-formed")
 
 
 if __name__ == "__main__":
