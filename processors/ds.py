@@ -123,7 +123,8 @@ class Sentence(object):
 
     def _set_nes(self, entities):
         """
-        Consolidates consecutive NEs under the appropriate label
+        Consolidates consecutive NEs under the appropriate label.
+        Regexs control for bionlp annotator, which uses IOB notation.
         """
         entity_dict = defaultdict(list)
         # initialize to empty label
@@ -134,6 +135,7 @@ class Sentence(object):
             # we don't have an entity tag
             if e == Sentence.NONENTITY:
                 # did we have an entity with the last token?
+                current = re.sub('(B-|I-)','', str(current))
                 if current == Sentence.NONENTITY:
                     continue
                 else:
@@ -149,6 +151,8 @@ class Sentence(object):
             # we have an entity tag!
             else:
                 # our old sequence continues
+                current = re.sub('(B-|I-)','', str(current))
+                e = re.sub('(B-|I-)','', str(e))
                 if e == current:
                     end = i
                 # our old sequence has ended

@@ -1,0 +1,1551 @@
+{
+    "sentences": [
+        {
+            "dependencies": {
+                "edges": [
+                    {
+                        "destination": 0,
+                        "relation": "det",
+                        "source": 1
+                    },
+                    {
+                        "destination": 4,
+                        "relation": "dep",
+                        "source": 1
+                    },
+                    {
+                        "destination": 2,
+                        "relation": "amod",
+                        "source": 4
+                    },
+                    {
+                        "destination": 3,
+                        "relation": "nn",
+                        "source": 4
+                    },
+                    {
+                        "destination": 1,
+                        "relation": "nsubj",
+                        "source": 5
+                    },
+                    {
+                        "destination": 9,
+                        "relation": "dobj",
+                        "source": 5
+                    },
+                    {
+                        "destination": 14,
+                        "relation": "vmod",
+                        "source": 5
+                    },
+                    {
+                        "destination": 7,
+                        "relation": "advmod",
+                        "source": 8
+                    },
+                    {
+                        "destination": 6,
+                        "relation": "det",
+                        "source": 9
+                    },
+                    {
+                        "destination": 8,
+                        "relation": "amod",
+                        "source": 9
+                    },
+                    {
+                        "destination": 12,
+                        "relation": "prep_of",
+                        "source": 9
+                    },
+                    {
+                        "destination": 11,
+                        "relation": "amod",
+                        "source": 12
+                    },
+                    {
+                        "destination": 15,
+                        "relation": "prep",
+                        "source": 14
+                    },
+                    {
+                        "destination": 18,
+                        "relation": "dobj",
+                        "source": 14
+                    },
+                    {
+                        "destination": 16,
+                        "relation": "pcomp",
+                        "source": 15
+                    },
+                    {
+                        "destination": 17,
+                        "relation": "amod",
+                        "source": 18
+                    }
+                ],
+                "roots": [
+                    5
+                ]
+            },
+            "endOffsets": [
+                3,
+                13,
+                21,
+                27,
+                32,
+                41,
+                43,
+                54,
+                58,
+                65,
+                68,
+                93,
+                101,
+                102,
+                112,
+                115,
+                127,
+                136,
+                143,
+                144
+            ],
+            "entities": [
+                "O",
+                "O",
+                "B-TissueType",
+                "I-TissueType",
+                "I-TissueType",
+                "O",
+                "O",
+                "O",
+                "O",
+                "O",
+                "O",
+                "O",
+                "B-CellType",
+                "O",
+                "O",
+                "O",
+                "O",
+                "O",
+                "O",
+                "O"
+            ],
+            "lemmas": [
+                "the",
+                "arthropod",
+                "ventral",
+                "nerve",
+                "cord",
+                "feature",
+                "a",
+                "comparably",
+                "low",
+                "number",
+                "of",
+                "serotonin-immunoreactive",
+                "neuron",
+                ",",
+                "occur",
+                "in",
+                "segmentally",
+                "repeat",
+                "array",
+                "."
+            ],
+            "startOffsets": [
+                0,
+                4,
+                14,
+                22,
+                28,
+                33,
+                42,
+                44,
+                55,
+                59,
+                66,
+                69,
+                94,
+                101,
+                103,
+                113,
+                116,
+                128,
+                137,
+                143
+            ],
+            "tags": [
+                "DT",
+                "NN",
+                "JJ",
+                "NN",
+                "NN",
+                "VBZ",
+                "DT",
+                "RB",
+                "JJ",
+                "NN",
+                "IN",
+                "JJ",
+                "NNS",
+                ",",
+                "VBG",
+                "IN",
+                "RB",
+                "VBN",
+                "NNS",
+                "."
+            ],
+            "words": [
+                "the",
+                "arthropod",
+                "ventral",
+                "nerve",
+                "cord",
+                "features",
+                "a",
+                "comparably",
+                "low",
+                "number",
+                "of",
+                "serotonin-immunoreactive",
+                "neurons",
+                ",",
+                "occurring",
+                "in",
+                "segmentally",
+                "repeated",
+                "arrays",
+                "."
+            ]
+        },
+        {
+            "dependencies": {
+                "edges": [
+                    {
+                        "destination": 4,
+                        "relation": "conj_and",
+                        "source": 2
+                    },
+                    {
+                        "destination": 1,
+                        "relation": "amod",
+                        "source": 2
+                    },
+                    {
+                        "destination": 6,
+                        "relation": "det",
+                        "source": 7
+                    },
+                    {
+                        "destination": 12,
+                        "relation": "pobj",
+                        "source": 10
+                    },
+                    {
+                        "destination": 11,
+                        "relation": "advmod",
+                        "source": 12
+                    },
+                    {
+                        "destination": 2,
+                        "relation": "prep_in",
+                        "source": 14
+                    },
+                    {
+                        "destination": 4,
+                        "relation": "prep_in",
+                        "source": 14
+                    },
+                    {
+                        "destination": 20,
+                        "relation": "pobj",
+                        "source": 14
+                    },
+                    {
+                        "destination": 7,
+                        "relation": "nsubjpass",
+                        "source": 14
+                    },
+                    {
+                        "destination": 23,
+                        "relation": "pobj",
+                        "source": 14
+                    },
+                    {
+                        "destination": 8,
+                        "relation": "aux",
+                        "source": 14
+                    },
+                    {
+                        "destination": 9,
+                        "relation": "auxpass",
+                        "source": 14
+                    },
+                    {
+                        "destination": 10,
+                        "relation": "advmod",
+                        "source": 14
+                    },
+                    {
+                        "destination": 13,
+                        "relation": "advmod",
+                        "source": 14
+                    },
+                    {
+                        "destination": 17,
+                        "relation": "prepc_based_on",
+                        "source": 14
+                    },
+                    {
+                        "destination": 18,
+                        "relation": "poss",
+                        "source": 20
+                    },
+                    {
+                        "destination": 19,
+                        "relation": "nn",
+                        "source": 20
+                    },
+                    {
+                        "destination": 23,
+                        "relation": "conj_and",
+                        "source": 20
+                    },
+                    {
+                        "destination": 22,
+                        "relation": "nn",
+                        "source": 23
+                    }
+                ],
+                "roots": [
+                    14
+                ]
+            },
+            "endOffsets": [
+                147,
+                157,
+                169,
+                173,
+                182,
+                183,
+                189,
+                197,
+                202,
+                207,
+                220,
+                234,
+                239,
+                258,
+                270,
+                271,
+                277,
+                280,
+                286,
+                291,
+                301,
+                305,
+                313,
+                326,
+                327
+            ],
+            "entities": [
+                "O",
+                "O",
+                "O",
+                "O",
+                "O",
+                "O",
+                "O",
+                "B-CellType",
+                "O",
+                "O",
+                "O",
+                "O",
+                "O",
+                "O",
+                "O",
+                "O",
+                "O",
+                "O",
+                "O",
+                "O",
+                "O",
+                "O",
+                "O",
+                "O",
+                "O"
+            ],
+            "lemmas": [
+                "in",
+                "different",
+                "crustacean",
+                "and",
+                "hexapod",
+                ",",
+                "these",
+                "neuron",
+                "have",
+                "be",
+                "individually",
+                "identifiedand",
+                "even",
+                "inter-specifically",
+                "homologize",
+                ",",
+                "base",
+                "on",
+                "they",
+                "soma",
+                "position",
+                "and",
+                "neurite",
+                "morphology",
+                "."
+            ],
+            "startOffsets": [
+                145,
+                148,
+                158,
+                170,
+                174,
+                182,
+                184,
+                190,
+                198,
+                203,
+                208,
+                221,
+                235,
+                240,
+                259,
+                270,
+                272,
+                278,
+                281,
+                287,
+                292,
+                302,
+                306,
+                314,
+                326
+            ],
+            "tags": [
+                "IN",
+                "JJ",
+                "NNS",
+                "CC",
+                "NNS",
+                ",",
+                "DT",
+                "NNS",
+                "VBP",
+                "VBN",
+                "RB",
+                "RB",
+                "RB",
+                "RB",
+                "VBN",
+                ",",
+                "VBN",
+                "IN",
+                "PRP$",
+                "NN",
+                "NNS",
+                "CC",
+                "NN",
+                "NNS",
+                "."
+            ],
+            "words": [
+                "in",
+                "different",
+                "crustaceans",
+                "and",
+                "hexapods",
+                ",",
+                "these",
+                "neurons",
+                "have",
+                "been",
+                "individually",
+                "identifiedand",
+                "even",
+                "inter-specifically",
+                "homologized",
+                ",",
+                "based",
+                "on",
+                "their",
+                "soma",
+                "positions",
+                "and",
+                "neurite",
+                "morphologies",
+                "."
+            ]
+        },
+        {
+            "dependencies": {
+                "edges": [
+                    {
+                        "destination": 5,
+                        "relation": "cop",
+                        "source": 7
+                    },
+                    {
+                        "destination": 6,
+                        "relation": "advmod",
+                        "source": 7
+                    },
+                    {
+                        "destination": 9,
+                        "relation": "prep_in",
+                        "source": 7
+                    },
+                    {
+                        "destination": 27,
+                        "relation": "advcl",
+                        "source": 7
+                    },
+                    {
+                        "destination": 1,
+                        "relation": "nsubj",
+                        "source": 7
+                    },
+                    {
+                        "destination": 13,
+                        "relation": "det",
+                        "source": 15
+                    },
+                    {
+                        "destination": 14,
+                        "relation": "amod",
+                        "source": 15
+                    },
+                    {
+                        "destination": 24,
+                        "relation": "prep_with",
+                        "source": 18
+                    },
+                    {
+                        "destination": 16,
+                        "relation": "amod",
+                        "source": 18
+                    },
+                    {
+                        "destination": 17,
+                        "relation": "nn",
+                        "source": 18
+                    },
+                    {
+                        "destination": 20,
+                        "relation": "prep_with",
+                        "source": 18
+                    },
+                    {
+                        "destination": 24,
+                        "relation": "conj_and",
+                        "source": 20
+                    },
+                    {
+                        "destination": 22,
+                        "relation": "amod",
+                        "source": 24
+                    },
+                    {
+                        "destination": 23,
+                        "relation": "nn",
+                        "source": 24
+                    },
+                    {
+                        "destination": 25,
+                        "relation": "aux",
+                        "source": 27
+                    },
+                    {
+                        "destination": 26,
+                        "relation": "auxpass",
+                        "source": 27
+                    },
+                    {
+                        "destination": 11,
+                        "relation": "mark",
+                        "source": 27
+                    },
+                    {
+                        "destination": 15,
+                        "relation": "prep_in",
+                        "source": 27
+                    },
+                    {
+                        "destination": 18,
+                        "relation": "nsubjpass",
+                        "source": 27
+                    },
+                    {
+                        "destination": 0,
+                        "relation": "amod",
+                        "source": 1
+                    },
+                    {
+                        "destination": 4,
+                        "relation": "prep_of",
+                        "source": 1
+                    },
+                    {
+                        "destination": 3,
+                        "relation": "amod",
+                        "source": 4
+                    }
+                ],
+                "roots": [
+                    7
+                ]
+            },
+            "endOffsets": [
+                339,
+                344,
+                347,
+                372,
+                380,
+                384,
+                389,
+                397,
+                400,
+                410,
+                411,
+                419,
+                422,
+                426,
+                439,
+                452,
+                462,
+                469,
+                478,
+                483,
+                490,
+                494,
+                503,
+                508,
+                516,
+                521,
+                526,
+                535,
+                536
+            ],
+            "entities": [
+                "O",
+                "O",
+                "O",
+                "O",
+                "B-CellType",
+                "O",
+                "O",
+                "O",
+                "O",
+                "O",
+                "O",
+                "O",
+                "O",
+                "O",
+                "O",
+                "O",
+                "O",
+                "B-TissueType",
+                "O",
+                "O",
+                "O",
+                "O",
+                "O",
+                "O",
+                "O",
+                "O",
+                "O",
+                "O",
+                "O"
+            ],
+            "lemmas": [
+                "stereotypic",
+                "set",
+                "of",
+                "serotonin-immunoreactive",
+                "neuron",
+                "be",
+                "also",
+                "present",
+                "in",
+                "myriapod",
+                ",",
+                "whereas",
+                "in",
+                "the",
+                "investigated",
+                "chelicerate",
+                "segmental",
+                "neuron",
+                "cluster",
+                "with",
+                "higher",
+                "and",
+                "variable",
+                "cell",
+                "number",
+                "have",
+                "be",
+                "report",
+                "."
+            ],
+            "startOffsets": [
+                328,
+                340,
+                345,
+                348,
+                373,
+                381,
+                385,
+                390,
+                398,
+                401,
+                410,
+                412,
+                420,
+                423,
+                427,
+                440,
+                453,
+                463,
+                470,
+                479,
+                484,
+                491,
+                495,
+                504,
+                509,
+                517,
+                522,
+                527,
+                535
+            ],
+            "tags": [
+                "JJ",
+                "NNS",
+                "IN",
+                "JJ",
+                "NNS",
+                "VBP",
+                "RB",
+                "JJ",
+                "IN",
+                "NNS",
+                ",",
+                "IN",
+                "IN",
+                "DT",
+                "JJ",
+                "NNS",
+                "JJ",
+                "NN",
+                "NNS",
+                "IN",
+                "JJR",
+                "CC",
+                "JJ",
+                "NN",
+                "NNS",
+                "VBP",
+                "VBN",
+                "VBN",
+                "."
+            ],
+            "words": [
+                "stereotypic",
+                "sets",
+                "of",
+                "serotonin-immunoreactive",
+                "neurons",
+                "are",
+                "also",
+                "present",
+                "in",
+                "myriapods",
+                ",",
+                "whereas",
+                "in",
+                "the",
+                "investigated",
+                "chelicerates",
+                "segmental",
+                "neuron",
+                "clusters",
+                "with",
+                "higher",
+                "and",
+                "variable",
+                "cell",
+                "numbers",
+                "have",
+                "been",
+                "reported",
+                "."
+            ]
+        },
+        {
+            "dependencies": {
+                "edges": [
+                    {
+                        "destination": 8,
+                        "relation": "amod",
+                        "source": 9
+                    },
+                    {
+                        "destination": 7,
+                        "relation": "amod",
+                        "source": 9
+                    },
+                    {
+                        "destination": 9,
+                        "relation": "nsubj",
+                        "source": 13
+                    },
+                    {
+                        "destination": 10,
+                        "relation": "cop",
+                        "source": 13
+                    },
+                    {
+                        "destination": 11,
+                        "relation": "det",
+                        "source": 13
+                    },
+                    {
+                        "destination": 12,
+                        "relation": "amod",
+                        "source": 13
+                    },
+                    {
+                        "destination": 16,
+                        "relation": "prep_of",
+                        "source": 13
+                    },
+                    {
+                        "destination": 5,
+                        "relation": "dobj",
+                        "source": 13
+                    },
+                    {
+                        "destination": 6,
+                        "relation": "advmod",
+                        "source": 13
+                    },
+                    {
+                        "destination": 15,
+                        "relation": "det",
+                        "source": 16
+                    },
+                    {
+                        "destination": 13,
+                        "relation": "ccomp",
+                        "source": 1
+                    },
+                    {
+                        "destination": 0,
+                        "relation": "nsubj",
+                        "source": 1
+                    },
+                    {
+                        "destination": 4,
+                        "relation": "prep_to",
+                        "source": 1
+                    },
+                    {
+                        "destination": 3,
+                        "relation": "det",
+                        "source": 4
+                    }
+                ],
+                "roots": [
+                    1
+                ]
+            },
+            "endOffsets": [
+                541,
+                545,
+                548,
+                552,
+                563,
+                568,
+                581,
+                594,
+                619,
+                627,
+                631,
+                634,
+                645,
+                653,
+                656,
+                660,
+                672,
+                673
+            ],
+            "entities": [
+                "O",
+                "O",
+                "O",
+                "O",
+                "O",
+                "O",
+                "O",
+                "O",
+                "O",
+                "B-CellType",
+                "O",
+                "O",
+                "O",
+                "O",
+                "O",
+                "O",
+                "O",
+                "O"
+            ],
+            "lemmas": [
+                "this",
+                "lead",
+                "to",
+                "the",
+                "suggestion",
+                "that",
+                "individually",
+                "identifiable",
+                "serotonin-immunoreactive",
+                "neuron",
+                "be",
+                "a",
+                "apomorphic",
+                "feature",
+                "of",
+                "the",
+                "mandibula",
+                "."
+            ],
+            "startOffsets": [
+                537,
+                542,
+                546,
+                549,
+                553,
+                564,
+                569,
+                582,
+                595,
+                620,
+                628,
+                632,
+                635,
+                646,
+                654,
+                657,
+                661,
+                672
+            ],
+            "tags": [
+                "DT",
+                "VBD",
+                "TO",
+                "DT",
+                "NN",
+                "WDT",
+                "RB",
+                "JJ",
+                "JJ",
+                "NNS",
+                "VBP",
+                "DT",
+                "JJ",
+                "NN",
+                "IN",
+                "DT",
+                "NN",
+                "."
+            ],
+            "words": [
+                "this",
+                "led",
+                "to",
+                "the",
+                "suggestion",
+                "that",
+                "individually",
+                "identifiable",
+                "serotonin-immunoreactive",
+                "neurons",
+                "are",
+                "an",
+                "apomorphic",
+                "feature",
+                "of",
+                "the",
+                "mandibulata",
+                "."
+            ]
+        },
+        {
+            "dependencies": {
+                "edges": [
+                    {
+                        "destination": 13,
+                        "relation": "num",
+                        "source": 14
+                    },
+                    {
+                        "destination": 18,
+                        "relation": "prep_of",
+                        "source": 14
+                    },
+                    {
+                        "destination": 16,
+                        "relation": "nn",
+                        "source": 18
+                    },
+                    {
+                        "destination": 17,
+                        "relation": "nn",
+                        "source": 18
+                    },
+                    {
+                        "destination": 0,
+                        "relation": "aux",
+                        "source": 1
+                    },
+                    {
+                        "destination": 3,
+                        "relation": "dobj",
+                        "source": 1
+                    },
+                    {
+                        "destination": 2,
+                        "relation": "det",
+                        "source": 3
+                    },
+                    {
+                        "destination": 7,
+                        "relation": "prep_of",
+                        "source": 3
+                    },
+                    {
+                        "destination": 5,
+                        "relation": "det",
+                        "source": 7
+                    },
+                    {
+                        "destination": 6,
+                        "relation": "amod",
+                        "source": 7
+                    },
+                    {
+                        "destination": 11,
+                        "relation": "dobj",
+                        "source": 10
+                    },
+                    {
+                        "destination": 14,
+                        "relation": "prep_in",
+                        "source": 10
+                    },
+                    {
+                        "destination": 1,
+                        "relation": "advcl",
+                        "source": 10
+                    },
+                    {
+                        "destination": 9,
+                        "relation": "nsubj",
+                        "source": 10
+                    }
+                ],
+                "roots": [
+                    10
+                ]
+            },
+            "endOffsets": [
+                676,
+                681,
+                685,
+                694,
+                697,
+                702,
+                720,
+                731,
+                732,
+                735,
+                743,
+                770,
+                773,
+                779,
+                787,
+                790,
+                802,
+                806,
+                814,
+                815
+            ],
+            "entities": [
+                "O",
+                "O",
+                "O",
+                "O",
+                "O",
+                "O",
+                "O",
+                "O",
+                "O",
+                "O",
+                "O",
+                "O",
+                "O",
+                "O",
+                "O",
+                "O",
+                "O",
+                "O",
+                "O",
+                "O"
+            ],
+            "lemmas": [
+                "to",
+                "test",
+                "the",
+                "validity",
+                "of",
+                "this",
+                "neurophylogenetic",
+                "hypothesis",
+                ",",
+                "we",
+                "study",
+                "serotonin-immunoreactivity",
+                "in",
+                "three",
+                "species",
+                "of",
+                "pycnogonida",
+                "sea",
+                "spider",
+                "."
+            ],
+            "startOffsets": [
+                674,
+                677,
+                682,
+                686,
+                695,
+                698,
+                703,
+                721,
+                731,
+                733,
+                736,
+                744,
+                771,
+                774,
+                780,
+                788,
+                791,
+                803,
+                807,
+                814
+            ],
+            "tags": [
+                "TO",
+                "VB",
+                "DT",
+                "NN",
+                "IN",
+                "DT",
+                "JJ",
+                "NN",
+                ",",
+                "PRP",
+                "VBD",
+                "NN",
+                "IN",
+                "CD",
+                "NNS",
+                "IN",
+                "NN",
+                "NN",
+                "NNS",
+                "."
+            ],
+            "words": [
+                "to",
+                "test",
+                "the",
+                "validity",
+                "of",
+                "this",
+                "neurophylogenetic",
+                "hypothesis",
+                ",",
+                "we",
+                "studied",
+                "serotonin-immunoreactivity",
+                "in",
+                "three",
+                "species",
+                "of",
+                "pycnogonida",
+                "sea",
+                "spiders",
+                "."
+            ]
+        },
+        {
+            "dependencies": {
+                "edges": [
+                    {
+                        "destination": 0,
+                        "relation": "det",
+                        "source": 1
+                    },
+                    {
+                        "destination": 4,
+                        "relation": "prep_of",
+                        "source": 1
+                    },
+                    {
+                        "destination": 3,
+                        "relation": "amod",
+                        "source": 4
+                    },
+                    {
+                        "destination": 1,
+                        "relation": "nsubj",
+                        "source": 5
+                    },
+                    {
+                        "destination": 6,
+                        "relation": "advmod",
+                        "source": 5
+                    },
+                    {
+                        "destination": 7,
+                        "relation": "advmod",
+                        "source": 5
+                    },
+                    {
+                        "destination": 9,
+                        "relation": "dep",
+                        "source": 5
+                    },
+                    {
+                        "destination": 17,
+                        "relation": "prep_to",
+                        "source": 9
+                    },
+                    {
+                        "destination": 19,
+                        "relation": "xcomp",
+                        "source": 9
+                    },
+                    {
+                        "destination": 8,
+                        "relation": "advmod",
+                        "source": 9
+                    },
+                    {
+                        "destination": 12,
+                        "relation": "prep_as",
+                        "source": 9
+                    },
+                    {
+                        "destination": 11,
+                        "relation": "nn",
+                        "source": 12
+                    },
+                    {
+                        "destination": 14,
+                        "relation": "det",
+                        "source": 17
+                    },
+                    {
+                        "destination": 15,
+                        "relation": "amod",
+                        "source": 17
+                    },
+                    {
+                        "destination": 16,
+                        "relation": "amod",
+                        "source": 17
+                    },
+                    {
+                        "destination": 22,
+                        "relation": "xcomp",
+                        "source": 19
+                    },
+                    {
+                        "destination": 20,
+                        "relation": "poss",
+                        "source": 21
+                    },
+                    {
+                        "destination": 21,
+                        "relation": "nsubj",
+                        "source": 22
+                    },
+                    {
+                        "destination": 26,
+                        "relation": "prep_for",
+                        "source": 22
+                    },
+                    {
+                        "destination": 31,
+                        "relation": "prep_of",
+                        "source": 26
+                    },
+                    {
+                        "destination": 24,
+                        "relation": "det",
+                        "source": 26
+                    },
+                    {
+                        "destination": 25,
+                        "relation": "amod",
+                        "source": 26
+                    },
+                    {
+                        "destination": 30,
+                        "relation": "nn",
+                        "source": 31
+                    },
+                    {
+                        "destination": 28,
+                        "relation": "nn",
+                        "source": 31
+                    },
+                    {
+                        "destination": 29,
+                        "relation": "amod",
+                        "source": 31
+                    }
+                ],
+                "roots": [
+                    5
+                ]
+            },
+            "endOffsets": [
+                820,
+                826,
+                829,
+                836,
+                847,
+                850,
+                859,
+                864,
+                874,
+                883,
+                886,
+                893,
+                899,
+                902,
+                906,
+                912,
+                919,
+                932,
+                933,
+                943,
+                947,
+                961,
+                969,
+                973,
+                975,
+                984,
+                999,
+                1002,
+                1012,
+                1020,
+                1027,
+                1037,
+                1038
+            ],
+            "entities": [
+                "O",
+                "O",
+                "O",
+                "O",
+                "O",
+                "O",
+                "O",
+                "O",
+                "O",
+                "O",
+                "O",
+                "O",
+                "O",
+                "O",
+                "O",
+                "O",
+                "O",
+                "O",
+                "O",
+                "O",
+                "O",
+                "O",
+                "O",
+                "O",
+                "O",
+                "O",
+                "O",
+                "O",
+                "O",
+                "B-TissueType",
+                "I-TissueType",
+                "O",
+                "O"
+            ],
+            "lemmas": [
+                "this",
+                "group",
+                "of",
+                "marine",
+                "arthropod",
+                "be",
+                "nowadays",
+                "most",
+                "plausibly",
+                "resolve",
+                "as",
+                "sister",
+                "group",
+                "to",
+                "all",
+                "other",
+                "extant",
+                "chelicerate",
+                ",",
+                "render",
+                "its",
+                "investigation",
+                "crucial",
+                "for",
+                "a",
+                "reliable",
+                "reconstruction",
+                "of",
+                "arthropod",
+                "nervous",
+                "system",
+                "evolution",
+                "."
+            ],
+            "startOffsets": [
+                816,
+                821,
+                827,
+                830,
+                837,
+                848,
+                851,
+                860,
+                865,
+                875,
+                884,
+                887,
+                894,
+                900,
+                903,
+                907,
+                913,
+                920,
+                932,
+                934,
+                944,
+                948,
+                962,
+                970,
+                974,
+                976,
+                985,
+                1000,
+                1003,
+                1013,
+                1021,
+                1028,
+                1037
+            ],
+            "tags": [
+                "DT",
+                "NN",
+                "IN",
+                "JJ",
+                "NNS",
+                "VBZ",
+                "RB",
+                "RBS",
+                "RB",
+                "VBN",
+                "IN",
+                "NN",
+                "NN",
+                "TO",
+                "DT",
+                "JJ",
+                "JJ",
+                "NNS",
+                ",",
+                "VBG",
+                "PRP$",
+                "NN",
+                "JJ",
+                "IN",
+                "DT",
+                "JJ",
+                "NN",
+                "IN",
+                "NN",
+                "JJ",
+                "NN",
+                "NN",
+                "."
+            ],
+            "words": [
+                "this",
+                "group",
+                "of",
+                "marine",
+                "arthropods",
+                "is",
+                "nowadays",
+                "most",
+                "plausibly",
+                "resolved",
+                "as",
+                "sister",
+                "group",
+                "to",
+                "all",
+                "other",
+                "extant",
+                "chelicerates",
+                ",",
+                "rendering",
+                "its",
+                "investigation",
+                "crucial",
+                "for",
+                "a",
+                "reliable",
+                "reconstruction",
+                "of",
+                "arthropod",
+                "nervous",
+                "system",
+                "evolution",
+                "."
+            ]
+        }
+    ],
+    "text": "the arthropod ventral nerve cord features a comparably low number of serotonin-immunoreactive neurons , occurring in segmentally repeated arrays . in different crustaceans and hexapods , these neurons have been individually identifiedand even inter-specifically homologized , based on their soma positions and neurite morphologies . stereotypic sets of serotonin-immunoreactive neurons are also present in myriapods , whereas in the investigated chelicerates segmental neuron clusters with higher and variable cell numbers have been reported . this led to the suggestion that individually identifiable serotonin-immunoreactive neurons are an apomorphic feature of the mandibulata . to test the validity of this neurophylogenetic hypothesis , we studied serotonin-immunoreactivity in three species of pycnogonida sea spiders . this group of marine arthropods is nowadays most plausibly resolved as sister group to all other extant chelicerates , rendering its investigation crucial for a reliable reconstruction of arthropod nervous system evolution ."
+}
