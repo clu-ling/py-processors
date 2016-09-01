@@ -22,4 +22,7 @@ def post_json(service, json_data):
     return json.loads(content)
 
 def full_path(p):
-    return os.path.abspath(os.path.expanduser(p))
+    """
+    Expand a path.  Supports "~" shortcut.
+    """
+    return os.path.abspath(os.path.normpath(os.path.expanduser(p)))

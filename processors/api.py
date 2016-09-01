@@ -302,13 +302,6 @@ class ProcessorsAPI(object):
         urlretrieve(jar_url, ppjar, reporthook=dlProgress)
         print("\nDownload Complete! {}".format(ppjar))
 
-
-    def _get_path(self, p):
-        """
-        Expand a user-specified path.  Supports "~" shortcut.
-        """
-        return os.path.abspath(os.path.normpath(os.path.expanduser(p)))
-
     def __del__(self):
         """
         Stop server unless otherwise specified
