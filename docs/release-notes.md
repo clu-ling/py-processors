@@ -1,4 +1,6 @@
 # Changes
+- v2.9.7:
+  - `.nes` support for IOB format
 - v2.9.6:
   - Simplified path checks for `jar`
 - v2.9.5:
