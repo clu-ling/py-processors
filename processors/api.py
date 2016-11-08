@@ -6,12 +6,12 @@ from six.moves.urllib.request import urlretrieve
 from .utils import *
 from .processors import *
 from .sentiment import SentimentAnalysisAPI
-from .odin import OdinAPI
+from .serialization import JSONSerializer
 import os
 import shlex
-import os
 import subprocess as sp
 import requests
+import re
 import time
 import sys
 import logging
@@ -315,3 +315,117 @@ class ProcessorsAPI(object):
             except Exception as e:
                 self.logger.debug(e)
                 print("Couldn't kill processors-server.  Was server started externally?")
+
+
+class OdinAPI(object):
+    """
+    API for performing sentiment analysis
+    """
+
+    validator = re.compile("^(https?|ftp):.+?\.?ya?ml$")
+
+    def __init__(self, address):
+        self._service = "{}/api/odin/extract".format(address)
+
+    def _extract(self, json_data):
+        try:
+            mns_json = post_json(self._service, json_data)
+            return JSONSerializer.mentions_from_JSON(mns_json)
+        except Exception as e:
+            print(e)
+            return None
+
+    @staticmethod
+    def valid_rule_url(url):
+        return True if OdinAPI.validator.match(url) else False
+
+    def extract_from_text(self, text, rules):
+        """
+        Sends text to the server with rules for IE
+        Returns a list of Mentions on None
+        """
+        if OdinAPI.valid_rule_url(rules):
+            # this is actually a URL to a yaml file
+            url = rules
+            container = TextWithURL(text, url)
+        else:
+            container = TextWithRules(text, rules)
+        return self._extract(container.to_JSON())
+
+    def extract_from_document(self, doc, rules):
+        """
+        Sends a Document to the server with rules for IE
+        Returns a list of Mentions or None
+        """
+        if OdinAPI.valid_rule_url(rules):
+            # this is actually a URL to a yaml file
+            url = rules
+            container = DocumentWithURL(doc, rules)
+        else:
+            container = DocumentWithRules(doc, rules)
+        return self._extract(container.to_JSON())
+
+
+class TextWithRules(object):
+
+    def __init__(self, text, rules):
+        self.text = text
+        self.rules = rules
+
+    def to_JSON_dict(self):
+        jdict = dict()
+        jdict["text"] = self.text
+        jdict["rules"] = self.rules
+        return jdict
+
+    def to_JSON(self):
+        return json.dumps(self.to_JSON_dict(), sort_keys=True, indent=4)
+
+class TextWithURL(object):
+
+    def __init__(self, text, url):
+        self.text = text
+        # TODO: throw exception if url is invalid
+        self.url = url
+
+    def to_JSON_dict(self):
+        jdict = dict()
+        jdict["text"] = self.text
+        jdict["url"] = self.url
+        return jdict
+
+    def to_JSON(self):
+        return json.dumps(self.to_JSON_dict(), sort_keys=True, indent=4)
+
+class DocumentWithRules(object):
+
+    def __init__(self, document, rules):
+        # TODO: throw exception if isinstance(document, Document) is False
+        self.document = document
+        self.rules = rules
+
+    def to_JSON_dict(self):
+        jdict = dict()
+        jdict["document"] = self.document.to_JSON_dict()
+        jdict["rules"] = self.rules
+        return jdict
+
+    def to_JSON(self):
+        return json.dumps(self.to_JSON_dict(), sort_keys=True, indent=4)
+
+class DocumentWithURL(object):
+
+    def __init__(self, document, url):
+        # TODO: throw exception if isinstance(document, Document) is False
+        self.document = document
+        # TODO: throw exception if url is invalid
+        self.url = url
+
+    def to_JSON_dict(self):
+        jdict = dict()
+        jdict["document"] = self.document.to_JSON_dict()
+        jdict["url"] = self.url
+        return jdict
+
+    def to_JSON(self):
+        return json.dumps(self.to_JSON_dict(), sort_keys=True, indent=4)
