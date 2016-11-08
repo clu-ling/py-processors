@@ -2,7 +2,10 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 from codecs import open
-from six.moves.urllib.request import urlretrieve
+try:
+    import urllib.request as urlrequest
+except ImportError:
+    import urllib as urlrequest
 from setuptools.command.install import install
 from setuptools.command.develop import develop
 from setuptools import setup
