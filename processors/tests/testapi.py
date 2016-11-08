@@ -65,7 +65,7 @@ class ProcessorsAPITests(unittest.TestCase):
 
     def test_unicode(self):
         "API.annotate should produce a Document when given text containg unicode"
-        
+
         # the server will do a poor job with non-English text, but it should still produce something...
         text = "頑張らなきゃならい"
         doc = API.annotate(text)

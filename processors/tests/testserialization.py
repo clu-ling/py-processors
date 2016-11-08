@@ -30,7 +30,9 @@ class SerializationTests(unittest.TestCase):
         json_file = os.path.join(__location__, "serialized_mention.json")
         print(json_file)
         with open(json_file, "r") as jf:
-            m = Mention.load_from_JSON(json.load(jf))
+            mentions = Mention.mentions_from_JSON(json.load(jf))
+        self.assertTrue(len(mentions) == 1, "More than one mention found for text.")
+        m = mentions[0]
         self.assertTrue(isinstance(m, Mention), "Mention.load_from_JSON did not produce a Mention from {}".format(json_file))
 
 if __name__ == "__main__":
