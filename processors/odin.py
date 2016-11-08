@@ -44,12 +44,9 @@ class Mention(object):
 
         self.label = label
         self.labels = labels if labels else [self.label]
-        self.token_interval = token_interval
-        self.start = self.token_interval.start
-        self.end = self.token_interval.end
-        # FIXME: should these be in the constructor?
-        self.character_start_offset = None
-        self.character_end_offset = None
+        self.tokenInterval = token_interval
+        self.start = self.tokenInterval.start
+        self.end = self.tokenInterval.end
         self.document = document
         self._doc_id = doc_id or hash(self.document)
         self.sentence = sentence
@@ -68,6 +65,9 @@ class Mention(object):
         # other
         self.sentenceObj = self.document.sentences[self.sentence]
         self.text = " ".join(self.sentenceObj.words[self.start:self.end])
+        # recover offsets
+        self.characterStartOffset = self.sentenceObj.startOffsets[self.tokenInterval.start]
+        self.characterEndOffset = self.sentenceObj.endOffsets[self.tokenInterval.end]
         # for later recovery
         self.id = None
         self.type = self._set_type()
@@ -90,14 +90,15 @@ class Mention(object):
         m["type"] = self.type
         m["label"] = self.label
         m["labels"] = self.labels
-        m["tokenInterval"] = self.token_interval.to_JSON_dict()
-        m["characterStartOffset"] = self.character_start_offset
-        m["characterEndOffset"] = self.character_end_offset
+        m["tokenInterval"] = self.tokenInterval.to_JSON_dict()
+        m["characterStartOffset"] = self.characterStartOffset
+        m["characterEndOffset"] = self.characterEndOffset
         m["sentence"] = self.sentence
         m["document"] = self._doc_id
         # do we have a trigger?
         if self.trigger:
              m["trigger"] = self.trigger.to_JSON_dict()
+        # do we have arguments?
         if self.arguments:
             m["arguments"] = self._arguments_to_JSON_dict()
         # handle paths
