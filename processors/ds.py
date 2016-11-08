@@ -28,6 +28,9 @@ class Document(object):
         self.bag_of_unlabeled_deps = list(chain(*[s.dependencies.unlabeled for s in self.sentences]))
         self.text = None
 
+    def __hash__(self):
+        return hash(self.to_JSON())
+
     def __unicode__(self):
         return self.text
 
