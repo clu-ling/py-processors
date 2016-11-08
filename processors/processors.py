@@ -3,7 +3,7 @@
 
 # use data structures
 from __future__ import unicode_literals
-from .ds import Document, Sentence, Dependencies
+from .ds import Document, Sentence, DirectedGraph
 from .utils import post_json
 import json
 

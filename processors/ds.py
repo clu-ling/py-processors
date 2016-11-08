@@ -14,7 +14,8 @@ import re
 
 class Document(object):
 
-    def __init__(self, sentences, text=None):
+    def __init__(self, sentences):
+        self.id = None
         self.size = len(sentences)
         self.sentences = sentences
         # easily access token attributes from all sentences
@@ -25,7 +26,7 @@ class Document(object):
         self.nes = merge_entity_dicts = self._merge_ne_dicts()
         self.bag_of_labeled_deps = list(chain(*[s.dependencies.labeled for s in self.sentences]))
         self.bag_of_unlabeled_deps = list(chain(*[s.dependencies.unlabeled for s in self.sentences]))
-        self.text = text if text else " ".join(self.words)
+        self.text = None
 
     def __unicode__(self):
         return self.text
@@ -43,10 +44,10 @@ class Document(object):
         return not self.__eq__(other)
 
     def bag_of_labeled_dependencies_using(self, form):
-        return list(chain(*[s.labeled_dependencies_using(form) for s in self.sentences]))
+        return list(chain(*[s.labeled_dependencies_using(s._get_tokens(form)) for s in self.sentences]))
 
     def bag_of_unlabeled_dependencies_using(self, form):
-        return list(chain(*[s.unlabeled_dependencies_using(form) for s in self.sentences]))
+        return list(chain(*[s.unlabeled_dependencies_using(s._get_tokens(form)) for s in self.sentences]))
 
     def _merge_ne_dicts(self):
         # Get the set of all NE labels found in the Doc's sentences
@@ -68,6 +69,9 @@ class Document(object):
         doc_dict = dict()
         doc_dict["sentences"] = [s.to_JSON_dict() for s in self.sentences]
         doc_dict["text"] = self.text
+        # can the ID be set?
+        if self.id != None:
+            doc_dict["id"] = self.id
         return doc_dict
 
     def to_JSON(self):
@@ -83,19 +87,24 @@ class Document(object):
                 "endOffsets": s["endOffsets"],
                 "tags": s.get("tags", None),
                 "lemmas": s.get("lemmas", None),
+                "chunks": s.get("chunks", None),
                 "entities": s.get("entities", None),
-                "text": s.get("text", None),
-                "dependencies": s.get("dependencies", None)
+                "graphs": s.get("graphs", None)
             }
             sent = Sentence(**kwargs)
             sentences.append(sent)
-        return Document(sentences, json_dict.get("text", None))
+        doc = Document(sentences)
+        # set id and text
+        doc.text = json_dict.get("text", None)
+        doc.id = kwargs.get("id", None)
+        return doc
+
 
 class Sentence(object):
 
     UNKNOWN = "UNKNOWN"
     # the O in IOB notation
-    NONENTITY = "O"
+    O = "O"
 
     def __init__(self, **kwargs):
         self.words = kwargs["words"]
@@ -104,10 +113,16 @@ class Sentence(object):
         self.length = len(self.words)
         self.tags = self._set_toks(kwargs.get("tags", None))
         self.lemmas = self._set_toks(kwargs.get("lemmas", None))
+        self._chunks = self._set_toks(kwargs.get("chunks", None))
         self._entities = self._set_toks(kwargs.get("entities", None))
         self.text = kwargs.get("text", None) or " ".join(self.words)
-        self.dependencies = self._build_dependencies_from_dict(kwargs.get("dependencies", None))
-        self.nes = self._set_nes(self._entities)
+        self.graphs = self._build_direct_graph_from_dict(kwargs.get("graphs", None))
+        self.basic_dependencies = self.graphs.get(DirectedGraph.STANFORD_BASIC_DEPENDENCIES, None)
+        self.collapsed_dependencies = self.graphs.get(DirectedGraph.STANFORD_COLLAPSED_DEPENDENCIES, None)
+        self.dependencies = self.collapsed_dependencies if self.collapsed_dependencies != None else self.basic_dependencies
+        # IOB tokens -> {label: [phrase 1, ..., phrase n]}
+        self.nes = self._handle_iob(self._entities)
+        self.phrases = self._handle_iob(self._chunks)
 
     def __eq__(self, other):
         if isinstance(other, self.__class__):
@@ -118,74 +133,7 @@ class Sentence(object):
     def __ne__(self, other):
         return not self.__eq__(other)
 
-    def _set_toks(self, toks):
-        return toks if toks else [self.UNKNOWN]*self.length
-
-    def _set_nes(self, entities):
-        """
-        Consolidates consecutive NEs under the appropriate label.
-        Regexs control for bionlp annotator, which uses IOB notation.
-        """
-        entity_dict = defaultdict(list)
-        # initialize to empty label
-        current = Sentence.NONENTITY
-        start = None
-        end = None
-        for i, e in enumerate(entities):
-            # we don't have an entity tag
-            if e == Sentence.NONENTITY:
-                # did we have an entity with the last token?
-                current = re.sub('(B-|I-)','', str(current))
-                if current == Sentence.NONENTITY:
-                    continue
-                else:
-                    # the last sequence has ended
-                    end = i
-                    # store the entity
-                    named_entity = ' '.join(self.words[start:end])
-                    entity_dict[current].append(named_entity)
-                    # reset our book-keeping vars
-                    current = Sentence.NONENTITY
-                    start = None
-                    end = None
-            # we have an entity tag!
-            else:
-                # our old sequence continues
-                current = re.sub('(B-|I-)','', str(current))
-                e = re.sub('(B-|I-)','', str(e))
-                if e == current:
-                    end = i
-                # our old sequence has ended
-                else:
-                    # do we have a previous NE?
-                    if current != Sentence.NONENTITY:
-                        end = i
-                        named_entity = ' '.join(self.words[start:end])
-                        entity_dict[current].append(named_entity)
-                    # update our book-keeping vars
-                    current = e
-                    start = i
-                    end = None
-        # this might be empty
-        return entity_dict
-
-    def _build_dependencies_from_dict(self, deps):
-        if deps and len(deps) > 0:
-            return Dependencies(deps, self.words)
-        return None
-
-    def __unicode__(self):
-        return self.text
-
-    def to_string(self):
-        return ' '.join("{w}__{p}".format(w=self.words[i],p=self.tags[i]) for i in range(self.length))
-
-    def labeled_dependencies_using(self, form):
-        """
-        Generates a list of labeled dependencies for a sentence
-        using "words", "tags", "lemmas", "entities", or token index ("index")
-        """
-
+    def _get_tokens(self, form):
         f = form.lower()
         if f == "words":
             tokens = self.words
@@ -197,6 +145,79 @@ class Sentence(object):
             tokens = self.nes
         elif f == "index":
             tokens = list(range(self.length))
+        return tokens
+
+    def _set_toks(self, toks):
+        return toks if toks else [self.UNKNOWN]*self.length
+
+    def _handle_iob(self, iob):
+        """
+        Consolidates consecutive tokens in IOB notation under the appropriate label.
+        Regexs control for bionlp annotator, which uses IOB notation.
+        """
+        entity_dict = defaultdict(list)
+        # initialize to empty label
+        current = Sentence.O
+        start = None
+        end = None
+        for i, tok in enumerate(iob):
+            # we don't have an I or O
+            if tok == Sentence.O:
+                # did we have an entity with the last token?
+                current = re.sub('(B-|I-)','', str(current))
+                if current == Sentence.O:
+                    continue
+                else:
+                    # the last sequence has ended
+                    end = i
+                    # store the entity
+                    named_entity = ' '.join(self.words[start:end])
+                    entity_dict[current].append(named_entity)
+                    # reset our book-keeping vars
+                    current = Sentence.O
+                    start = None
+                    end = None
+            # we have a tag!
+            else:
+                # our old sequence continues
+                current = re.sub('(B-|I-)','', str(current))
+                tok = re.sub('(B-|I-)','', str(tok))
+                if tok == current:
+                    end = i
+                # our old sequence has ended
+                else:
+                    # do we have a previous NE?
+                    if current != Sentence.O:
+                        end = i
+                        named_entity = ' '.join(self.words[start:end])
+                        entity_dict[current].append(named_entity)
+                    # update our book-keeping vars
+                    current = tok
+                    start = i
+                    end = None
+        # this might be empty
+        return entity_dict
+
+    def _build_direct_graph_from_dict(self, graphs):
+        deps_dict = dict()
+        if graphs and len(graphs) > 0:
+            # process each stored graph
+            for (kind, deps) in graphs.items():
+                deps_dict[kind] = DirectedGraph(kind, deps, self.words)
+            return deps_dict
+        return None
+
+    def __unicode__(self):
+        return self.text
+
+    def to_string(self):
+        return ' '.join("{w}__{p}".format(w=self.words[i],p=self.tags[i]) for i in range(self.length))
+
+    def labeled_dependencies_using(self, tokens):
+        """
+        Generates a list of labeled dependencies for a sentence
+        using the provided tokens
+        """
         #else:
         #    raise Exception("""form must be "words", "tags", "lemmas", or "index"""")
         deps = self.dependencies
@@ -206,13 +227,13 @@ class Sentence(object):
                 labeled.append("{}_{}_{}".format(tokens[out], rel.upper(), tokens[dest]))
         return labeled
 
-    def unlabeled_dependencies_using(self, form):
+    def unlabeled_dependencies_using(self, tokens):
         """
         Generate a list of unlabeled dependencies for a sentence
-        using "words", "tags", "lemmas", "entities", or token index ("index")
+        using the provided tokens
         """
         unlabeled = []
-        for sd in self.labeled_dependencies_using(form):
+        for sd in self.labeled_dependencies_using(tokens):
             (head, _, dep) = sd.split("_")
             unlabeled.append("{}_{}".format(head, dep))
         return unlabeled
@@ -225,7 +246,10 @@ class Sentence(object):
         sentence_dict["tags"] = self.tags
         sentence_dict["lemmas"] = self.lemmas
         sentence_dict["entities"] = self._entities
-        sentence_dict["dependencies"] = self.dependencies.to_JSON_dict()
+        # add graphs
+        sentence_dict["graphs"] = dict()
+        for (kind, graph) in self.graphs.items():
+            sentence_dict["graphs"][kind] = graph._graph_to_JSON_dict()
         return sentence_dict
 
     def to_JSON(self):
@@ -241,27 +265,61 @@ class Sentence(object):
                     tags=json_dict.get("tags", None),
                     entities=json_dict.get("entities", None),
                     text=json_dict.get("text", None),
-                    dependencies=json_dict.get("dependencies", None)
+                    dependencies=json_dict.get("graphs", None)
                     )
         return sent
 
 
-class Dependencies(object):
+class Edge(object):
+
+    def __init__(self, source, destination, relation):
+        self.source = source
+        self.destination = destination
+        self.relation = relation
+
+    def __unicode__(self):
+        return self.to_string()
+
+    def to_string(self):
+        return "Edge(source: {}, destination: {}, relation: {})".format(self.source, self.destination, self.relation)
+
+    def __eq__(self, other):
+        if isinstance(other, self.__class__):
+            return self.__dict__ == other.__dict__
+        else:
+            return False
+
+    def to_JSON_dict(self):
+        edge_dict = dict()
+        edge_dict["source"] = self.source
+        edge_dict["destination"] = self.destination
+        edge_dict["relation"] = self.relation
+        return edge_dict
+
+    def to_JSON(self):
+        return json.dumps(self.to_JSON_dict(), sort_keys=True, indent=4)
+
+
+class DirectedGraph(object):
+
     """
     Storage class for Stanford-style dependencies
     """
-    def __init__(self, deps, words):
+    STANFORD_BASIC_DEPENDENCIES = "stanford-basic"
+    STANFORD_COLLAPSED_DEPENDENCIES = "stanford-collapsed"
+
+    def __init__(self, kind, deps, words):
         self._words = [w.lower() for w in words]
-        self.deps = self.unpack_deps(deps)
+        self.kind = kind
         self.roots = deps.get("roots", [])
-        self.edges = deps["edges"]
-        self.incoming = self._build_incoming(self.deps)
-        self.outgoing = self._build_outgoing(self.deps)
+        self.edges = [Edge(e["source"], e["destination"], e["relation"]) for e in deps["edges"]]
+        self.incoming = self._build_incoming(self.edges)
+        self.outgoing = self._build_outgoing(self.edges)
         self.labeled = self._build_labeled()
         self.unlabeled = self._build_unlabeled()
 
     def __unicode__(self):
-        return self.deps
+        return self.edges
 
     def __eq__(self, other):
         if isinstance(other, self.__class__):
@@ -272,25 +330,16 @@ class Dependencies(object):
     def __ne__(self, other):
         return not self.__eq__(other)
 
-    def unpack_deps(self, deps):
-        dependencies = []
-        for edge in deps["edges"]:
-            outgoing = edge['source']
-            incoming = edge['destination']
-            rel = edge['relation']
-            dependencies.append((incoming, outgoing, rel))
-        return dependencies
-
-    def _build_incoming(self, deps):
+    def _build_incoming(self, edges):
         dep_dict = defaultdict(list)
-        for (incoming, outgoing, rel) in deps:
-            dep_dict[incoming].append((outgoing, rel))
+        for edge in edges:
+            dep_dict[edge.destination].append((edge.source, edge.relation))
         return dep_dict
 
-    def _build_outgoing(self, deps):
+    def _build_outgoing(self, edges):
         dep_dict = defaultdict(list)
-        for (incoming, outgoing, rel) in deps:
-            dep_dict[outgoing].append((incoming, rel))
+        for edge in edges:
+            dep_dict[edge.source].append((edge.destination, edge.relation))
         return dep_dict
 
     def _build_labeled(self):
@@ -307,11 +356,14 @@ class Dependencies(object):
                 unlabeled.append("{}_{}".format(self._words[out], self._words[dest]))
         return unlabeled
 
+    def _graph_to_JSON_dict(self):
+        dg_dict = dict()
+        dg_dict["edges"] = [e.to_JSON_dict() for e in self.edges]
+        dg_dict["roots"] = self.roots
+        return dg_dict
+
     def to_JSON_dict(self):
-        deps_dict = dict()
-        deps_dict["edges"] = self.edges
-        deps_dict["roots"] = self.roots
-        return deps_dict
+        return {self.kind:self._graph_to_JSON_dict()}
 
     def to_JSON(self):
         return json.dumps(self.to_JSON_dict(), sort_keys=True, indent=4)
