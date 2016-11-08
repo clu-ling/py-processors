@@ -11,7 +11,7 @@ import json
 class Processor(object):
 
     def __init__(self, address):
-        self.service = "{}/annotate".format(address)
+        self.service = "{}/api/annotate".format(address)
 
     def _message_to_json_dict(self, msg):
         return post_json(self.service, msg.to_JSON())
@@ -46,7 +46,7 @@ class Processor(object):
 class FastNLPProcessor(Processor):
 
     def __init__(self, address):
-        self.service = "{}/fastnlp/annotate".format(address)
+        self.service = "{}/api/fastnlp/annotate".format(address)
 
     def annotate(self, text):
         return super(FastNLPProcessor, self).annotate(text)
@@ -55,7 +55,7 @@ class FastNLPProcessor(Processor):
 class BioNLPProcessor(Processor):
 
     def __init__(self, address):
-        self.service = "{}/bionlp/annotate".format(address)
+        self.service = "{}/api/bionlp/annotate".format(address)
 
     def annotate(self, text):
         return super(BioNLPProcessor, self).annotate(text)

@@ -15,7 +15,7 @@ class OdinAPI(object):
     validator = re.compile("^(https?|ftp):.+?\.?ya?ml$")
 
     def __init__(self, address):
-        self._service = "{}/odin/extract".format(address)
+        self._service = "{}/api/odin/extract".format(address)
 
     def _extract(self, json_data):
         try:

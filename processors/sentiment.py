@@ -20,7 +20,7 @@ class SentimentAnalysisAPI(object):
 class SentimentAnalyzer(object):
 
     def __init__(self, address):
-        self._service = "{}/sentiment/score".format(address)
+        self._service = "{}/api/sentiment/score".format(address)
         self._text_service = self._service
         self._segmented_service = self._service
         self._sentence_service = self._service
