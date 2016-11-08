@@ -7,65 +7,70 @@ import re
 import json
 
 
+class Interval(object):
 
     def __init__(self, start, end):
         self.start = start
         self.end = end
 
     def to_JSON_dict(self):
-        jdict = dict()
-        jdict["document"] = self.document.to_JSON_dict()
-        jdict["rules"] = self.rules
-        return jdict
+        return {"start":self.start, "end":self.end}
 
     def to_JSON(self):
         return json.dumps(self.to_JSON_dict(), sort_keys=True, indent=4)
 
-class DocumentWithURL(object):
-
-    def __init__(self, document, url):
-        # TODO: throw exception if isinstance(document, Document) is False
-        self.document = document
-        # TODO: throw exception if url is invalid
-        self.url = url
-
-    def to_JSON_dict(self):
-        jdict = dict()
-        jdict["document"] = self.document.to_JSON_dict()
-        jdict["url"] = self.url
-        return jdict
-
-    def to_JSON(self):
-        return json.dumps(self.to_JSON_dict(), sort_keys=True, indent=4)
+    @staticmethod
+    def load_from_JSON(json):
+        return Interval(start=json["start"], end=json["end"])
 
 class Mention(object):
 
+    TBM = "TextBoundMention"
+    EM = "EventMention"
+    RM = "RelationMention"
+
     def __init__(self,
-                label,
-                start,
-                end,
+                token_interval,
                 sentence,
                 document,
                 foundBy,
+                label,
                 labels=None,
                 trigger=None,
                 arguments=None,
-                keep=True):
+                paths=None,
+                keep=True,
+                doc_id=None):
 
         self.label = label
         self.labels = labels if labels else [self.label]
-        self.start = start
-        self.end = end
-        self.sentence = sentence
+        self.token_interval = token_interval
+        self.start = self.token_interval.start
+        self.end = self.token_interval.end
+        # FIXME: should these be in the constructor?
+        self.character_start_offset = None
+        self.character_end_offset = None
         self.document = document
-        self.trigger = Mention.load_from_JSON(trigger) if trigger else None
+        self._doc_id = doc_id or hash(self.document)
+        self.sentence = sentence
+        if trigger:
+            # NOTE: doc id is not stored for trigger's json,
+            # as it is assumed to be contained in the same document as its parent
+            trigger.update({"document": self._doc_id})
+            self.trigger = Mention.load_from_JSON(trigger, self._to_document_map())
+        else:
+            self.trigger = None
         # unpack args
-        self.arguments = {role:[Mention.load_from_JSON(a) for a in args] for role, args in arguments.items()}
+        self.arguments = {role:[Mention.load_from_JSON(a, self._to_document_map()) for a in args] for (role, args) in arguments.items()} if arguments else None
+        self.paths = paths
         self.keep = keep
         self.foundBy = foundBy
         # other
         self.sentenceObj = self.document.sentences[self.sentence]
         self.text = " ".join(self.sentenceObj.words[self.start:self.end])
+        # for later recovery
+        self.id = None
+        self.type = self._set_type()
 
     def __eq__(self, other):
         if isinstance(other, self.__class__):
@@ -81,16 +86,23 @@ class Mention(object):
 
     def to_JSON_dict(self):
         m = dict()
+        m["id"] = self.id
+        m["type"] = self.type
         m["label"] = self.label
         m["labels"] = self.labels
-        m["start"] = self.start
-        m["end"] = self.label
+        m["tokenInterval"] = self.token_interval.to_JSON_dict()
+        m["characterStartOffset"] = self.character_start_offset
+        m["characterEndOffset"] = self.character_end_offset
         m["sentence"] = self.sentence
-        m["document"] = self.document.to_JSON_dict()
+        m["document"] = self._doc_id
         # do we have a trigger?
         if self.trigger:
-             m["trigger"] = self.trigger
-        m["arguments"] = self.arguments_to_JSON_dict()
+             m["trigger"] = self.trigger.to_JSON_dict()
+        if self.arguments:
+            m["arguments"] = self._arguments_to_JSON_dict()
+        # handle paths
+        if self.paths:
+            m["paths"] = self.paths
         m["keep"] = self.keep
         m["foundBy"] = self.foundBy
         return m
@@ -98,22 +110,49 @@ class Mention(object):
     def to_JSON(self):
         return json.dumps(self.to_JSON_dict(), sort_keys=True, indent=4)
 
-    def arguments_to_JSON_dict(self):
-        return dict((role, [a.to_JSON_dict() for a in args]) for (role, args) in self.arguments)
+    def _arguments_to_JSON_dict(self):
+        return dict((role, [a.to_JSON_dict() for a in args]) for (role, args) in self.arguments.items())
+
+    def _paths_to_JSON_dict(self):
+        return {role: paths.to_JSON_dict() for (role, paths) in self.paths}
 
     @staticmethod
-    def load_from_JSON(jdict):
-        sentences = []
+    def load_from_JSON(mjson, docs_dict):
+        # recover document
+        doc_id = mjson["document"]
+        doc = docs_dict[doc_id]
+        labels = mjson["labels"]
         kwargs = {
-            "label": jdict["label"],
-            "labels": jdict["labels"],
-            "start": jdict["start"],
-            "end": jdict["end"],
-            "sentence": jdict["sentence"],
-            "document": Document.load_from_JSON(jdict["document"]),
-            "trigger": jdict.get("trigger", None),
-            "arguments": jdict.get("arguments", dict()),
-            "keep": jdict.get("keep", True),
-            "foundBy": jdict["foundBy"]
+            "label": mjson.get("label", labels[0]),
+            "labels": labels,
+            "token_interval": Interval.load_from_JSON(mjson["tokenInterval"]),
+            "sentence": mjson["sentence"],
+            "document": doc,
+            "doc_id": doc_id,
+            "trigger": mjson.get("trigger", None),
+            "arguments": mjson.get("arguments", None),
+            "paths": mjson.get("paths", None),
+            "keep": mjson.get("keep", True),
+            "foundBy": mjson["foundBy"]
         }
-        return Mention(**kwargs)
+        m = Mention(**kwargs)
+        # set IDs
+        m.id = mjson["id"]
+        m._doc_id = doc_id
+        # set character offsets
+        m.character_start_offset = mjson["characterStartOffset"]
+        m.character_end_offset = mjson["characterEndOffset"]
+        return m
+
+    def _to_document_map(self):
+        return {self._doc_id: self.document}
+
+    def _set_type(self):
+        # event mention
+        if self.trigger != None:
+            return Mention.EM
+        # textbound mention
+        elif self.trigger == None and self.arguments == None:
+            return Mention.TBM
+        else:
+            return Mention.RM
