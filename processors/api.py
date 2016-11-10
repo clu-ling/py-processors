@@ -77,7 +77,7 @@ class ProcessorsAPI(object):
     PORT = 8886
     JVM_MEM = "-Xmx3G"
     HOST = "localhost"
-    LOG = full_path(os.path.join("~", ".py-processors.log"))
+    LOG = full_path(os.path.join("~", "py-processors.log"))
     #print(resource_filename(__name__, "processors-server.jar"))
 
     def __init__(self, **kwargs):
@@ -365,6 +365,10 @@ class OdinAPI(object):
             container = DocumentWithRules(doc, rules)
         return self._extract(container.to_JSON())
 
+#############################################
+# Containers for Odin data
+# transmitted to the server for processing
+#############################################
 
 class TextWithRules(object):
 
