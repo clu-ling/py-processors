@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# Gus Hahn-Powell 2015
+# Gus Hahn-Powell 2015-2016
 # data structures for storing processors-server output
 # based on conventions from the CLU lab's processors library (https://github.com/clulab/processors)
 from __future__ import unicode_literals
@@ -306,7 +306,7 @@ class Edge(object):
 class DirectedGraph(object):
 
     """
-    Storage class for Stanford-style dependencies
+    Storage class for directed graphs.
     """
     STANFORD_BASIC_DEPENDENCIES = "stanford-basic"
     STANFORD_COLLAPSED_DEPENDENCIES = "stanford-collapsed"
@@ -370,3 +370,30 @@ class DirectedGraph(object):
 
     def to_JSON(self):
         return json.dumps(self.to_JSON_dict(), sort_keys=True, indent=4)
+
+
+class Interval(object):
+    """
+    Defines a token or character span
+
+    Parameters
+    ----------
+    start : str
+        The token or character index where the interval begins.
+    end : str
+        The 1 + the index of the last token/character in the span.
+    """
+
+    def __init__(self, start, end):
+        self.start = start
+        self.end = end
+
+    def to_JSON_dict(self):
+        return {"start":self.start, "end":self.end}
+
+    def to_JSON(self):
+        return json.dumps(self.to_JSON_dict(), sort_keys=True, indent=4)
+
+    @staticmethod
+    def load_from_JSON(json):
+        return Interval(start=json["start"], end=json["end"])
