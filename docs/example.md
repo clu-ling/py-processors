@@ -112,7 +112,7 @@ scores = API.sentiment.corenlp.score_segmented_text(lyrics)
 ```
 
 ## Rule-based information extraction (IE) with `Odin`  
-If you're unfamiliar with writing `Odin` rules, see our manual for a primer on the language: http://arxiv.org/pdf/1509.07513v1.pdf
+If you're unfamiliar with writing `Odin` rules, see our manual for a primer on the language: [http://arxiv.org/pdf/1509.07513v1.pdf](http://arxiv.org/pdf/1509.07513v1.pdf)
 
 ```python
 # Do rule-based IE with Odin!
@@ -178,7 +178,7 @@ _NOTE: If you decide that you no longer want to use this enivronment variable, r
 
 ## Allocating memory
 
-By default, the server will be run with 3GB of RAM. You might be able to get be with a little less, though.  You can start the server with a different amount of memory with the `jvm_mem` parameter:
+By default, the server will be run with 3GB of RAM. You might be able to get by with a little less, though.  You can start the server with a different amount of memory with the `jvm_mem` parameter:
 
 ```python
 from processors import *

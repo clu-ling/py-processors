@@ -28,4 +28,4 @@ pip install git+https://github.com/myedibleenso/py-processors.git
 
 # How to use it?
 
-See [the walkthrough example](example.md#a-walkthrough-example)
+See [the walkthrough example](example.md)

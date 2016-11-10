@@ -1,4 +1,8 @@
 # Changes
+- v3.0.0:
+  - Updated api to match [v.3.0 of `processors-server`](https://github.com/myedibleenso/processors-server/releases/tag/v3.0)
+  - Support for Odin `@Mention.argname`
+  - `json` compatible with [`org.clulab.processors`](https://github.com/clulab/processors)
 - v2.9.7:
   - `.nes` support for IOB format
 - v2.9.6:
