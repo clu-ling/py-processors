@@ -2,28 +2,30 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 from .utils import post_json
-from .ds import Document
+from .ds import Document, Interval
 import re
 import json
 
 
-class Interval(object):
-
-    def __init__(self, start, end):
-        self.start = start
-        self.end = end
-
-    def to_JSON_dict(self):
-        return {"start":self.start, "end":self.end}
-
-    def to_JSON(self):
-        return json.dumps(self.to_JSON_dict(), sort_keys=True, indent=4)
-
-    @staticmethod
-    def load_from_JSON(json):
-        return Interval(start=json["start"], end=json["end"])
-
 class Mention(object):
+    """
+    A labeled span of text.  Used to model textual mentions of events, relations, and entities.
+
+    Parameters
+    ----------
+    token_interval : Interval
+        The span of the Mention represented as an Interval.
+    sentence : int
+        The sentence index that contains the Mention.
+    document : Document
+        The Document in which the Mention was found.
+    foundBy : str
+        The Odin IE rule that produced this Mention.
+    label : str
+        The label most closely associated with this span.  Usually the lowest hyponym of "labels".
+    labels: list
+        The list of labels associated with this span.
+    """
 
     TBM = "TextBoundMention"
     EM = "EventMention"
