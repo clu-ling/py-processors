@@ -107,7 +107,7 @@ scores = API.sentiment.corenlp.score_text(review)
 score = API.sentiment.corenlp.score_sentence(doc.sentences[0])
 
 # ... or from text already segmented into sentences
-lyrics = ["My sugalumps are two of a kind", "Sweet and white and highly refined", "Honeys try all kinds of tomfoolery", "to steel a feel of my family jewlery"]
+lyrics = ["My sugar lumps are two of a kind", "Sweet and white and highly refined", "Honeys try all kinds of tomfoolery", "to steal a feel of my family jewelry"]
 scores = API.sentiment.corenlp.score_segmented_text(lyrics)
 ```
 
