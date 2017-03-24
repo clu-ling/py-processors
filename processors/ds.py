@@ -7,6 +7,7 @@
 from __future__ import unicode_literals
 from itertools import chain
 from collections import defaultdict
+from processors.paths import PathFinder
 #from six import text_type
 import json
 import re
@@ -77,8 +78,12 @@ class Document(object):
             doc_dict["id"] = self.id
         return doc_dict
 
-    def to_JSON(self):
-        return json.dumps(self.to_JSON_dict(), sort_keys=True, indent=4)
+    def to_JSON(self, pretty=True):
+        """
+        Returns JSON as String.
+        """
+        num_spaces = 4 if pretty else 0
+        return json.dumps(self.to_JSON_dict(), sort_keys=True, indent=num_spaces)
 
     @staticmethod
     def load_from_JSON(json_dict):
@@ -320,6 +325,7 @@ class DirectedGraph(object):
         self.outgoing = self._build_outgoing(self.edges)
         self.labeled = self._build_labeled()
         self.unlabeled = self._build_unlabeled()
+        self.graph = PathFinder.build_graph(roots=self.roots, edges=self.edges, name=self.kind)
 
     def __unicode__(self):
         return self.edges
@@ -332,6 +338,14 @@ class DirectedGraph(object):
 
     def __ne__(self, other):
         return not self.__eq__(other)
+
+    def shortest_path(self, start, end):
+        """
+        Find the shortest path in the syntactic depedency graph
+        between the provided start and end nodes.
+        """
+        res = PathFinder.shortest_path(self.graph, start, end)
+        return PathFinder.retrieve_edges(self, res) if res else None
 
     def _build_incoming(self, edges):
         dep_dict = defaultdict(list)
