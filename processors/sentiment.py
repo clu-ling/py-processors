@@ -58,7 +58,7 @@ class SentimentAnalyzer(object):
         Returns a score for each sentence
         """
         try:
-            msg = SentencesMessage(sentences)
+            msg = SegmentedMessage(sentences)
             sentiment_scores = post_json(self._segmented_service, msg.to_JSON())
             return sentiment_scores["scores"]
 
