@@ -41,7 +41,7 @@ class Document(object):
 
     def __eq__(self, other):
         if isinstance(other, self.__class__):
-            return self.__dict__ == other.__dict__
+            return self.to_JSON() == other.to_JSON()
         else:
             return False
 
@@ -135,7 +135,7 @@ class Sentence(object):
 
     def __eq__(self, other):
         if isinstance(other, self.__class__):
-            return self.__dict__ == other.__dict__
+            return self.to_JSON() == other.to_JSON()
         else:
             return False
 
@@ -294,7 +294,7 @@ class Edge(object):
 
     def __eq__(self, other):
         if isinstance(other, self.__class__):
-            return self.__dict__ == other.__dict__
+            return self.to_JSON() == other.to_JSON()
         else:
             return False
 
@@ -333,6 +333,7 @@ class DirectedGraph(object):
 
     def __eq__(self, other):
         if isinstance(other, self.__class__):
+            return self.to_JSON() == other.to_JSON()
         else:
             return False
 
