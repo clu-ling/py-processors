@@ -61,7 +61,6 @@ class ProcessorsAPITests(unittest.TestCase):
         doc2 = API.annotate(text)
         d2s1 = doc2.sentences[0]
         self.assertEqual(d1s1.dependencies, d2s1.dependencies, "two .annotate calls on same text did not produce equivalent Dependencies")
-        self.assertEqual(d1s1.dependencies, Dependencies(deps=json.loads(d1s1.dependencies.to_JSON()), words=d1s1.words), "loading JSON dumped from one Dependencies instance should produce an equivalent Dependencies instance")
 
     def test_unicode(self):
         "API.annotate should produce a Document when given text containg unicode"
