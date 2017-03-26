@@ -133,3 +133,18 @@ class DependencyUtils(object):
             if i < len(relations):
                 lexicalized_path.append(relations[i])
         return " ".join(lexicalized_path)
+
+    @staticmethod
+    def pagerank(networkx_graph,
+                 alpha=0.85,
+                 personalization=None,
+                 max_iter=1000,
+                 tol=1e-06,
+                 nstart=None,
+                 weight='weight',
+                 dangling=None):
+        """
+        networkx implementation of pagerank algorithm.
+        Use with DirectedGraph.graph.
+        """
+        return nx.algorithms.link_analysis.pagerank(G=networkx_graph, alpha=alpha, personalization=personalization, max_iter=max_iter, tol=tol, nstart=nstart, weight=weight, dangling=dangling)
