@@ -61,6 +61,13 @@ deps.incoming[0]
 # see what dependencies are originating from the first token (i.e. token 0 is the head of what?)
 deps.outgoing[0]
 
+# find the shortest path between "name" and either "Inigo" or "Montoya".
+deps.shortest_path(start=1, end=[3,4])
+
+# run PageRank on the dependency graph to find nodes with the most activity.
+# SPOILER: the nodes with the highest weight are usually the sentential predicate and its args
+deps.pagerank()
+
 # try using BioNLPProcessor
 biodoc = api.bionlp.annotate("We next considered the effect of Ras monoubiquitination on GAP-mediated hydrolysis")
 
