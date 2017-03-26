@@ -27,3 +27,7 @@ For annotation tuned to the biomedical domain, use `.bionlp.annotate`:
 API = ProcessorsAPI(port=8886)
 doc = API.bionlp.annotate("In contrast, the EGFR T669A mutant increased both basal EGFR and ERBB3 tyrosine phosphorylation that was not augmented by MEK inhibition.")
 ```
+
+# API Reference
+
+See [the API reference](api.md) for more details.
