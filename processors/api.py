@@ -58,10 +58,10 @@ class ProcessorsAPI(object):
         Produces a sentiment score for the provided `sentence` (an instance of Sentence).
     corenlp.sentiment.score_document(doc)
         Produces sentiment scores for the provided `doc` (an instance of Document).  One score is produced for each sentence.
-    corenlp.sentiment.score_segmented_text
+    corenlp.sentiment.score_segmented_text(sentences)
         Produces sentiment scores for the provided `sentences` (a list of text segmented into sentences).  One score is produced for item in `sentences`.
     odin.extract_from_text(text, rules)
-        Produces a list of Mentions for matches of the provided `rules` on the `text`.  `rules` can be a string of Odin rules, or a url ending in .yml or yaml.
+        Produces a list of Mentions for matches of the provided `rules` on the `text`.  `rules` can be a string of Odin rules, or a url ending in `.yml` or `.yaml`.
     odin.extract_from_document(doc, rules)
         Produces a list of Mentions for matches of the provided `rules` on the `doc` (an instance of Document).  `rules` can be a string of Odin rules, or a url ending in .yml or yaml.
     start_server(jar_path, **kwargs)
@@ -319,7 +319,13 @@ class ProcessorsAPI(object):
 
 class OdinAPI(object):
     """
-    API for performing rule-based information extraction with Odin
+    API for performing rule-based information extraction with Odin.
+
+    Parameters
+    ----------
+    address : str
+        The base address for the API (i.e., everything preceding `/api/..`)
+
     """
 
     validator = re.compile("^(https?|ftp):.+?\.?ya?ml$")
@@ -341,8 +347,19 @@ class OdinAPI(object):
 
     def extract_from_text(self, text, rules):
         """
-        Sends text to the server with rules for IE
-        Returns a list of Mentions on None
+        Sends text to the server with rules for information extraction (IE).
+
+        Parameters
+        ----------
+        text : str
+            `rules` will be applied to this `text`.
+        rules : str
+            Either Odin rules provided as a `yaml` string, or a url pointing to a `yaml` file of rules.
+
+        Returns
+        -------
+        [processors.odin.Mention] or None
+            Rule matches produce a list of `processors.odin.Mention`.
         """
         if OdinAPI.valid_rule_url(rules):
             # this is actually a URL to a yaml file
@@ -354,8 +371,20 @@ class OdinAPI(object):
 
     def extract_from_document(self, doc, rules):
         """
-        Sends a Document to the server with rules for IE
-        Returns a list of Mentions or None
+        Sends a `processors.ds.Document` (`doc`) to the server with rules for information extraction (IE).
+
+        Parameters
+        ----------
+        doc : processors.ds.Document
+            `rules` will be applied to this `processors.ds.Document`.
+        rules : str
+            Either Odin rules provided as a `yaml` string, or a url pointing to a `yaml` file of rules.
+
+        Returns
+        -------
+        [processors.odin.Mention] or None
+            Rule matches produce a list of `processors.odin.Mention`.
+
         """
         if OdinAPI.valid_rule_url(rules):
             # this is actually a URL to a yaml file

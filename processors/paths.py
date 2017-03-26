@@ -7,6 +7,24 @@ import collections
 
 
 class DependencyUtils(object):
+    """
+    A set of utilities for analyzing syntactic dependency graphs.
+
+    Methods
+    -------
+    build_networkx_graph(roots, edges, name)
+        Constructs a networkx.Graph
+    shortest_path(g, start, end)
+        Finds the shortest path in a `networkx.Graph` between any element in a list of start nodes and any element in a list of end nodes.
+    retrieve_edges(dep_graph, path)
+        Converts output of `shortest_path` into a list of triples that include the grammatical relation (and direction) for each node-node "hop" in the syntactic dependency graph.
+    simplify_tag(tag)
+        Maps part of speech (PoS) tag to a subset of PoS tags to better consolidate categorical labels.
+    lexicalize_path(sentence, path, words=False, lemmas=False, tags=False, simple_tags=False, entities=False)
+        Lexicalizes path in syntactic dependency graph using Odin-style token constraints.
+    pagerank(networkx_graph, alpha=0.85, personalization=None, max_iter=1000, tol=1e-06, nstart=None, weight='weight', dangling=None)
+        Measures node activity in a `networkx.Graph` using a thin wrapper around `networkx` implementation of pagerank algorithm (see `networkx.algorithms.link_analysis.pagerank`).  Use with `processors.ds.DirectedGraph.graph`.
+    """
 
     UNKNOWN = LabelManager.UNKNOWN
 
@@ -27,6 +45,13 @@ class DependencyUtils(object):
     def shortest_path(g, start, end):
         """
         Find the shortest path between two nodes.
+
+        Parameters
+        ----------
+        start : int or [int]
+            A single token index or list of token indices serving as the start of the graph traversal.
+        end : int or [int]
+            A single token index or list of token indices serving as the end of the graph traversal.
         """
         start = start if isinstance(start, collections.Iterable) else [start]
         end = end if isinstance(end, collections.Iterable) else [end]
@@ -48,6 +73,25 @@ class DependencyUtils(object):
 
     @staticmethod
     def retrieve_edges(dep_graph, path):
+        """
+        Converts output of Converts output of `DependencyUtils.shortest_path`
+        into a list of triples that include the grammatical relation (and direction)
+        for each node-node "hop" in the syntactic dependency graph.
+
+        Parameters
+        ----------
+        dep_graph : processors.ds.DirectedGraph
+            The `DirectedGraph` used to retrieve the grammatical relations for each edge in the `path`.
+        path : [(int, int)]
+            A list of tuples representing the shortest path from A to B in `dep_graph`.
+
+        Returns
+        -------
+        [(int, str, int)]
+            the shortest path (`path`) enhanced with the directed grammatical relations
+            (ex. `>nsubj` for `predicate` to `subject` vs. `<nsubj` for `subject` to `predicate`).
+        """
+
         shortest_path = []
         for (s, d) in path:
             # build dictionaries from incoming/outgoing
@@ -61,6 +105,19 @@ class DependencyUtils(object):
 
     @staticmethod
     def simplify_tag(tag):
+        """
+        Maps part of speech (PoS) tag to a subset of PoS tags to better consolidate categorical labels.
+
+        Parameters
+        ----------
+        tag : str
+            The Penn-style PoS tag to be mapped to a simplified form.
+
+        Returns
+        -------
+        str
+            A simplified form of `tag`.  In some cases, the returned form may be identical to `tag`.
+        """
         simple_tag = "\"{}\"".format(tag)
         # collapse plurals
         if tag.startswith("NNP"):
@@ -95,7 +152,29 @@ class DependencyUtils(object):
                         tags=False,
                         simple_tags=False,
                         entities=False):
+        """
+        Lexicalizes path in syntactic dependency graph using Odin-style token constraints.  Operates on output of `DependencyUtils.retrieve_edges`
 
+        Parameters
+        ----------
+        sentence : processors.ds.Sentence
+            The `Sentence` from which the `path` was found.  Used to lexicalize the `path`.
+        words : bool
+            Whether or not to encode nodes in the `path` with a token constraint constructed from `Sentence.words`
+        lemmas : bool
+            Whether or not to encode nodes in the `path` with a token constraint constructed from `Sentence.lemmas`
+        tags : bool
+            Whether or not to encode nodes in the `path` with a token constraint constructed from `Sentence.tags`
+        simple_tags : bool
+            Whether or not to encode nodes in the `path` with a token constraint constructed from `DependencyUtils.simplify_tag` applied to `Sentence.tags`
+        entities : bool
+            Whether or not to encode nodes in the `path` with a token constraint constructed from `Sentence._entities`
+
+        Returns
+        -------
+        [str]
+            The lexicalized form of `path`, encoded according to the specified parameters.
+        """
         UNKNOWN = LabelManager.UNKNOWN
         lexicalized_path = []
         relations = []
@@ -144,7 +223,15 @@ class DependencyUtils(object):
                  weight='weight',
                  dangling=None):
         """
-        networkx implementation of pagerank algorithm.
-        Use with DirectedGraph.graph.
+        Measures node activity in a `networkx.Graph` using a thin wrapper around `networkx` implementation of pagerank algorithm (see `networkx.algorithms.link_analysis.pagerank`).  Use with `processors.ds.DirectedGraph.graph`.
+
+        Parameters
+        ----------
+        networkx_graph : networkx.Graph
+            Corresponds to `G` parameter of `networkx.algorithms.link_analysis.pagerank`.
+
+        See Also
+        --------
+        Method parameters correspond to those of [`networkx.algorithms.link_analysis.pagerank`](https://networkx.github.io/documentation/development/reference/generated/networkx.algorithms.link_analysis.pagerank_alg.pagerank.html#networkx.algorithms.link_analysis.pagerank_alg.pagerank)
         """
         return nx.algorithms.link_analysis.pagerank(G=networkx_graph, alpha=alpha, personalization=personalization, max_iter=max_iter, tol=tol, nstart=nstart, weight=weight, dangling=dangling)

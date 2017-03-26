@@ -25,6 +25,42 @@ class Mention(object):
         The label most closely associated with this span.  Usually the lowest hyponym of "labels".
     labels: list
         The list of labels associated with this span.
+    trigger: dict or None
+        dict of JSON for Mention's trigger (event predicate or word(s) signaling the Mention).
+    arguments: dict or None
+        dict of JSON for Mention's arguments.
+    paths: dict or None
+        dict of JSON encoding the syntactic paths linking a Mention's arguments to its trigger (applies to Mentions produces from `type:"dependency"` rules).
+    doc_id: str or None
+        the id of the document
+
+    Attributes
+    ----------
+    tokenInterval: processors.ds.Interval
+        An `Interval` encoding the `start` and `end` of the `Mention`.
+    start : int
+        The token index that starts the `Mention`.
+    end : int
+        The token index that marks the end of the Mention (exclusive).
+    sentenceObj : processors.ds.Sentence
+        Pointer to the `Sentence` instance containing the `Mention`.
+    characterStartOffset: int
+        The index of the character that starts the `Mention`.
+    characterEndOffset: int
+        The index of the character that ends the `Mention`.
+    type: Mention.TBM or Mention.EM or Mention.RM
+        The type of the `Mention`.
+
+    See Also
+    --------
+
+    [`Odin` manual](https://arxiv.org/abs/1509.07513)
+
+    Methods
+    -------
+    matches(label_pattern)
+        Test if the provided pattern, `label_pattern`, matches any element in `Mention.labels`.
+
     """
 
     TBM = "TextBoundMention"

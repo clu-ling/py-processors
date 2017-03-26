@@ -88,7 +88,7 @@ with open(json_file, "r") as jf:
 
 ## Perform sentiment analysis
 
-You can perform sentiment analysis using `CoreNLP`'s tree-based system.
+You can perform sentiment analysis using [`CoreNLP`'s tree-based system](https://nlp.stanford.edu/~socherr/EMNLP2013_RNTN.pdf).
 
 ```python
 # get sentiment analysis scores
