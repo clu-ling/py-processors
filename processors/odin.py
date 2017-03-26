@@ -146,6 +146,22 @@ class Mention(object):
         m["foundBy"] = self.foundBy
         return m
 
+    def matches(self, label_pattern):
+        """
+        Test if the provided pattern, `label_pattern`, matches any element in `Mention.labels`.
+
+        Parameters
+        ----------
+        label_pattern : str or _sre.SRE_Pattern
+            The pattern to match against each element in `Mention.labels`
+
+        Returns
+        -------
+        bool
+            True if `label_pattern` matches any element in `Mention.labels`
+        """
+        return any(label_pattern.match(label) for label in self.labels)
+
     def to_JSON(self):
         return json.dumps(self.to_JSON_dict(), sort_keys=True, indent=4)
 
