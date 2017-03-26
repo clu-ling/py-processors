@@ -104,8 +104,8 @@ class CoreNLPSentimentAnalyzer(SentimentAnalyzer):
     Bridge to CoreNLP's tree-based sentiment analysis
     """
     def __init__(self, address):
-        self._service = "{}/sentiment/corenlp/score".format(address)
+        self._service = "{}/api/sentiment/corenlp/score".format(address)
         self._text_service = self._service
-        self._segmented_service = "{}/segmented".format(self._service)
+        self._segmented_service = self._service
         self._sentence_service = self._service
         self._document_service = self._service
