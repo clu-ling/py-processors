@@ -211,7 +211,7 @@ class DependencyUtils(object):
             # append next edge
             if i < len(relations):
                 lexicalized_path.append(relations[i])
-        return " ".join(lexicalized_path)
+        return lexicalized_path
 
     @staticmethod
     def pagerank(networkx_graph,
