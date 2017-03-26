@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 #from pkg_resources import resource_filename
 from six.moves.urllib.request import urlretrieve
 from .utils import *
-from .processors import *
+from .annotators import *
 from .sentiment import SentimentAnalysisAPI
 from .serialization import JSONSerializer
 import os

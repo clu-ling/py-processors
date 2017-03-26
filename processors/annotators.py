@@ -3,8 +3,8 @@
 
 # use data structures
 from __future__ import unicode_literals
-from .ds import Document, Sentence, DirectedGraph
-from .utils import post_json
+from processors.ds import Document, Sentence, DirectedGraph
+from processors.utils import post_json
 import json
 
 
@@ -36,7 +36,7 @@ class Processor(object):
         """
         try:
             # load json from str interable and build Sentences and Document
-            msg = SentencesMessage(sentences)
+            msg = SegmentedMessage(sentences)
             return self._annotate_message(msg)
 
         except Exception as e:
@@ -74,13 +74,16 @@ class Message(object):
         return json.dumps(self.to_JSON_dict(), sort_keys=True, indent=4)
 
 
-class SentencesMessage(object):
-    def __init__(self, sentences):
-        self.sentences = sentences
+class SegmentedMessage(object):
+    """
+    Container for text already split into sentences.
+    """
+    def __init__(self, segments):
+        self.segments = segments
 
     def to_JSON_dict(self):
         jdict = dict()
-        jdict["sentences"] = self.sentences
+        jdict["segments"] = self.segments
         return jdict
 
     def to_JSON(self):

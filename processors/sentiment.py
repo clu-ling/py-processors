@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 from .utils import post_json
 from .ds import Sentence, Document
 from .processors import Message, SentencesMessage
+from processors.annotators import Message, SegmentedMessage
 import json
 import six
 
