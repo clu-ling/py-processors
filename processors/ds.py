@@ -7,7 +7,8 @@
 from __future__ import unicode_literals
 from itertools import chain
 from collections import defaultdict
-from processors.paths import PathFinder
+from processors.paths import DependencyUtils
+from processors.utils import LabelManager
 #from six import text_type
 import json
 import re
@@ -110,9 +111,9 @@ class Document(object):
 
 class Sentence(object):
 
-    UNKNOWN = "UNKNOWN"
+    UNKNOWN = LabelManager.UNKNOWN
     # the O in IOB notation
-    O = "O"
+    O = LabelManager.O
 
     def __init__(self, **kwargs):
         self.words = kwargs["words"]
@@ -156,7 +157,7 @@ class Sentence(object):
         return tokens
 
     def _set_toks(self, toks):
-        return toks if toks else [self.UNKNOWN]*self.length
+        return toks if toks else [Sentence.UNKNOWN]*self.length
 
     def _handle_iob(self, iob):
         """
@@ -325,14 +326,13 @@ class DirectedGraph(object):
         self.outgoing = self._build_outgoing(self.edges)
         self.labeled = self._build_labeled()
         self.unlabeled = self._build_unlabeled()
-        self.graph = PathFinder.build_graph(roots=self.roots, edges=self.edges, name=self.kind)
+        self.graph = DependencyUtils.build_graph(roots=self.roots, edges=self.edges, name=self.kind)
 
     def __unicode__(self):
         return self.edges
 
     def __eq__(self, other):
         if isinstance(other, self.__class__):
-            return self.__dict__ == other.__dict__
         else:
             return False
 
@@ -344,8 +344,8 @@ class DirectedGraph(object):
         Find the shortest path in the syntactic depedency graph
         between the provided start and end nodes.
         """
-        res = PathFinder.shortest_path(self.graph, start, end)
-        return PathFinder.retrieve_edges(self, res) if res else None
+        res = DependencyUtils.shortest_path(self.graph, start, end)
+        return DependencyUtils.retrieve_edges(self, res) if res else None
 
     def _build_incoming(self, edges):
         dep_dict = defaultdict(list)

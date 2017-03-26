@@ -1,13 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+from processors.utils import LabelManager
 import networkx as nx
 import collections
 
 
-class PathFinder(object):
+class DependencyUtils(object):
 
-    UNKNOWN = "UNKNOWN"
+    UNKNOWN = LabelManager.UNKNOWN
 
     @staticmethod
     def build_graph(roots, edges, name):
@@ -95,7 +96,7 @@ class PathFinder(object):
                         simple_tags=False,
                         entities=False):
 
-        UNKNOWN = PathFinder.UNKNOWN
+        UNKNOWN = LabelManager.UNKNOWN
         lexicalized_path = []
         relations = []
         nodes = []
@@ -122,7 +123,7 @@ class PathFinder(object):
                 token_constraints.append("entity=\"{}\"".format(sentence.entity[node]))
             # simple tags
             if simple_tags and sentence.tags[node] != UNKNOWN:
-                token_constraints.append("tag={}".format(PathFinder.simplify_tag(sentence.tags[node])))
+                token_constraints.append("tag={}".format(DependencyUtils.simplify_tag(sentence.tags[node])))
             # build node pattern
             if len(token_constraints) > 0:
                 node_pattern = "[{}]".format(" & ".join(token_constraints))
