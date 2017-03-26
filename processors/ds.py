@@ -274,7 +274,7 @@ class Sentence(object):
                     tags=json_dict.get("tags", None),
                     entities=json_dict.get("entities", None),
                     text=json_dict.get("text", None),
-                    dependencies=json_dict.get("graphs", None)
+                    graphs=json_dict.get("graphs", None)
                     )
         return sent
 
