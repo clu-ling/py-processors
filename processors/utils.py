@@ -26,3 +26,11 @@ def full_path(p):
     Expand a path.  Supports "~" shortcut.
     """
     return os.path.abspath(os.path.normpath(os.path.expanduser(p)))
+
+class LabelManager(object):
+    """
+    Keep track of common labels
+    """
+    UNKNOWN = "UNKNOWN"
+    # the O in IOB notation
+    O = "O"
