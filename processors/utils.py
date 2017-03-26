@@ -5,6 +5,7 @@ import requests
 import json
 import os
 
+
 def post_json(service, json_data):
     # POST json to the server API
     #response = requests.post(service, json={"text":"{}".format(text)})

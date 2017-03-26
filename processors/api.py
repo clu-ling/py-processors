@@ -319,7 +319,7 @@ class ProcessorsAPI(object):
 
 class OdinAPI(object):
     """
-    API for performing sentiment analysis
+    API for performing rule-based information extraction with Odin
     """
 
     validator = re.compile("^(https?|ftp):.+?\.?ya?ml$")
