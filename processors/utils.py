@@ -5,6 +5,7 @@ import requests
 import json
 import os
 
+
 def post_json(service, json_data):
     # POST json to the server API
     #response = requests.post(service, json={"text":"{}".format(text)})
@@ -26,3 +27,11 @@ def full_path(p):
     Expand a path.  Supports "~" shortcut.
     """
     return os.path.abspath(os.path.normpath(os.path.expanduser(p)))
+
+class LabelManager(object):
+    """
+    Keep track of common labels
+    """
+    UNKNOWN = "UNKNOWN"
+    # the O in IOB notation
+    O = "O"

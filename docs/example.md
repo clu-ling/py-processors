@@ -61,6 +61,13 @@ deps.incoming[0]
 # see what dependencies are originating from the first token (i.e. token 0 is the head of what?)
 deps.outgoing[0]
 
+# find the shortest path between "name" and either "Inigo" or "Montoya".
+deps.shortest_path(start=1, end=[3,4])
+
+# run PageRank on the dependency graph to find nodes with the most activity.
+# SPOILER: the nodes with the highest weight are usually the sentential predicate and its args
+deps.pagerank()
+
 # try using BioNLPProcessor
 biodoc = api.bionlp.annotate("We next considered the effect of Ras monoubiquitination on GAP-mediated hydrolysis")
 
@@ -88,7 +95,7 @@ with open(json_file, "r") as jf:
 
 ## Perform sentiment analysis
 
-You can perform sentiment analysis using `CoreNLP`'s tree-based system.
+You can perform sentiment analysis using [`CoreNLP`'s tree-based system](https://nlp.stanford.edu/~socherr/EMNLP2013_RNTN.pdf).
 
 ```python
 # get sentiment analysis scores
@@ -107,12 +114,12 @@ scores = API.sentiment.corenlp.score_text(review)
 score = API.sentiment.corenlp.score_sentence(doc.sentences[0])
 
 # ... or from text already segmented into sentences
-lyrics = ["My sugalumps are two of a kind", "Sweet and white and highly refined", "Honeys try all kinds of tomfoolery", "to steel a feel of my family jewlery"]
+lyrics = ["My sugar lumps are two of a kind", "Sweet and white and highly refined", "Honeys try all kinds of tomfoolery", "to steal a feel of my family jewelry"]
 scores = API.sentiment.corenlp.score_segmented_text(lyrics)
 ```
 
 ## Rule-based information extraction (IE) with `Odin`  
-If you're unfamiliar with writing `Odin` rules, see our manual for a primer on the language: http://arxiv.org/pdf/1509.07513v1.pdf
+If you're unfamiliar with writing `Odin` rules, see our manual for a primer on the language: [http://arxiv.org/pdf/1509.07513v1.pdf](http://arxiv.org/pdf/1509.07513v1.pdf)
 
 ```python
 # Do rule-based IE with Odin!
@@ -178,7 +185,7 @@ _NOTE: If you decide that you no longer want to use this enivronment variable, r
 
 ## Allocating memory
 
-By default, the server will be run with 3GB of RAM. You might be able to get be with a little less, though.  You can start the server with a different amount of memory with the `jvm_mem` parameter:
+By default, the server will be run with 3GB of RAM. You might be able to get by with a little less, though.  You can start the server with a different amount of memory with the `jvm_mem` parameter:
 
 ```python
 from processors import *

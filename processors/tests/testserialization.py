@@ -26,12 +26,14 @@ class SerializationTests(unittest.TestCase):
         self.assertTrue(isinstance(s, Sentence), "Sentence.load_from_JSON did not produce a Sentence from {}".format(json_file))
 
     def test_mention_load_from_json(self):
-        "Mention.load_from_JSON should produce a Mention from serialized_mention.json"
+        "JSONSerializer.load_from_JSON should produce a Mention from serialized_mention.json"
         json_file = os.path.join(__location__, "serialized_mention.json")
         print(json_file)
         with open(json_file, "r") as jf:
-            m = Mention.load_from_JSON(json.load(jf))
-        self.assertTrue(isinstance(m, Mention), "Mention.load_from_JSON did not produce a Mention from {}".format(json_file))
+            mentions = JSONSerializer.mentions_from_JSON(json.load(jf))
+        self.assertTrue(len(mentions) == 1, "More than one mention found for text.")
+        m = mentions[0]
+        self.assertTrue(isinstance(m, Mention), "JSONSerializer.load_from_JSON did not produce a Mention from {}".format(json_file))
 
 if __name__ == "__main__":
     unittest.main()

@@ -4,6 +4,7 @@
 - [Text processors](processors.md)
 - [Rule-based IE with Odin](odin.md)
 - [Annotating text](processors.md#annotating-text)
+- [API Reference](api.md)
 - [A walkthrough example](example.md)
 - [Running the tests](dev.md#running-the-tests)
 - [FAQ](faq.md)
@@ -28,4 +29,4 @@ pip install git+https://github.com/myedibleenso/py-processors.git
 
 # How to use it?
 
-See [the walkthrough example](example.md#a-walkthrough-example)
+See [the walkthrough example](example.md)

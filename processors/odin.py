@@ -2,152 +2,113 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 from .utils import post_json
-from .ds import Document
+from .ds import Document, Interval
 import re
 import json
 
 
-class OdinAPI(object):
-    """
-    API for performing sentiment analysis
-    """
-
-    validator = re.compile("^(https?|ftp):.+?\.?ya?ml$")
-
-    def __init__(self, address):
-        self._service = "{}/odin/extract".format(address)
-
-    def _extract(self, json_data):
-        try:
-            mentions = [Mention.load_from_JSON(m) for m in post_json(self._service, json_data)]
-            return mentions
-        except Exception as e:
-            print(e)
-            return None
-
-    @staticmethod
-    def valid_rule_url(url):
-        return True if OdinAPI.validator.match(url) else False
-
-    def extract_from_text(self, text, rules):
-        """
-        Sends text to the server with rules for IE
-        Returns a list of Mentions on None
-        """
-        if OdinAPI.valid_rule_url(rules):
-            # this is actually a URL to a yaml file
-            url = rules
-            container = TextWithURL(text, url)
-        else:
-            container = TextWithRules(text, rules)
-        return self._extract(container.to_JSON())
-
-    def extract_from_document(self, doc, rules):
-        """
-        Sends a Document to the server with rules for IE
-        Returns a list of Mentions or None
-        """
-        if OdinAPI.valid_rule_url(rules):
-            # this is actually a URL to a yaml file
-            url = rules
-            container = DocumentWithURL(doc, rules)
-        else:
-            container = DocumentWithRules(doc, rules)
-        return self._extract(container.to_JSON())
-
-
-class TextWithRules(object):
-
-    def __init__(self, text, rules):
-        self.text = text
-        self.rules = rules
-
-    def to_JSON_dict(self):
-        jdict = dict()
-        jdict["text"] = self.text
-        jdict["rules"] = self.rules
-        return jdict
-
-    def to_JSON(self):
-        return json.dumps(self.to_JSON_dict(), sort_keys=True, indent=4)
-
-class TextWithURL(object):
-
-    def __init__(self, text, url):
-        self.text = text
-        # TODO: throw exception if url is invalid
-        self.url = url
-
-    def to_JSON_dict(self):
-        jdict = dict()
-        jdict["text"] = self.text
-        jdict["url"] = self.url
-        return jdict
-
-    def to_JSON(self):
-        return json.dumps(self.to_JSON_dict(), sort_keys=True, indent=4)
-
-class DocumentWithRules(object):
-
-    def __init__(self, document, rules):
-        # TODO: throw exception if isinstance(document, Document) is False
-        self.document = document
-        self.rules = rules
-
-    def to_JSON_dict(self):
-        jdict = dict()
-        jdict["document"] = self.document.to_JSON_dict()
-        jdict["rules"] = self.rules
-        return jdict
-
-    def to_JSON(self):
-        return json.dumps(self.to_JSON_dict(), sort_keys=True, indent=4)
-
-class DocumentWithURL(object):
-
-    def __init__(self, document, url):
-        # TODO: throw exception if isinstance(document, Document) is False
-        self.document = document
-        # TODO: throw exception if url is invalid
-        self.url = url
-
-    def to_JSON_dict(self):
-        jdict = dict()
-        jdict["document"] = self.document.to_JSON_dict()
-        jdict["url"] = self.url
-        return jdict
-
-    def to_JSON(self):
-        return json.dumps(self.to_JSON_dict(), sort_keys=True, indent=4)
-
 class Mention(object):
+    """
+    A labeled span of text.  Used to model textual mentions of events, relations, and entities.
+
+    Parameters
+    ----------
+    token_interval : Interval
+        The span of the Mention represented as an Interval.
+    sentence : int
+        The sentence index that contains the Mention.
+    document : Document
+        The Document in which the Mention was found.
+    foundBy : str
+        The Odin IE rule that produced this Mention.
+    label : str
+        The label most closely associated with this span.  Usually the lowest hyponym of "labels".
+    labels: list
+        The list of labels associated with this span.
+    trigger: dict or None
+        dict of JSON for Mention's trigger (event predicate or word(s) signaling the Mention).
+    arguments: dict or None
+        dict of JSON for Mention's arguments.
+    paths: dict or None
+        dict of JSON encoding the syntactic paths linking a Mention's arguments to its trigger (applies to Mentions produces from `type:"dependency"` rules).
+    doc_id: str or None
+        the id of the document
+
+    Attributes
+    ----------
+    tokenInterval: processors.ds.Interval
+        An `Interval` encoding the `start` and `end` of the `Mention`.
+    start : int
+        The token index that starts the `Mention`.
+    end : int
+        The token index that marks the end of the Mention (exclusive).
+    sentenceObj : processors.ds.Sentence
+        Pointer to the `Sentence` instance containing the `Mention`.
+    characterStartOffset: int
+        The index of the character that starts the `Mention`.
+    characterEndOffset: int
+        The index of the character that ends the `Mention`.
+    type: Mention.TBM or Mention.EM or Mention.RM
+        The type of the `Mention`.
+
+    See Also
+    --------
+
+    [`Odin` manual](https://arxiv.org/abs/1509.07513)
+
+    Methods
+    -------
+    matches(label_pattern)
+        Test if the provided pattern, `label_pattern`, matches any element in `Mention.labels`.
+
+    """
+
+    TBM = "TextBoundMention"
+    EM = "EventMention"
+    RM = "RelationMention"
 
     def __init__(self,
-                label,
-                start,
-                end,
+                token_interval,
                 sentence,
                 document,
                 foundBy,
+                label,
                 labels=None,
                 trigger=None,
                 arguments=None,
-                keep=True):
+                paths=None,
+                keep=True,
+                doc_id=None):
 
         self.label = label
         self.labels = labels if labels else [self.label]
-        self.start = start
-        self.end = end
-        self.sentence = sentence
+        self.tokenInterval = token_interval
+        self.start = self.tokenInterval.start
+        self.end = self.tokenInterval.end
         self.document = document
-        self.trigger = Mention.load_from_JSON(trigger) if trigger else None
+        self._doc_id = doc_id or hash(self.document)
+        self.sentence = sentence
+        if trigger:
+            # NOTE: doc id is not stored for trigger's json,
+            # as it is assumed to be contained in the same document as its parent
+            trigger.update({"document": self._doc_id})
+            self.trigger = Mention.load_from_JSON(trigger, self._to_document_map())
+        else:
+            self.trigger = None
         # unpack args
-        self.arguments = {role:[Mention.load_from_JSON(a) for a in args] for role, args in arguments.items()}
+        self.arguments = {role:[Mention.load_from_JSON(a, self._to_document_map()) for a in args] for (role, args) in arguments.items()} if arguments else None
+        self.paths = paths
         self.keep = keep
         self.foundBy = foundBy
         # other
         self.sentenceObj = self.document.sentences[self.sentence]
         self.text = " ".join(self.sentenceObj.words[self.start:self.end])
+        # recover offsets
+        self.characterStartOffset = self.sentenceObj.startOffsets[self.tokenInterval.start]
+        self.characterEndOffset = self.sentenceObj.endOffsets[self.tokenInterval.end]
+        # for later recovery
+        self.id = None
+        self.type = self._set_type()
 
     def __eq__(self, other):
         if isinstance(other, self.__class__):
@@ -163,39 +124,90 @@ class Mention(object):
 
     def to_JSON_dict(self):
         m = dict()
+        m["id"] = self.id
+        m["type"] = self.type
         m["label"] = self.label
         m["labels"] = self.labels
-        m["start"] = self.start
-        m["end"] = self.label
+        m["tokenInterval"] = self.tokenInterval.to_JSON_dict()
+        m["characterStartOffset"] = self.characterStartOffset
+        m["characterEndOffset"] = self.characterEndOffset
         m["sentence"] = self.sentence
-        m["document"] = self.document.to_JSON_dict()
+        m["document"] = self._doc_id
         # do we have a trigger?
         if self.trigger:
-             m["trigger"] = self.trigger
-        m["arguments"] = self.arguments_to_JSON_dict()
+             m["trigger"] = self.trigger.to_JSON_dict()
+        # do we have arguments?
+        if self.arguments:
+            m["arguments"] = self._arguments_to_JSON_dict()
+        # handle paths
+        if self.paths:
+            m["paths"] = self.paths
         m["keep"] = self.keep
         m["foundBy"] = self.foundBy
         return m
 
+    def matches(self, label_pattern):
+        """
+        Test if the provided pattern, `label_pattern`, matches any element in `Mention.labels`.
+
+        Parameters
+        ----------
+        label_pattern : str or _sre.SRE_Pattern
+            The pattern to match against each element in `Mention.labels`
+
+        Returns
+        -------
+        bool
+            True if `label_pattern` matches any element in `Mention.labels`
+        """
+        return any(label_pattern.match(label) for label in self.labels)
+
     def to_JSON(self):
         return json.dumps(self.to_JSON_dict(), sort_keys=True, indent=4)
 
-    def arguments_to_JSON_dict(self):
-        return dict((role, [a.to_JSON_dict() for a in args]) for (role, args) in self.arguments)
+    def _arguments_to_JSON_dict(self):
+        return dict((role, [a.to_JSON_dict() for a in args]) for (role, args) in self.arguments.items())
+
+    def _paths_to_JSON_dict(self):
+        return {role: paths.to_JSON_dict() for (role, paths) in self.paths}
 
     @staticmethod
-    def load_from_JSON(jdict):
-        sentences = []
+    def load_from_JSON(mjson, docs_dict):
+        # recover document
+        doc_id = mjson["document"]
+        doc = docs_dict[doc_id]
+        labels = mjson["labels"]
         kwargs = {
-            "label": jdict["label"],
-            "labels": jdict["labels"],
-            "start": jdict["start"],
-            "end": jdict["end"],
-            "sentence": jdict["sentence"],
-            "document": Document.load_from_JSON(jdict["document"]),
-            "trigger": jdict.get("trigger", None),
-            "arguments": jdict.get("arguments", dict()),
-            "keep": jdict.get("keep", True),
-            "foundBy": jdict["foundBy"]
+            "label": mjson.get("label", labels[0]),
+            "labels": labels,
+            "token_interval": Interval.load_from_JSON(mjson["tokenInterval"]),
+            "sentence": mjson["sentence"],
+            "document": doc,
+            "doc_id": doc_id,
+            "trigger": mjson.get("trigger", None),
+            "arguments": mjson.get("arguments", None),
+            "paths": mjson.get("paths", None),
+            "keep": mjson.get("keep", True),
+            "foundBy": mjson["foundBy"]
         }
-        return Mention(**kwargs)
+        m = Mention(**kwargs)
+        # set IDs
+        m.id = mjson["id"]
+        m._doc_id = doc_id
+        # set character offsets
+        m.character_start_offset = mjson["characterStartOffset"]
+        m.character_end_offset = mjson["characterEndOffset"]
+        return m
+
+    def _to_document_map(self):
+        return {self._doc_id: self.document}
+
+    def _set_type(self):
+        # event mention
+        if self.trigger != None:
+            return Mention.EM
+        # textbound mention
+        elif self.trigger == None and self.arguments == None:
+            return Mention.TBM
+        else:
+            return Mention.RM
