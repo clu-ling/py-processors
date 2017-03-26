@@ -125,7 +125,7 @@ class Sentence(object):
         self._chunks = self._set_toks(kwargs.get("chunks", None))
         self._entities = self._set_toks(kwargs.get("entities", None))
         self.text = kwargs.get("text", None) or " ".join(self.words)
-        self.graphs = self._build_direct_graph_from_dict(kwargs.get("graphs", None))
+        self.graphs = self._build_directed_graph_from_dict(kwargs.get("graphs", None))
         self.basic_dependencies = self.graphs.get(DirectedGraph.STANFORD_BASIC_DEPENDENCIES, None)
         self.collapsed_dependencies = self.graphs.get(DirectedGraph.STANFORD_COLLAPSED_DEPENDENCIES, None)
         self.dependencies = self.collapsed_dependencies if self.collapsed_dependencies != None else self.basic_dependencies
@@ -207,7 +207,7 @@ class Sentence(object):
         # this might be empty
         return entity_dict
 
-    def _build_direct_graph_from_dict(self, graphs):
+    def _build_directed_graph_from_dict(self, graphs):
         deps_dict = dict()
         if graphs and len(graphs) > 0:
             # process each stored graph
