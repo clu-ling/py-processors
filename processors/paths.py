@@ -29,7 +29,7 @@ class DependencyUtils(object):
     UNKNOWN = LabelManager.UNKNOWN
 
     @staticmethod
-    def build_graph(roots, edges, name):
+    def build_networkx_graph(roots, edges, name):
         """
         Converts a `processors` dependency graph into a networkx graph
         """
