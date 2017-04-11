@@ -153,8 +153,17 @@ mentions = API.odin.extract_from_text(example_text, rules_url)
 # You can also perform IE with Odin on a Document.
 barack_doc = API.annotate(example_text)
 mentions = API.odin.extract_from_document(barack_doc, rules_url)
-```
 
+# mentions can be serialized as well
+mentions_json_file = "mentions.json"
+
+with open(mentions_json_file, "w") as out:
+    out.write(JSONSerializer.mentions_to_JSON(mentions))
+
+# loading from a file is also handled via JSONSerializer
+with open(mentions_json_file, "r") as jf:
+    mentions = JSONSerializer.mentions_from_JSON(json.load(jf))
+```
 
 # Other ways of initializing the server
 
