@@ -207,4 +207,4 @@ from processors import *
 API = ProcessorsAPI(port=8886, keep_alive=True)
 ```
 
-This is useful if you're sharing access to the server on a network, or if you have a bunch of independent tasks and would prefer to avoid the waiting for the server to initialize again and again.
+This is useful if you're sharing access to the server on a network, or if you have a bunch of independent tasks and would prefer to avoid waiting for the server to initialize again and again.

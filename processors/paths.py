@@ -53,6 +53,7 @@ class DependencyUtils(object):
         end : int or [int]
             A single token index or list of token indices serving as the end of the graph traversal.
         """
+        # converts single int to [int]
         start = start if isinstance(start, collections.Iterable) else [start]
         end = end if isinstance(end, collections.Iterable) else [end]
         # node list -> edges (i.e., (source, dest) pairs)
@@ -60,6 +61,7 @@ class DependencyUtils(object):
             return [(path[i], path[i+1]) for i in range(len(path) - 1)]
 
         shortest_paths = []
+        # pathfinding b/w pairs of nodes
         for s in start:
             for e in end:
                 try:
