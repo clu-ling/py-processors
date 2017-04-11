@@ -160,7 +160,7 @@ class Mention(object):
         bool
             True if `label_pattern` matches any element in `Mention.labels`
         """
-        return any(label_pattern.match(label) for label in self.labels)
+        return any(re.match(label_pattern, label) for label in self.labels)
 
     def to_JSON(self):
         return json.dumps(self.to_JSON_dict(), sort_keys=True, indent=4)
