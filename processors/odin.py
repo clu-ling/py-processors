@@ -105,7 +105,7 @@ class Mention(object):
         self.text = " ".join(self.sentenceObj.words[self.start:self.end])
         # recover offsets
         self.characterStartOffset = self.sentenceObj.startOffsets[self.tokenInterval.start]
-        self.characterEndOffset = self.sentenceObj.endOffsets[self.tokenInterval.end]
+        self.characterEndOffset = self.sentenceObj.endOffsets[self.tokenInterval.end - 1]
         # for later recovery
         self.id = None
         self.type = self._set_type()
