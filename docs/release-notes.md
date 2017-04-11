@@ -1,4 +1,6 @@
 # Changes
+- v3.0.1:
+  - Fixed an off-by-one error for character offsets when creating mentions
 - v3.0.0:
   - `PageRank` for dependency graphs via `networkx`
   - Find shortest paths in dependency graphs via `networkx`
