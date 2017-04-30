@@ -1,4 +1,10 @@
 # Changes
+- v3.0.2:
+  - Added support to reverse directed graph for pagerank, resulting in predicate and argument nodes having higher weights
+  - `DependencyUtils.directed_relation()`
+  - Added `DirectedGraph.degree_centrality()`, `DirectedGraph.in_degree_centrality()`, and `DirectedGraph.out_degree_centrality()`
+  - `pagerank` now returns a `collections.Counter`
+  - Optionally limit `DependencyUtils.lexicalize_path()` to specific token indices
 - v3.0.1:
   - Fixed an off-by-one error for character offsets when creating mentions
 - v3.0.0:
