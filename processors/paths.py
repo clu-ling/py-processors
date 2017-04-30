@@ -231,7 +231,9 @@ class DependencyUtils(object):
                         lemmas=False,
                         tags=False,
                         simple_tags=False,
-                        entities=False):
+                        entities=False,
+                        limit_to=None,
+                        ):
         """
         Lexicalizes path in syntactic dependency graph using Odin-style token constraints.  Operates on output of `DependencyUtils.retrieve_edges`
 
@@ -258,6 +260,8 @@ class DependencyUtils(object):
         entities : bool
             Whether or not to encode nodes in the `path` with a token constraint constructed from `Sentence._entities`
 
+        limit_to : [int] or None
+            Selectively apply lexicalization only to the this list of token indices.  None means apply the specified lexicalization to all token indices in the path.
         Returns
         -------
         [str]
@@ -274,31 +278,32 @@ class DependencyUtils(object):
         nodes.append(path[-1][-1])
 
         for (i, node) in enumerate(nodes):
-            # build token constraints
-            token_constraints = []
-            # words
-            if words:
-                token_constraints.append("word=\"{}\"".format(sentence.words[node]))
-            # PoS tags
-            if tags and sentence.tags[node] != UNKNOWN:
-                token_constraints.append("tag=\"{}\"".format(sentence.tags[node]))
-            # lemmas
-            if lemmas and sentence.lemmas[node] != UNKNOWN:
-                token_constraints.append("lemma=\"{}\"".format(sentence.lemmas[node]))
-            # NE labels
-            if entities and sentence._entities[node] != UNKNOWN:
-                token_constraints.append("entity=\"{}\"".format(sentence.entity[node]))
-            # simple tags
-            if simple_tags and sentence.tags[node] != UNKNOWN:
-                token_constraints.append("tag={}".format(DependencyUtils.simplify_tag(sentence.tags[node])))
-            # build node pattern
-            if len(token_constraints) > 0:
-                node_pattern = "[{}]".format(" & ".join(token_constraints))
-                # store lexicalized representation of node
-                lexicalized_path.append(node_pattern)
-            # append next edge
-            if i < len(relations):
-                lexicalized_path.append(relations[i])
+            if not limit_to or node in limit_to:
+                # build token constraints
+                token_constraints = []
+                # words
+                if words:
+                    token_constraints.append("word=\"{}\"".format(sentence.words[node]))
+                # PoS tags
+                if tags and sentence.tags[node] != UNKNOWN:
+                    token_constraints.append("tag=\"{}\"".format(sentence.tags[node]))
+                # lemmas
+                if lemmas and sentence.lemmas[node] != UNKNOWN:
+                    token_constraints.append("lemma=\"{}\"".format(sentence.lemmas[node]))
+                # NE labels
+                if entities and sentence._entities[node] != UNKNOWN:
+                    token_constraints.append("entity=\"{}\"".format(sentence.entity[node]))
+                # simple tags
+                if simple_tags and sentence.tags[node] != UNKNOWN:
+                    token_constraints.append("tag={}".format(DependencyUtils.simplify_tag(sentence.tags[node])))
+                # build node pattern
+                if len(token_constraints) > 0:
+                    node_pattern = "[{}]".format(" & ".join(token_constraints))
+                    # store lexicalized representation of node
+                    lexicalized_path.append(node_pattern)
+                # append next edge
+                if i < len(relations):
+                    lexicalized_path.append(relations[i])
         return lexicalized_path
 
     @staticmethod
