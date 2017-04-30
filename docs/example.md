@@ -65,7 +65,14 @@ deps.outgoing[0]
 deps.shortest_paths(start=1, end=[3,4])
 
 # find the shortest path between "name" and either "Inigo" or "Montoya".  Prefer a path that involves a "nsubj" relation.
-deps.shortest_path(start=1, end=[3,4], scoring_func=lambda path: 9000 if any(seg[1] == "nsubj" for seg in path) else 0)
+sp = deps.shortest_path(start=1, end=[3,4],
+scoring_func=lambda path: 9000 if any(seg[1] == "nsubj" for seg in path) else 0)
+
+# generate an Odin-like pattern with partial lexicalization
+DependencyUtils.lexicalize_path(sentence=s, path=sp, lemmas=True, tags=True)
+
+# limit lexicalization to tokens 1 and 4 (if present)
+DependencyUtils.lexicalize_path(sentence=s, path=sp, lemmas=True, tags=True, limit_to=[1,4])
 
 # run PageRank on the dependency graph to find nodes with the most activity.
 # SPOILER: When using reverse=True, the nodes with the highest weight are usually the sentential predicate and its args
