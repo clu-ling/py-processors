@@ -15,14 +15,19 @@ class DependencyUtils(object):
     -------
     build_networkx_graph(roots, edges, name)
         Constructs a networkx.Graph
+
     shortest_path(g, start, end)
         Finds the shortest path in a `networkx.Graph` between any element in a list of start nodes and any element in a list of end nodes.
+
     retrieve_edges(dep_graph, path)
         Converts output of `shortest_path` into a list of triples that include the grammatical relation (and direction) for each node-node "hop" in the syntactic dependency graph.
+
     simplify_tag(tag)
         Maps part of speech (PoS) tag to a subset of PoS tags to better consolidate categorical labels.
+
     lexicalize_path(sentence, path, words=False, lemmas=False, tags=False, simple_tags=False, entities=False)
         Lexicalizes path in syntactic dependency graph using Odin-style token constraints.
+
     pagerank(networkx_graph, alpha=0.85, personalization=None, max_iter=1000, tol=1e-06, nstart=None, weight='weight', dangling=None)
         Measures node activity in a `networkx.Graph` using a thin wrapper around `networkx` implementation of pagerank algorithm (see `networkx.algorithms.link_analysis.pagerank`).  Use with `processors.ds.DirectedGraph.graph`.
     """
@@ -56,8 +61,10 @@ class DependencyUtils(object):
         ----------
         g : a networkx graph
             The networkx graph to explore.
+
         start : int or [int]
             A single token index or list of token indices serving as the start of the graph traversal.
+
         end : int or [int]
             A single token index or list of token indices serving as the end of the graph traversal.
 
@@ -156,6 +163,7 @@ class DependencyUtils(object):
         ----------
         dep_graph : processors.ds.DirectedGraph
             The `DirectedGraph` used to retrieve the grammatical relations for each edge in the `path`.
+
         path : [(int, int)]
             A list of tuples representing the shortest path from A to B in `dep_graph`.
 
@@ -231,16 +239,22 @@ class DependencyUtils(object):
         ----------
         sentence : processors.ds.Sentence
             The `Sentence` from which the `path` was found.  Used to lexicalize the `path`.
+
         path : list
             A list of (source index, relation, target index) triples.
+
         words : bool
             Whether or not to encode nodes in the `path` with a token constraint constructed from `Sentence.words`
+
         lemmas : bool
             Whether or not to encode nodes in the `path` with a token constraint constructed from `Sentence.lemmas`
+
         tags : bool
             Whether or not to encode nodes in the `path` with a token constraint constructed from `Sentence.tags`
+
         simple_tags : bool
             Whether or not to encode nodes in the `path` with a token constraint constructed from `DependencyUtils.simplify_tag` applied to `Sentence.tags`
+
         entities : bool
             Whether or not to encode nodes in the `path` with a token constraint constructed from `Sentence._entities`
 

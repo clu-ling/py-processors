@@ -28,24 +28,34 @@ class Document(object):
     ----------
     id : str or None
         A unique ID for the `Document`.
+
     size : int
         The number of `sentences`.
+
     sentences : sentences
         The sentences comprising the `Document`.
+
     words : [str]
         A list of the `Document`'s tokens.
+
     tags : [str]
         A list of the `Document`'s tokens represented using part of speech (PoS) tags.
+
     lemmas : [str]
         A list of the `Document`'s tokens represented using lemmas.
+
     _entities : [str]
         A list of the `Document`'s tokens represented using IOB-style named entity (NE) labels.
+
     nes : dict
         A dictionary of NE labels represented in the `Document` -> a list of corresponding text spans.
+
     bag_of_labeled_deps : [str]
         The labeled dependencies from all sentences in the `Document`.
+
     bag_of_unlabeled_deps : [str]
         The unlabeled dependencies from all sentences in the `Document`.
+
     text : str or None
         The original text of the `Document`.
 
@@ -53,6 +63,7 @@ class Document(object):
     -------
     bag_of_labeled_dependencies_using(form)
         Produces a list of syntactic dependencies where each edge is labeled with its grammatical relation.
+
     bag_of_unlabeled_dependencies_using(form)
         Produces a list of syntactic dependencies where each edge is left unlabeled without its grammatical relation.
     """
@@ -159,20 +170,28 @@ class Sentence(object):
     ----------
     text : str or None
         The text of the `Sentence`.
+
     words : [str]
         A list of the `Sentence`'s tokens.
+
     startOffsets : [int]
         The character offsets starting each token (inclusive).
+
     endOffsets : [int]
         The character offsets marking the end of each token (exclusive).
+
     tags : [str]
         A list of the `Sentence`'s tokens represented using part of speech (PoS) tags.
+
     lemmas : [str]
         A list of the `Sentence`'s tokens represented using lemmas.
+
     chunks : [str]
         A list of the `Sentence`'s tokens represented using IOB-style phrase labels (ex. `B-NP`, `I-NP`, `B-VP`, etc.).
+
     entities : [str]
         A list of the `Sentence`'s tokens represented using IOB-style named entity (NE) labels.
+
     graphs : dict
         A dictionary of {graph-name -> {edges: [{source, destination, relation}], roots: [int]}}
 
@@ -180,27 +199,37 @@ class Sentence(object):
     ----------
     text : str
         The text of the `Sentence`.
+
     startOffsets : [int]
         The character offsets starting each token (inclusive).
+
     endOffsets : [int]
         The character offsets marking the end of each token (exclusive).
+
     length : int
         The number of tokens in the `Sentence`
 
     graphs : dict
         A dictionary (str -> `processors.ds.DirectedGraph`) mapping the graph type/name to a `processors.ds.DirectedGraph`.
+
     basic_dependencies : processors.ds.DirectedGraph
         A `processors.ds.DirectedGraph` using basic Stanford dependencies.
+
     collapsed_dependencies : processors.ds.DirectedGraph
         A `processors.ds.DirectedGraph` using collapsed Stanford dependencies.
+
     dependencies : processors.ds.DirectedGraph
         A pointer to the prefered syntactic dependency graph type for this `Sentence`.
+
     _entities : [str]
         The IOB-style Named Entity (NE) labels corresponding to each token.
+
     _chunks : [str]
         The IOB-style chunk labels corresponding to each token.
+
     nes : dict
         A dictionary of NE labels represented in the `Document` -> a list of corresponding text spans (ex. {"PERSON": [phrase 1, ..., phrase n]}). Built from `Sentence._entities`
+
     phrases : dict
         A dictionary of chunk labels represented in the `Document` -> a list of corresponding text spans (ex. {"NP": [phrase 1, ..., phrase n]}). Built from `Sentence._chunks`
 
@@ -209,6 +238,7 @@ class Sentence(object):
     -------
     bag_of_labeled_dependencies_using(form)
         Produces a list of syntactic dependencies where each edge is labeled with its grammatical relation.
+
     bag_of_unlabeled_dependencies_using(form)
         Produces a list of syntactic dependencies where each edge is left unlabeled without its grammatical relation.
     """
@@ -421,8 +451,10 @@ class DirectedGraph(object):
     ----------
     kind : str
         The name of the directed graph.
+
     deps : dict
         A dictionary of {edges: [{source, destination, relation}], roots: [int]}
+
     words : [str]
         A list of the word form of the tokens from the originating `Sentence`.
 
@@ -430,16 +462,23 @@ class DirectedGraph(object):
     ----------
     _words : [str]
         A list of the word form of the tokens from the originating `Sentence`.
+
     roots : [int]
         A list of indices for the syntactic dependency graph's roots.  Generally this is a single token index.
+
     edges: list[processors.ds.Edge]
         A list of `processors.ds.Edge`
+
     incoming : A dictionary of {int -> [int]} encoding the incoming edges for each node in the graph.
+
     outgoing : A dictionary of {int -> [int]} encoding the outgoing edges for each node in the graph.
+
     labeled : [str]
         A list of strings where each element in the list represents an edge encoded as source index, relation, and destination index ("source_relation_destination").
+
     unlabeled : [str]
         A list of strings where each element in the list represents an edge encoded as source index and destination index ("source_destination").
+
     graph : networkx.Graph
         A `networkx.graph` representation of the `DirectedGraph`.  Used by `shortest_path`
 
@@ -486,6 +525,7 @@ class DirectedGraph(object):
         ----------
         start : int or [int]
             A single token index or list of token indices serving as the start of the graph traversal.
+
         end : int or [int]
             A single token index or list of token indices serving as the end of the graph traversal.
 
@@ -505,8 +545,10 @@ class DirectedGraph(object):
         ----------
         start : int or [int]
             A single token index or list of token indices serving as the start of the graph traversal.
+
         end : int or [int]
             A single token index or list of token indices serving as the end of the graph traversal.
+
         scoring_func : function
             A function that scores each path in a list of [(source index, directed relation, destination index)] paths.  Each path has the form [(source index, relation, destination index)].
             The path with the maximum score will be returned.
@@ -620,6 +662,7 @@ class Interval(object):
     ----------
     start : str
         The token or character index where the interval begins.
+
     end : str
         The 1 + the index of the last token/character in the span.
     """
