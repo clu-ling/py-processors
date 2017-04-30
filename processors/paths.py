@@ -30,11 +30,11 @@ class DependencyUtils(object):
     UNKNOWN = LabelManager.UNKNOWN
 
     @staticmethod
-    def build_networkx_graph(roots, edges, name, is_directed=True, reverse=False):
+    def build_networkx_graph(roots, edges, name, reverse=False):
         """
         Converts a `processors` dependency graph into a networkx graph
         """
-        G = nx.DiGraph() if is_directed else nx.Graph()
+        G = nx.DiGraph()
         graph_name = name
         # store roots
         G.graph["roots"] = roots

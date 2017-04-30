@@ -462,8 +462,8 @@ class DirectedGraph(object):
         self.outgoing = self._build_outgoing(self.edges)
         self.labeled = self._build_labeled()
         self.unlabeled = self._build_unlabeled()
-        self.undirected_graph = DependencyUtils.build_networkx_graph(roots=self.roots, edges=self.edges, name=self.kind, is_directed=False, reverse=False)
-        self.directed_graph = DependencyUtils.build_networkx_graph(roots=self.roots, edges=self.edges, name=self.kind, is_directed=True, reverse=False)
+        self.directed_graph = DependencyUtils.build_networkx_graph(roots=self.roots, edges=self.edges, name=self.kind, reverse=False)
+        self.undirected_graph = self.directed_graph.to_undirected()
 
     def __unicode__(self):
         return self.edges
