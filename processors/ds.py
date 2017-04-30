@@ -6,7 +6,7 @@
 # based on conventions from the CLU lab's processors library (https://github.com/clulab/processors)
 from __future__ import unicode_literals
 from itertools import chain
-from collections import defaultdict
+from collections import defaultdict, Counter
 from processors.paths import DependencyUtils
 from processors.utils import LabelManager
 #from six import text_type
@@ -462,7 +462,8 @@ class DirectedGraph(object):
         self.outgoing = self._build_outgoing(self.edges)
         self.labeled = self._build_labeled()
         self.unlabeled = self._build_unlabeled()
-        self.graph = DependencyUtils.build_networkx_graph(roots=self.roots, edges=self.edges, name=self.kind)
+        self.undirected_graph = DependencyUtils.build_networkx_graph(roots=self.roots, edges=self.edges, name=self.kind, is_directed=False, reverse=False)
+        self.directed_graph = DependencyUtils.build_networkx_graph(roots=self.roots, edges=self.edges, name=self.kind, is_directed=True, reverse=False)
 
     def __unicode__(self):
         return self.edges
@@ -485,8 +486,38 @@ class DirectedGraph(object):
         --------
         `processors.paths.DependencyUtils.shortest_path`
         """
-        res = DependencyUtils.shortest_path(self.graph, start, end)
+        res = DependencyUtils.shortest_path(self.undirected_graph, start, end)
         return DependencyUtils.retrieve_edges(self, res) if res else None
+
+    def degree_centrality(self):
+        """
+        Compute the degree centrality for nodes.
+
+        See Also
+        --------
+        https://networkx.github.io/documentation/development/reference/algorithms.centrality.html
+        """
+        return Counter(nx.degree_centrality(self.directed_graph))
+
+    def in_degree_centrality(self):
+        """
+        Compute the in-degree centrality for nodes.
+
+        See Also
+        --------
+        https://networkx.github.io/documentation/development/reference/algorithms.centrality.html
+        """
+        return Counter(nx.in_degree_centrality(self.directed_graph))
+
+    def out_degree_centrality(self):
+        """
+        Compute the out-degree centrality for nodes.
+
+        See Also
+        --------
+        https://networkx.github.io/documentation/development/reference/algorithms.centrality.html
+        """
+        return Counter(nx.out_degree_centrality(self.directed_graph))
 
     def pagerank(self,
                  alpha=0.85,
@@ -495,16 +526,23 @@ class DirectedGraph(object):
                  tol=1e-06,
                  nstart=None,
                  weight='weight',
-                 dangling=None):
+                 dangling=None,
+                 use_directed=True,
+                 reverse=True):
         """
         Measures node activity in a `networkx.Graph` using a thin wrapper around `networkx` implementation of pagerank algorithm (see `networkx.algorithms.link_analysis.pagerank`).  Use with `processors.ds.DirectedGraph.graph`.
+        Note that by default, the directed graph is reversed in order to highlight predicate-argument nodes (refer to pagerank algorithm to understand why).
 
         See Also
         --------
         `processors.paths.DependencyUtils.pagerank`
         Method parameters correspond to those of [`networkx.algorithms.link_analysis.pagerank`](https://networkx.github.io/documentation/development/reference/generated/networkx.algorithms.link_analysis.pagerank_alg.pagerank.html#networkx.algorithms.link_analysis.pagerank_alg.pagerank)
         """
-        return DependencyUtils.pagerank(self.graph, alpha=alpha, personalization=personalization, max_iter=max_iter, tol=tol, nstart=nstart, weight=weight, dangling=dangling)
+        # check whether or not to reverse directed graph
+        dg = self.directed_graph if not reverse else DependencyUtils.build_networkx_graph(roots=self.roots, edges=self.edges, name=self.kind, is_directed=True, reverse=True)
+        # determine graph to use
+        graph = dg if use_directed else self.undirected_graph
+        return DependencyUtils.pagerank(graph, alpha=alpha, personalization=personalization, max_iter=max_iter, tol=tol, nstart=nstart, weight=weight, dangling=dangling)
 
     def _build_incoming(self, edges):
         dep_dict = defaultdict(list)

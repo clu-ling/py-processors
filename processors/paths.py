@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 from processors.utils import LabelManager
+from Collections import Counter
 import networkx as nx
 import collections
 
@@ -29,15 +30,19 @@ class DependencyUtils(object):
     UNKNOWN = LabelManager.UNKNOWN
 
     @staticmethod
-    def build_networkx_graph(roots, edges, name):
+    def build_networkx_graph(roots, edges, name, is_directed=True, reverse=False):
         """
         Converts a `processors` dependency graph into a networkx graph
         """
-        G = nx.Graph()
+        G = nx.DiGraph() if is_directed else nx.Graph()
         graph_name = name
         # store roots
         G.graph["roots"] = roots
-        edges = [(edge.source, edge.destination, {"relation": edge.relation}) for edge in edges]
+        # reversing the graph is useful if you want to run pagerank to highlight predicate and argument nodes
+        if reverse:
+            edges = [(edge.destination, edge.source, {"relation": edge.relation}) for edge in edges]
+        else:
+            edges = [(edge.source, edge.destination, {"relation": edge.relation}) for edge in edges]
         G.add_edges_from(edges)
         return G
 
@@ -74,9 +79,35 @@ class DependencyUtils(object):
         return None if len(shortest_paths) == 0 else min(shortest_paths, key=lambda x: len(x))
 
     @staticmethod
+    def directed_relation(source_idx, destination_idx, relation, deps):
+        """
+        Converts relation to a directed relation (incoming v. outgoing)
+        if such a relation links `source_idx` and `destination_idx` in `deps`.
+
+        Parameters
+        ----------
+        source_idx : int
+            The token index for the source node
+
+        destination_idx : int
+            The token index for the destination node
+
+        relation : str
+            The undirected relation (i.e., the grammatical/semantic relation that connects the two nodes)
+
+        Returns
+        -------
+        str or None
+            The directed relation that connects the `source_idx` to the `destination_idx` in `deps`.
+        """
+        matches = [">{}".format(rel) for d, rel in deps.outgoing[source_idx] if d == destination_idx and rel == relation] + \
+        ["<{}".format(rel) for d, rel in deps.incoming[source_idx] if d == destination_idx and rel == relation]
+        return None if len(matches) == 0 else matches[0]
+
+    @staticmethod
     def retrieve_edges(dep_graph, path):
         """
-        Converts output of Converts output of `DependencyUtils.shortest_path`
+        Converts output of `DependencyUtils.shortest_path`
         into a list of triples that include the grammatical relation (and direction)
         for each node-node "hop" in the syntactic dependency graph.
 
@@ -161,6 +192,8 @@ class DependencyUtils(object):
         ----------
         sentence : processors.ds.Sentence
             The `Sentence` from which the `path` was found.  Used to lexicalize the `path`.
+        path : list
+            A list of (source index, relation, target index) triples.
         words : bool
             Whether or not to encode nodes in the `path` with a token constraint constructed from `Sentence.words`
         lemmas : bool
@@ -235,5 +268,11 @@ class DependencyUtils(object):
         See Also
         --------
         Method parameters correspond to those of [`networkx.algorithms.link_analysis.pagerank`](https://networkx.github.io/documentation/development/reference/generated/networkx.algorithms.link_analysis.pagerank_alg.pagerank.html#networkx.algorithms.link_analysis.pagerank_alg.pagerank)
+
+        Returns
+        -------
+        collections.Counter
+            A collections.Counter of node -> pagerank weights
         """
-        return nx.algorithms.link_analysis.pagerank(G=networkx_graph, alpha=alpha, personalization=personalization, max_iter=max_iter, tol=tol, nstart=nstart, weight=weight, dangling=dangling)
+        pg_res = nx.algorithms.link_analysis.pagerank(G=networkx_graph, alpha=alpha, personalization=personalization, max_iter=max_iter, tol=tol, nstart=nstart, weight=weight, dangling=dangling)
+        return Counter(pg_res)
