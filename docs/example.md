@@ -23,7 +23,7 @@ Text can be annotated automatically with [these linguistic attributes](procesors
 doc = API.fastnlp.annotate("My name is Inigo Montoya.  You killed my father.  Prepare to die.")
 
 # you can also annotate text already segmented into sentences
-doc = API.fastnlp.annotate(["My name is Inigo Montoya.", "You killed my father.", "Prepare to die."])
+doc = API.fastnlp.annotate_from_sentences(["My name is Inigo Montoya.", "You killed my father.", "Prepare to die."])
 
 # There should be 3 Sentence objects in this Document
 doc.size
