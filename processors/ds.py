@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# Gus Hahn-Powell 2015-2016
+# Gus Hahn-Powell 2015
 # data structures for storing processors-server output
 # based on conventions from the CLU lab's processors library (https://github.com/clulab/processors)
 from __future__ import unicode_literals
