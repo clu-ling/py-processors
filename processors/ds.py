@@ -477,17 +477,46 @@ class DirectedGraph(object):
     def __ne__(self, other):
         return not self.__eq__(other)
 
-    def shortest_path(self, start, end):
+    def shortest_paths(self, start, end):
         """
-        Find the shortest path in the syntactic depedency graph
+        Find the shortest paths in the syntactic depedency graph
         between the provided start and end nodes.
+
+        Parameters
+        ----------
+        start : int or [int]
+            A single token index or list of token indices serving as the start of the graph traversal.
+        end : int or [int]
+            A single token index or list of token indices serving as the end of the graph traversal.
 
         See Also
         --------
         `processors.paths.DependencyUtils.shortest_path`
         """
-        res = DependencyUtils.shortest_path(self.undirected_graph, start, end)
-        return DependencyUtils.retrieve_edges(self, res) if res else None
+        paths = DependencyUtils.shortest_paths(self.undirected_graph, start, end)
+        return None if not paths else [DependencyUtils.retrieve_edges(self, path) for path in paths]
+
+    def shortest_path(self, start, end, scoring_func=lambda path: -len(path)):
+        """
+        Find the shortest path in the syntactic depedency graph
+        between the provided start and end nodes.
+
+        Parameters
+        ----------
+        start : int or [int]
+            A single token index or list of token indices serving as the start of the graph traversal.
+        end : int or [int]
+            A single token index or list of token indices serving as the end of the graph traversal.
+        scoring_func : function
+            A function that scores each path in a list of [(source index, directed relation, destination index)] paths.  Each path has the form [(source index, relation, destination index)].
+            The path with the maximum score will be returned.
+
+        See Also
+        --------
+        `processors.paths.DependencyUtils.shortest_path`
+        """
+        paths = self.shortest_paths(start, end)
+        return None if not paths else max(paths, key=scoring_func)
 
     def degree_centrality(self):
         """

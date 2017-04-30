@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 from processors.utils import LabelManager
-from Collections import Counter
+from collections import Counter
 import networkx as nx
 import collections
 
@@ -47,16 +47,24 @@ class DependencyUtils(object):
         return G
 
     @staticmethod
-    def shortest_path(g, start, end):
+    def shortest_paths(g, start, end):
         """
-        Find the shortest path between two nodes.
+        Find the shortest paths between two nodes.
+        Note that if `g` is a directed graph, a path will not be found.
 
         Parameters
         ----------
+        g : a networkx graph
+            The networkx graph to explore.
         start : int or [int]
             A single token index or list of token indices serving as the start of the graph traversal.
         end : int or [int]
             A single token index or list of token indices serving as the end of the graph traversal.
+
+        Returns
+        -------
+        None or [[(int, int)]]
+            None if no paths are found.  Otherwise, a list of lists of (source index, target index) tuples representing path segments.
         """
         # converts single int to [int]
         start = start if isinstance(start, collections.Iterable) else [start]
@@ -70,13 +78,43 @@ class DependencyUtils(object):
         for s in start:
             for e in end:
                 try:
-                    path = nx.algorithms.shortest_path(g, s, e)
-                    shortest_paths.append(path_to_edges(g, path))
+                    paths = nx.algorithms.all_shortest_paths(g, s, e)
+                    for path in paths:
+                        shortest_paths.append(path_to_edges(g, path))
                 # no path found...
                 except:
                     #print("No path found between '{}' and '{}'".format(s, e))
                     continue
-        return None if len(shortest_paths) == 0 else min(shortest_paths, key=lambda x: len(x))
+        return None if len(shortest_paths) == 0 else shortest_paths
+
+    @staticmethod
+    def shortest_path(g, start, end, scoring_func=lambda path: -len(path)):
+        """
+        Find the shortest path between two nodes.
+        Note that pathfinding is sensitive to direction.  If you want to ignore direction, convert your networkx.Digraph to a networkx.Graph.
+
+        Parameters
+        ----------
+        g : a networkx graph
+            The networkx graph to explore.
+
+        start : int or [int]
+            A single token index or list of token indices serving as the start of the graph traversal.
+
+        end : int or [int]
+            A single token index or list of token indices serving as the end of the graph traversal.
+
+        scoring_func : function
+            A function that scores each path in a list of paths.  Each path has the form [(source index, relation, destination index)].
+            The path with the maximum score will be returned.
+
+        Returns
+        -------
+        None or [(int, int)]
+            None if no paths are found.  Otherwise, a list of (source index, target index) tuples representing path segments.
+        """
+        paths = DependencyUtils.shortest_paths(g, start, end)
+        return None if len(shortest_paths) == 0 else max(paths, key=scoring_func)
 
     @staticmethod
     def directed_relation(source_idx, destination_idx, relation, deps):
@@ -94,6 +132,9 @@ class DependencyUtils(object):
 
         relation : str
             The undirected relation (i.e., the grammatical/semantic relation that connects the two nodes)
+
+        deps : processors.ds.DirectedGraph
+            The directed graph to be referenced
 
         Returns
         -------
@@ -128,11 +169,9 @@ class DependencyUtils(object):
         shortest_path = []
         for (s, d) in path:
             # build dictionaries from incoming/outgoing
-            outgoing = dep_graph.outgoing[s]
-            outgoing = dict(outgoing) if len(outgoing) > 0 else dict()
-            incoming = dep_graph.incoming[s]
-            incoming = dict(incoming) if len(incoming) > 0 else dict()
-            relation = ">{}".format(outgoing[d]) if d in outgoing else "<{}".format(incoming[d])
+            outgoing = {dest_idx:">{}".format(rel) for (dest_idx, rel) in dep_graph.outgoing[s]}
+            incoming = {source_idx:"<{}".format(rel) for (source_idx, rel) in dep_graph.incoming[s]}
+            relation = outgoing[d] if d in outgoing else incoming[d]
             shortest_path.append((s, relation, d))
         return shortest_path
 
