@@ -275,6 +275,9 @@ class Sentence(object):
     def __ne__(self, other):
         return not self.__eq__(other)
 
+    def __hash__(self):
+        return hash(self.to_JSON())
+        
     def _get_tokens(self, form):
         f = form.lower()
         if f == "words":
