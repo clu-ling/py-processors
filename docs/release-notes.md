@@ -1,4 +1,7 @@
 # Changes
+- v3.0.3:
+  - Added `HeadFinder` and `HeadFinder.semantic_head()`
+  - `pagerank` bug fix related to outdated parameter
 - v3.0.2:
   - Added support to reverse directed graph for pagerank, resulting in predicate and argument nodes having higher weights
   - `DependencyUtils.directed_relation()`
