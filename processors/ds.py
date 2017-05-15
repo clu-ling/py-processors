@@ -7,7 +7,7 @@
 from __future__ import unicode_literals
 from itertools import chain
 from collections import defaultdict, Counter
-from processors.paths import DependencyUtils
+from processors.paths import DependencyUtils, HeadFinder
 from processors.utils import LabelManager
 #from six import text_type
 import networkx as nx
@@ -382,6 +382,9 @@ class Sentence(object):
             (head, _, dep) = sd.split("_")
             unlabeled.append("{}_{}".format(head, dep))
         return unlabeled
+
+    def semantic_head(self, graph_name="stanford-collapsed", valid_tags={r"^N", "VBG"}, valid_indices=None):
+        return HeadFinder.semantic_head(self, graph_name, valid_tags, valid_indices)
 
     def to_JSON_dict(self):
         sentence_dict = dict()

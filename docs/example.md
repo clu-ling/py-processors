@@ -81,6 +81,15 @@ deps.pagerank(reverse=True)
 # find out which nodes are most central to the dependency graph
 deps.degree_centrality()
 
+# retrieve the likely semantic head for a sentence.
+from processors.paths import HeadFinder
+doc2 = API.annotate("acute renal failure")
+sentence = doc2.sentences[0]
+# select the graph to examine (default is "stanford-collapsed") and
+# optionally limit to a set of PoS tags (regex or str)
+head_idx = sentence.semantic_head(graph_name="stanford-collapsed", valid_tags=None)
+head_word = sentence.words[head_idx] if head_idx else None
+
 # try using BioNLPProcessor
 biodoc = api.bionlp.annotate("We next considered the effect of Ras monoubiquitination on GAP-mediated hydrolysis")
 

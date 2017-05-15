@@ -5,6 +5,7 @@ from processors.utils import LabelManager
 from collections import Counter
 import networkx as nx
 import collections
+import re
 
 
 class DependencyUtils(object):
@@ -334,3 +335,54 @@ class DependencyUtils(object):
         """
         pg_res = nx.algorithms.link_analysis.pagerank(G=networkx_graph, alpha=alpha, personalization=personalization, max_iter=max_iter, tol=tol, nstart=nstart, weight=weight, dangling=dangling)
         return Counter(pg_res)
+
+
+
+class HeadFinder(object):
+
+    import processors
+
+    @staticmethod
+    def semantic_head(sentence, graph_name="stanford-collapsed", valid_tags={r"^N", "VBG"}, valid_indices=None):
+        """
+        Finds the token with the highest pagerank score that meets the filtering criteria.
+
+        Parameters
+        ----------
+        sentence : processors.ds.Sentence
+            The Sentence to be analyzed.
+
+        graph_name : str
+            The name of the graph upon which to run the algorithm.  Default is "stanford-collapsed".
+
+        valid_tags : set or None
+            An optional set of str or regexes representing valid tokens.
+
+        valid_indices : list or None
+            A optional list of int representing the indices that should be considered.
+
+        Returns
+        -------
+        int or None
+            The index of the highest scoring token meeting the criteria.
+        """
+
+        from processors.ds import Sentence as Sent
+        if not isinstance(sentence, Sent): return None
+
+        dependencies = sentence.graphs.get(graph_name, None)
+
+        if not dependencies: return None
+
+        valid_indices = valid_indices if valid_indices else list(range(sentence.length))
+
+        def is_valid_tag(tag):
+            return True if not valid_tags else any(re.match(tag_pattern, tag) for tag_pattern in valid_tags)
+
+        scored_toks = dependencies.pagerank().most_common()
+
+        remaining = [i for (i, score) in scored_toks \
+                    if i in valid_indices and
+                    is_valid_tag(sentence.tags[i])]
+        # take token with the highest pagerank score
+        return remaining[0] if remaining else None
