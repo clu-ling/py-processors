@@ -277,7 +277,7 @@ class Sentence(object):
 
     def __hash__(self):
         return hash(self.to_JSON())
-        
+
     def _get_tokens(self, form):
         f = form.lower()
         if f == "words":
@@ -614,7 +614,7 @@ class DirectedGraph(object):
         Method parameters correspond to those of [`networkx.algorithms.link_analysis.pagerank`](https://networkx.github.io/documentation/development/reference/generated/networkx.algorithms.link_analysis.pagerank_alg.pagerank.html#networkx.algorithms.link_analysis.pagerank_alg.pagerank)
         """
         # check whether or not to reverse directed graph
-        dg = self.directed_graph if not reverse else DependencyUtils.build_networkx_graph(roots=self.roots, edges=self.edges, name=self.kind, is_directed=True, reverse=True)
+        dg = self.directed_graph if not reverse else DependencyUtils.build_networkx_graph(roots=self.roots, edges=self.edges, name=self.kind, reverse=True)
         # determine graph to use
         graph = dg if use_directed else self.undirected_graph
         return DependencyUtils.pagerank(graph, alpha=alpha, personalization=personalization, max_iter=max_iter, tol=tol, nstart=nstart, weight=weight, dangling=dangling)
