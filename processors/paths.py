@@ -368,16 +368,23 @@ class HeadFinder(object):
         """
 
         from processors.ds import Sentence as Sent
+
+        def is_valid_tag(tag):
+            return True if not valid_tags else any(re.match(tag_pattern, tag) for tag_pattern in valid_tags)
+
+        # ensure we're dealing with a Sentence
         if not isinstance(sentence, Sent): return None
+
+        valid_indices = valid_indices if valid_indices else list(range(sentence.length))
+
+        # corner case: if the sentence is a single token, pagerank doesn't apply.
+        # check tag and index
+        if sentence.length == 1:
+            return 0 if is_valid_tag(sentence.tags[0]) and 0 in valid_indices else None
 
         dependencies = sentence.graphs.get(graph_name, None)
 
         if not dependencies: return None
-
-        valid_indices = valid_indices if valid_indices else list(range(sentence.length))
-
-        def is_valid_tag(tag):
-            return True if not valid_tags else any(re.match(tag_pattern, tag) for tag_pattern in valid_tags)
 
         scored_toks = dependencies.pagerank().most_common()
 
@@ -385,4 +392,4 @@ class HeadFinder(object):
                     if i in valid_indices and
                     is_valid_tag(sentence.tags[i])]
         # take token with the highest pagerank score
-        return remaining[0] if remaining else None
+        return remaining[0] if len(remaining) > 0 else None
