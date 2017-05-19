@@ -22,7 +22,7 @@ class JupyterVisualizer(object):
             dp_lib=JupyterVisualizer.dp_lib,
             dist=distance,
             sent_json=s.to_JSON(),
-            div_id="sentence_{}".format(s.__hash__()),
+            div_id="sentence_{}_{}".format(s.__hash__(), graph_name),
             gn=graph_name
         )
 
