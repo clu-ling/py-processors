@@ -1,12 +1,16 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+from itertools import count
 from IPython.core.display import display, HTML
 from termcolor import colored
 import os
 
 
 class JupyterVisualizer(object):
+    """
+    Widgets for use with jupyter notebook
+    """
 
     ASSETS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "assets")
 
@@ -15,14 +19,18 @@ class JupyterVisualizer(object):
     with open(os.path.join(ASSETS_DIR, "displacy-processors.html")) as html_file:
         base_contents = html_file.read()
 
+    _id_gen = count(start=0, step=1)
+
     @staticmethod
     def display_graph(s, graph_name="stanford-collapsed", distance=90):
+
+        def next_id(): return next(JupyterVisualizer._id_gen)
 
         contents = JupyterVisualizer.base_contents.format(
             dp_lib=JupyterVisualizer.dp_lib,
             dist=distance,
             sent_json=s.to_JSON(),
-            div_id="sentence_{}_{}".format(s.__hash__(), graph_name),
+            div_id="graph_{}".format(next_id()),
             gn=graph_name
         )
 
