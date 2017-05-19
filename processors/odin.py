@@ -3,6 +3,7 @@
 from __future__ import unicode_literals
 from .utils import post_json
 from .ds import Document, Interval
+from .visualization import OdinHighlighter
 import re
 import json
 
@@ -120,7 +121,7 @@ class Mention(object):
         return not self.__eq__(other)
 
     def __str__(self):
-        return self.text
+        return "{}: {}".format(OdinHighlighter.LABEL(self.label), OdinHighlighter.highlight_mention(self))
 
     def to_JSON_dict(self):
         m = dict()

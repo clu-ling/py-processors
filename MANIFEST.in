@@ -1,6 +1,10 @@
 include processors/*.py
 include processors/*.jar
 
+include processors/assets/*.js
+include processors/assets/*.css
+include processors/assets/*.html
+
 include processors/tests/*.json
 include processors/tests/*.yml
 include processors/tests/*.txt
