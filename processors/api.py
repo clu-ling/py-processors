@@ -117,11 +117,11 @@ class ProcessorsAPI(object):
         try:
             service_address = "{}/version".format(self.address)
             server_version = post_json(service_address, None)["version"]
-            if float(__ps_rec__) != float(server_version):
+            if str(__ps_rec__) != str(server_version):
                 warnings.warn("Recommended server version is {}, but server version is {}".format(__ps_rec__, server_version))
             else:
                 self.logger.info("Server version meets recommendations (v{})".format(__ps_rec__))
-        except:
+        except Exception as e:
             warnings.warn("Unable to determine server version.  Recommended version is {}".format(__ps_rec__))
 
 
@@ -334,12 +334,16 @@ class OdinAPI(object):
         self._service = "{}/api/odin/extract".format(address)
 
     def _extract(self, json_data):
-        try:
-            mns_json = post_json(self._service, json_data)
-            return JSONSerializer.mentions_from_JSON(mns_json)
-        except Exception as e:
-            print(e)
+        mns_json = post_json(self._service, json_data)
+        if "error" in mns_json:
+            error_msg = mns_json["error"]
+            original_msg = json.loads(json_data)
+            rules = original_msg.get("rules", original_msg.get("url", None))
+            oe = OdinError(rules=rules, message=error_msg)
+            print(oe)
             return None
+        else:
+            return JSONSerializer.mentions_from_JSON(mns_json)
 
     @staticmethod
     def valid_rule_url(url):

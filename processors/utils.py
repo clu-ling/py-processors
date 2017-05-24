@@ -35,3 +35,17 @@ class LabelManager(object):
     UNKNOWN = "UNKNOWN"
     # the O in IOB notation
     O = "O"
+
+
+class OdinError(Exception):
+    """
+    An error encountered while parsing an Odin rule.
+    """
+
+    def __init__(self, rules, message):
+        self.rules = rules
+        self.message = message
+
+    def __str__(self):
+        cn = colored(self.__class__.__name__, color="red", attrs=["bold"])
+        return "{}: {}\n{}".format(cn, self.message, self.rules)
