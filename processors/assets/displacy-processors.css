@@ -1,0 +1,13 @@
+/*.displacy-tag[data-tag^="NN"]{
+  color: green;
+  font-weight: bold;
+}
+
+.displacy-tag[data-tag^="VB"]{
+  color: blue;
+  font-weight: bold;
+}
+
+.displacy-entity:not([data-tag="O"]){
+  font-weight: bold;
+}*/

@@ -1,0 +1,48 @@
+.sentence {
+   font-family:"Liberation Mono",monospace;
+   color: #3e3f41;
+   font-size: 1em;
+   padding-bottom: 3px;
+ }
+ .mention-label {
+   -webkit-font-smoothing: subpixel-antialiased;
+   color: white;
+   font-weight:bold;
+   padding-left: 4px;
+   padding-right: 4px;
+ }
+ .mention-role {
+   -webkit-font-smoothing: subpixel-antialiased;
+   color: #ff0000;
+   font-weight:bold;
+   padding-left: 4px;
+   padding-right: 4px;
+ }
+ .mention-span {
+   border-radius: 50px;
+   background-color: #ffa64d;
+   -webkit-font-smoothing: subpixel-antialiased;
+   color: black;
+   padding-top: 4px;
+   padding-bottom: 4px;
+   padding-left: 4px;
+   padding-right: 8px;
+ }
+ .mention-arg {
+   font-weight:bold;
+   background-color:#009933;
+   color: white;
+   padding-top: 4px;
+   padding-bottom: 4px;
+   padding-left: 4px;
+   padding-right: 8px;
+ }
+ .mention-trigger {
+   font-weight:bold;
+   background-color:#0066ff;
+   color: white;
+   padding-top: 4px;
+   padding-bottom: 4px;
+   padding-left: 8px;
+   padding-right: 8px;
+ }
