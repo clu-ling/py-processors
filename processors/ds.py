@@ -523,6 +523,9 @@ class DirectedGraph(object):
     def __ne__(self, other):
         return not self.__eq__(other)
 
+    def __hash__(self):
+        return hash(self.to_JSON())
+
     def shortest_paths(self, start, end):
         """
         Find the shortest paths in the syntactic depedency graph
