@@ -1,8 +1,13 @@
 # Changes
 - v3.0.3:
+  - jupyter notebook visualizations for `Sentence` graphs (dependency parses) and `Mention` structure
+    - `visualization.JupyterVisualizer.display_graph()`
+    - `visualization.Jupyter.Visualizer.display_mention()`
+  - Display errors for broken Odin rules
+  - Upgraded `processors-server` version to v3.0.2
   - Added `HeadFinder` and `HeadFinder.semantic_head()`
   - `pagerank` bug fix related to outdated parameter
-  - Make `Sentence` hashable
+  - Make `Sentence`, `DirectedGraph`, and `Mention` hashable
 - v3.0.2:
   - Added support to reverse directed graph for pagerank, resulting in predicate and argument nodes having higher weights
   - `DependencyUtils.directed_relation()`

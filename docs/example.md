@@ -166,6 +166,8 @@ He was inaugurated on January 20, 2009.
 
 # take a look at the .label, .labels, and .text attributes of each mention
 mentions = API.odin.extract_from_text(example_text, example_rule)
+# visualize the structure of a mention as colored output in the terminal
+for m in mentions: print(m)
 
 # Alternatively, you can provide a rule URL.  The URL should end with .yml or .yaml.
 rules_url = "https://raw.githubusercontent.com/clulab/reach/508697db2217ba14cd1fa0a99174816cc3383317/src/main/resources/edu/arizona/sista/demo/open/grammars/rules.yml"
@@ -186,6 +188,66 @@ with open(mentions_json_file, "w") as out:
 with open(mentions_json_file, "r") as jf:
     mentions = JSONSerializer.mentions_from_JSON(json.load(jf))
 ```
+
+# Jupyter notebook visualizations
+
+`py-processors` has some notebook-based visualizations.
+Using [our fork] of [displaCy](), You can now visualizer a `Sentence` graph as an SVG image using `visualization.JupyterVisualizer.display_graph()`:
+
+```python
+from processors.visualization import JupyterVisualizer as viz
+# run this snippet within a jupyter notebook
+text = "To be loved by unicorns is the greatest gift of all."
+doc = API.annotate(text)
+viz.display_graph(doc.sentences[0], graph_name="stanford-collapsed")
+```
+
+Mentions can also be visualized in a notebook:
+
+```python
+# run this snippet within a jupyter notebook
+rules = """
+rules:
+  - name: "ner-location"
+    label: [Location, PossibleLocation, Entity]
+    priority: 1
+    type: token
+    pattern: |
+      [entity="LOCATION"]+ | Twin Peaks
+
+  - name: "ner-person"
+    label: [Person, PossiblePerson, Entity]
+    priority: 1
+    type: token
+    pattern: |
+     [entity="PERSON"]+
+
+  - name: "ner-org"
+    label: [Organization, Entity]
+    priority: 1
+    type: token
+    pattern: |
+      [entity="ORGANIZATION"]+
+
+  - name: "ner-date"
+    label: [Date]
+    priority: 1
+    type: token
+    pattern: |
+      [entity="DATE"]+
+
+  - name: "missing"
+    label: Missing
+    pattern: |
+      trigger = [lemma=go] missing
+      theme: Person = <xcomp nsubj
+      date: Date? = prep_on
+"""
+mentions = API.odin.extract_from_text("FBI Special Agent Dale Cooper went missing on June 10, 1991.  He was last seen in the woods of Twin Peaks. ", rules=rules)
+
+for m in mentions: viz.display_mention(m)
+```
+
 
 # Other ways of initializing the server
 
