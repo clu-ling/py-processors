@@ -105,6 +105,7 @@ class ProcessorsAPI(object):
         self.logger = logging.getLogger(__name__)
         self.log_file = self._prepare_log_file(kwargs.get("log_file", ProcessorsAPI.LOG))
         # set self.jar_path
+        self.jar_path = None
         self._resolve_jar_path(kwargs.get("jar_path", None))
         # attempt to establish connection with server
         self.establish_connection()
