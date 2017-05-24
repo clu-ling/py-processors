@@ -104,7 +104,8 @@ class ProcessorsAPI(object):
         #self.DEVNULL = open(os.devnull, 'wb')
         self.logger = logging.getLogger(__name__)
         self.log_file = self._prepare_log_file(kwargs.get("log_file", ProcessorsAPI.LOG))
-        self.jar_path = kwargs.get("jar_path", ProcessorsAPI.DEFAULT_JAR)
+        # set self.jar_path
+        self._resolve_jar_path(kwargs.get("jar_path", None))
         # attempt to establish connection with server
         self.establish_connection()
 
@@ -289,7 +290,9 @@ class ProcessorsAPI(object):
         self.address = "http://{}:{}".format(self.hostname, self.port)
 
     @staticmethod
-    def _download_jar(jar_url="http://www.cs.arizona.edu/~hahnpowell/processors-server/current/processors-server.jar"):
+    def _download_jar(jar_url=None):
+        from .__init__ import SERVER_JAR_URL
+        jar_url = jar_url or SERVER_JAR_URL
         # download processors-server.jar
         ppjar = ProcessorsAPI.DEFAULT_JAR
         percent = 0
