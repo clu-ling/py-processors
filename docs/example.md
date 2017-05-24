@@ -192,7 +192,7 @@ with open(mentions_json_file, "r") as jf:
 # Jupyter notebook visualizations
 
 `py-processors` has some notebook-based visualizations.
-Using [our fork] of [displaCy](), You can now visualizer a `Sentence` graph as an SVG image using `visualization.JupyterVisualizer.display_graph()`:
+Using [our fork](https://github.com/myedibleenso/displacy-processors) of [displaCy](https://github.com/explosion/displacy), You can now visualizer a `Sentence` graph as an SVG image using `visualization.JupyterVisualizer.display_graph()`:
 
 ```python
 from processors.visualization import JupyterVisualizer as viz
