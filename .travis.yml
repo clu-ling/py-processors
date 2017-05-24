@@ -11,6 +11,9 @@ language: python
   # hosts:
   #   - localhost
 
+branches:
+  only:
+    - master
 
 # test the server on multiple JDKs
 jdk:
