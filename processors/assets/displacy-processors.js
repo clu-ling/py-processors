@@ -1,5 +1,6 @@
 //- ----------------------------------
-//- 💥 DISPLACY
+//- DISPLACY PROCESSORS
+//- Based on DisplaCy:
 //- ----------------------------------
 
 
@@ -9,7 +10,7 @@
 class displaCyProcessors {
     constructor (options) {
 
-        this.container = document.querySelector(options.container || '#displacy');
+        this.container = document.querySelector(options.container);
 
         this.$ = document.querySelector.bind(document);
 
@@ -30,14 +31,13 @@ class displaCyProcessors {
 
     exportSVG() {
       // http://stackoverflow.com/a/38481556
-      var parseStyles = function(svg) {
-        var styleSheets = [];
-        var i;
+      const parseStyles = function(svg) {
+        const styleSheets = [];
         // get the stylesheets of the document (ownerDocument in case svg is in <iframe> or <object>)
-        var docStyles = svg.ownerDocument.styleSheets;
+        const docStyles = svg.ownerDocument.styleSheets;
 
         // transform the live StyleSheetList to an array to avoid endless loop
-        for (i = 0; i < docStyles.length; i++) {
+        for (var i = 0; i < docStyles.length; i++) {
           styleSheets.push(docStyles[i]);
         }
 
@@ -45,28 +45,27 @@ class displaCyProcessors {
           return;
         }
 
-        var defs = svg.querySelector('defs') || document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+        const defs = svg.querySelector('defs') || document.createElementNS('http://www.w3.org/2000/svg', 'defs');
         if (!defs.parentNode) { svg.insertBefore(defs, svg.firstElementChild); }
         svg.matches = svg.matches || svg.webkitMatchesSelector || svg.mozMatchesSelector || svg.msMatchesSelector || svg.oMatchesSelector;
 
         // iterate through all document's stylesheets
-        for (i = 0; i < styleSheets.length; i++) {
+        for (var i = 0; i < styleSheets.length; i++) {
           var currentStyle = styleSheets[i]
 
-          var rules;
           try {
-            rules = currentStyle.cssRules;
+            var rules = currentStyle.cssRules;
           } catch (e) {
             continue;
           }
           // create a new style element
-          var style = document.createElement('style');
+          const style = document.createElement('style');
           // some stylesheets can't be accessed and will throw a security error
-          var l = rules && rules.length;
+          const l = rules && rules.length;
           // iterate through each cssRules of this stylesheet
           for (var j = 0; j < l; j++) {
             // get the selector of this cssRules
-            var selector = rules[j].selectorText;
+            const selector = rules[j].selectorText;
             // probably an external stylesheet we can't access
             if (!selector) {
               continue;
@@ -103,7 +102,7 @@ class displaCyProcessors {
       var a = document.createElement('a');
       a.href = 'data:image/svg+xml; charset=utf8, ' + encodeURIComponent(svgData.replace(/></g, '>\n\r<'));
       a.download = 'graph.svg';
-      a.innerHTML = 'save to file';
+      a.innerHTML = '<br>save to file';
       this.container.appendChild(a);
     }
 
@@ -130,7 +129,7 @@ class displaCyProcessors {
     }
     getSVGname() {return this.container.id + '-svg'; }
     render(sentence, graphName = "stanford-collapsed", settings = {}, text) {
-        var parse = this.handleParsedSentence(sentence, graphName = "stanford-collapsed");
+        const parse = this.handleParsedSentence(sentence, graphName = graphName);
         this.levels = [...new Set(parse.arcs.map(({ end, start }) => end - start).sort((a, b) => a - b))];
         // starting node for most distant dependency
         // (note that disregard for sign means )
@@ -168,7 +167,7 @@ class displaCyProcessors {
             classnames: [ 'displacy-token' ],
             attributes: [
                 ['fill', 'currentColor'],
-                ['data-tag', tag],
+                ['data-tag', text],
                 ['text-anchor', 'middle'],
                 ['y', this.offsetY + this.wordSpacing],
                 ...data.map(([attr, value]) => (['data-' + attr.replace(' ', '-'), value]))
@@ -178,8 +177,9 @@ class displaCyProcessors {
                     classnames: [ 'displacy-word' ],
                     attributes: [
                         ['x', this.offsetX + i * this.distance],
+                        ['dy', '-1em'],
                         ['fill', 'currentColor'],
-                        ['data-tag', tag]
+                        ['data-tag', text]
                     ],
                     text: text
                 }),
@@ -228,15 +228,18 @@ class displaCyProcessors {
             if(curve == 0 && this.levels.length > 5) curve = -this.distance;
 
             return this._el('g', {
+                id: 'edge-' + i + "-" + this.container.id,
                 classnames: [ 'displacy-arrow' ],
                 attributes: [
                     [ 'data-dir', dir ],
                     [ 'data-label', label ],
                     ...data.map(([attr, value]) => (['data-' + attr.replace(' ', '-'), value]))
                 ],
+                // NOTE: 'arrow' id must correspond to xlink referenced in 'textPath'
+                // in order to render sequential visualizations correctly in a jupyter notebook (distinct divs aren't enough)
                 children:  [
                     this._el('path', {
-                        id: 'arrow-' + i,
+                        id: 'arrow-' + i + "-" + this.container.id,
                         classnames: [ 'displacy-arc' ],
                         attributes: [
                             [ 'd', `M${startX},${startY} C${startX},${curve} ${endpoint},${curve} ${endpoint},${startY}`],
@@ -254,7 +257,7 @@ class displaCyProcessors {
                         ],
                         children: [
                             this._el('textPath', {
-                                xlink: '#arrow-' + i,
+                                xlink: '#arrow-' + i + "-" + this.container.id,
                                 classnames: [ 'displacy-label' ],
                                 attributes: [
                                     [ 'startOffset', '50%' ],

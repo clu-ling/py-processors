@@ -1,17 +1,26 @@
-
+<html>
+<head>
+  <style>
+    {css}
+  </style>
+</head>
 <body>
-  <div id="{div_id}"></div>
-  <script type="text/javascript">
-    {dp_lib};
-    var visualizer = new displaCyProcessors({{
-        container: "#{div_id}",
-        distance: {dist},
-        offsetX: 100
-    }});
-    var sent = {sent_json};
-    var graph_name = "{gn}";
+<div id="{div_id}">
+</div>
 
-    visualizer.render(sent, graph_name)
-    visualizer.exportSVG()
-  </script>
+<script type="text/javascript">
+  {dp_lib};
+
+  var visualizer = new displaCyProcessors({{
+      container: "#{div_id}",
+      distance: {dist},
+      offsetX: 100
+  }});
+  var sent = {sent_json};
+  var graph_name = "{gn}";
+
+  visualizer.render(sent, graph_name)
+  visualizer.exportSVG()
+</script>
 </body>
+</html>
