@@ -105,7 +105,7 @@ class ProcessorsAPI(object):
         self.logger = logging.getLogger(__name__)
         self.log_file = self._prepare_log_file(kwargs.get("log_file", ProcessorsAPI.LOG))
         # set self.jar_path
-        self.jar_path = None
+        self.jar_path = ProcessorsAPI.DEFAULT_JAR
         self._resolve_jar_path(kwargs.get("jar_path", None))
         # attempt to establish connection with server
         self.establish_connection()
@@ -185,6 +185,7 @@ class ProcessorsAPI(object):
         """
         Attempts to preferentially set value of self.jar_path
         """
+        jar_path = jar_path or ProcessorsAPI.DEFAULT_JAR
         # Preference 1: if a .jar is given, check to see if the path is valid
         if jar_path:
             jp = full_path(jar_path)
