@@ -158,7 +158,7 @@ class Document(object):
         doc = Document(sentences)
         # set id and text
         doc.text = json_dict.get("text", None)
-        doc.id = kwargs.get("id", None)
+        doc.id = json_dict.get("id", None)
         return doc
 
 
