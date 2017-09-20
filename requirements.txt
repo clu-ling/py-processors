@@ -1,6 +1,6 @@
 six
 requests>=2.4.2
-networkx==1.11
+networkx==2.0
 green>=2.5.0
 coverage
 Sphinx
