@@ -61,6 +61,7 @@ with open('docs/index.md', 'r', 'utf-8') as f:
     readme = f.read()
 
 test_deps = ["green>=2.5.0", "coverage"]
+viz_deps = ["jupyter>=1.0.0", "ipython>=6.2.1", "traitlets>=4.3.2"]
 
 setup(name='py-processors',
       packages=["processors"],
@@ -86,6 +87,9 @@ setup(name='py-processors',
         "Programming Language :: Python :: 3"
       ),
       tests_require=test_deps,
-      extras_require={'test': test_deps},
+      extras_require={
+        'test': test_deps,
+        'jupyter': viz_deps
+      },
       include_package_data=True,
       zip_safe=False)
