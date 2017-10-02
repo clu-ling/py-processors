@@ -29,7 +29,7 @@ class JupyterVisualizer(object):
     _id_gen = count(start=0, step=1)
 
     @staticmethod
-    def graph_to_html(s, graph_name="stanford-collapsed", css="", distance=None, div_id=None):
+    def graph_to_html(s, graph_name="stanford-collapsed", css=None, distance=None, div_id=None):
         distance = distance or int((sum(len(w) for w in s.words) + s.length) * 1.75)
 
         def next_id(): return next(JupyterVisualizer._id_gen)
@@ -38,7 +38,6 @@ class JupyterVisualizer(object):
 
         # apply css only to current viz
         custom_css = css.replace(".displacy", "#{} .displacy".format(div_id)) if css else ""
-
         html = JupyterVisualizer.base_contents.format(
             dp_lib=JupyterVisualizer.dp_lib,
             dist=distance,
@@ -50,7 +49,7 @@ class JupyterVisualizer(object):
         return html
 
     @staticmethod
-    def display_graph(s, graph_name="stanford-collapsed", css="", distance=None, div_id=None):
+    def display_graph(s, graph_name="stanford-collapsed", css=None, distance=None, div_id=None):
         res = JupyterVisualizer.graph_to_html(s=s, graph_name=graph_name, css=css, distance=distance, div_id=div_id)
         display(HTML(data=res))
 
