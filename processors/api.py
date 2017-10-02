@@ -109,7 +109,7 @@ class ProcessorsAPI(object):
         self.log_file = self._prepare_log_file(kwargs.get("log_file", ProcessorsAPI.LOG))
         # set self.jar_path
         self.jar_path = ProcessorsAPI.DEFAULT_JAR
-        self._resolve_jar_path(kwargs.get("jar_path", None))
+        self._resolve_jar_path(kwargs.get("jar_path", self.jar_path))
         # attempt to establish connection with server
         self.establish_connection()
 
@@ -189,15 +189,17 @@ class ProcessorsAPI(object):
         Attempts to preferentially set value of self.jar_path
         """
         jar_path = jar_path or ProcessorsAPI.DEFAULT_JAR
+
         # Preference 1: if a .jar is given, check to see if the path is valid
         if jar_path:
             jp = full_path(jar_path)
             # check if path is valid
             if os.path.exists(jp):
                 self.jar_path = jp
+
         # Preference 2: if a PROCESSORS_SERVER environment variable is defined, check its validity
-        elif ProcessorsAPI.PROC_VAR in os.environ:
-            self.logger.info("Using path given via $PROCESSORS_SERVER")
+        if not os.path.exists(self.jar_path) and ProcessorsAPI.PROC_VAR in os.environ:
+            self.logger.info("Using path given via ${}".format(ProcessorsAPI.PROC_VAR))
             jp = full_path(os.environ[ProcessorsAPI.PROC_VAR])
             # check if path is valid
             if os.path.exists(jp):
