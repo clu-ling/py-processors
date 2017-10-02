@@ -21,9 +21,6 @@ jdk:
 
 python:
   - "2.7"
-  # - "3.2"
-  # - "3.3"
-  # - "3.4"
   - "3.5"
 
 before_install:
@@ -57,5 +54,5 @@ script:
 
 after_success:
   # inspect log file
-  - cat ~/.py-processors.log
+  - cat ~/py-processors.log
   - coveralls

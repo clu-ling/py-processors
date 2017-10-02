@@ -38,7 +38,7 @@ class ProcessorsAPI(object):
     kee_alive : bool
         Whether or not to keep the server running when ProcessorsAPI instance goes out of scope.  Default is false (server is shut down).
     log_file: str
-        The path for the log file.  Default is .py-processors.log in the user's home directory.
+        The path for the log file.  Default is py-processors.log in the user's home directory.
 
     Methods
     -------
@@ -79,7 +79,7 @@ class ProcessorsAPI(object):
     PORT = 8886
     JVM_MEM = "-Xmx3G"
     HOST = "localhost"
-    LOG = full_path(os.path.join("~", "py-processors.log"))
+    LOG = full_path(os.path.join(os.path.expanduser("~"), "py-processors.log"))
     #print(resource_filename(__name__, "processors-server.jar"))
 
     def __init__(self, **kwargs):
