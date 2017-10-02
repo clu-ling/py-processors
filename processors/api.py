@@ -44,6 +44,8 @@ class ProcessorsAPI(object):
     -------
     annotate(text)
         Produces a Document from the provided `text` using the default processor.
+    clu.annotate(text)
+        Produces a Document from the provided `text` using CluProcessor.
     fastnlp.annotate(text)
         Produces a Document from the provided `text` using FastNLPProcessor.
     bionlp.annotate(text)
@@ -94,6 +96,7 @@ class ProcessorsAPI(object):
         self.wait_time = 2
         # processors
         self.default = Processor(self.address)
+        self.clu = CluProcessor(self.address)
         self.fastnlp = FastNLPProcessor(self.address)
         self.bionlp = BioNLPProcessor(self.address)
         # sentiment
