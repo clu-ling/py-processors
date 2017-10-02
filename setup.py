@@ -60,6 +60,8 @@ with open('requirements.txt', 'r', 'utf-8') as f:
 with open('docs/index.md', 'r', 'utf-8') as f:
     readme = f.read()
 
+test_deps = ["green>=2.5.0", "coverage"]
+
 setup(name='py-processors',
       packages=["processors"],
       version=version,
@@ -83,6 +85,7 @@ setup(name='py-processors',
         "Programming Language :: Python :: 2.7",
         "Programming Language :: Python :: 3"
       ),
-      tests_require=["green>=2.5.0", "coverage"],
+      tests_require=test_deps,
+      extras_require={'test': test_deps},
       include_package_data=True,
       zip_safe=False)

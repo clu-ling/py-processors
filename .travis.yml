@@ -45,7 +45,8 @@ before_install:
 
 # command to install dependencies
 install:
-  - pip install .
+  #- pip install .
+  - pip install .[test]
 #  - pip install git+https://github.com/myedibleenso/py-processors.git
 
 # command to run tests
