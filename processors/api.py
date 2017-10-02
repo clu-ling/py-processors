@@ -205,6 +205,7 @@ class ProcessorsAPI(object):
             else:
                 self.jar_path = None
                 self.logger.warn("WARNING: {0} path is invalid.  \nPlease verify this entry in your environment:\n\texport {0}=/path/to/processors-server.jar".format(ProcessorsAPI.PROC_VAR))
+
         # Preference 3: attempt to use the processors-sever.jar (download if not found)
         # check if jar exists
         if not self.jar_path or not os.path.exists(self.jar_path):

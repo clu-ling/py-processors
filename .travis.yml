@@ -54,6 +54,4 @@ script:
   - green -vv --run-coverage
 
 after_success:
-  # inspect log file
-  - cat ~/py-processors.log
   - coveralls
