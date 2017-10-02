@@ -194,12 +194,10 @@ with open(mentions_json_file, "r") as jf:
 `py-processors` supports some custom notebook-based visualizations, but  you'll need to install the extra `[jupyter]` module in order to use them:
 
 ```
-pip install py-processors[jupyter]
+pip install "py-processors[jupyter]"
 ```
 
-Note that if you're using `zsh`, you may need to escape the square brackets to install the extra module.
-
-These visualizations make use of [our fork](https://github.com/myedibleenso/displacy-processors) of [displaCy](https://github.com/explosion/displacy), You can now visualizer a `Sentence` graph as an SVG image using `visualization.JupyterVisualizer.display_graph()`:
+These visualizations make use of [our fork](https://github.com/myedibleenso/displacy-processors) of [displaCy](https://github.com/explosion/displacy), You can now visualize a `Sentence` graph as an SVG image using `visualization.JupyterVisualizer.display_graph()`:
 
 ```python
 from processors.visualization import JupyterVisualizer as viz
