@@ -47,10 +47,10 @@ s.length
 s.nes
 
 # generate labeled dependencies using "words", "tags", "lemmas", "entities", or token index ("index")
-s.labeled_dependencies_using("tags")
+s.bag_of_labeled_dependencies_using("tags")
 
 # generate unlabeled dependencies using "words", "tags", "lemmas", "entities", or token index ("index")
-s.unlabeled_dependencies_using("lemmas")
+s.bag_of_unlabeled_dependencies_using("lemmas")
 
 # play around with the dependencies directly
 deps = s.dependencies
