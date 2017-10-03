@@ -18,10 +18,9 @@ import logging
 import warnings
 
 
-class ProcessorsAPI(object):
-
+class ProcessorsBaseAPI(object):
     """
-    Manages a connection with the processors-server jar and provides an interface to the API.
+    Manages a connection with processors-server and provides an interface to the API.
 
     Parameters
     ----------
@@ -29,14 +28,6 @@ class ProcessorsAPI(object):
         The port the server is running on or should be started on.  Default is 8886.
     hostname : str
         The host name to use for the server.  Default is "localhost".
-    timeout : int
-        The number of seconds to wait for the server to initialize.  Default is 120.
-    jvm_mem : str
-        The maximum amount of memory to allocate to the JVM for the server.  Default is "-Xmx3G".
-    jar_path : str
-        The path to the processors-server jar.  Default is the jar installed with the package.
-    kee_alive : bool
-        Whether or not to keep the server running when ProcessorsAPI instance goes out of scope.  Default is false (server is shut down).
     log_file: str
         The path for the log file.  Default is py-processors.log in the user's home directory.
 
@@ -66,34 +57,16 @@ class ProcessorsAPI(object):
         Produces a list of Mentions for matches of the provided `rules` on the `text`.  `rules` can be a string of Odin rules, or a url ending in `.yml` or `.yaml`.
     odin.extract_from_document(doc, rules)
         Produces a list of Mentions for matches of the provided `rules` on the `doc` (an instance of Document).  `rules` can be a string of Odin rules, or a url ending in .yml or yaml.
-    start_server(jar_path, **kwargs)
-        Starts the server using the provided `jar_path`.  Optionally takes hostname, port, jvm_mem, and timeout.
-    stop_server()
-        Attempts to stop the server running at self.address.
     """
-
-    PROC_VAR = 'PROCESSORS_SERVER'
-    TIMEOUT = 120
-    # save to lib loc
-    DEFAULT_JAR = os.path.join(os.path.dirname(os.path.realpath(__file__)), "processors-server.jar")
-    PORT = 8886
-    JVM_MEM = "-Xmx3G"
+    PORT = 8888
     HOST = "localhost"
     LOG = full_path(os.path.join(os.path.expanduser("~"), "py-processors.log"))
-    #print(resource_filename(__name__, "processors-server.jar"))
 
     def __init__(self, **kwargs):
 
-        self.hostname = kwargs.get("hostname", ProcessorsAPI.HOST)
-        self.port = kwargs.get("port", ProcessorsAPI.PORT)
+        self.hostname = kwargs.get("hostname", ProcessorsBaseAPI.HOST)
+        self.port = kwargs.get("port", ProcessorsBaseAPI.PORT)
         self.make_address(self.hostname, self.port)
-        self.timeout = kwargs.get("timeout", ProcessorsAPI.TIMEOUT)
-        self.jvm_mem = kwargs.get("jvm_mem", ProcessorsAPI.JVM_MEM)
-        self._start_command = "java {mem} -cp {jp} NLPServer --port {port} --host {host}" # mem, jar path, port, host
-        # whether or not to stop the server when the object is destroyed
-        self.keep_alive = kwargs.get("keep_alive", False)
-        # how long to wait between requests
-        self.wait_time = 2
         # processors
         self.default = Processor(self.address)
         self.clu = CluProcessor(self.address)
@@ -107,28 +80,14 @@ class ProcessorsAPI(object):
         #self.DEVNULL = open(os.devnull, 'wb')
         self.logger = logging.getLogger(__name__)
         self.log_file = self._prepare_log_file(kwargs.get("log_file", ProcessorsAPI.LOG))
-        # set self.jar_path
-        self.jar_path = ProcessorsAPI.DEFAULT_JAR
-        self._resolve_jar_path(kwargs.get("jar_path", self.jar_path))
-        # attempt to establish connection with server
-        self.establish_connection()
 
-    def _check_server_version(self):
-        """
-        Checks server version to see if it meets the recommendations
-        """
-        # avoid circular imports by delaying this import
-        from .__init__ import __ps_rec__
-        try:
-            service_address = "{}/version".format(self.address)
-            server_version = post_json(service_address, None)["version"]
-            if str(__ps_rec__) != str(server_version):
-                warnings.warn("Recommended server version is {}, but server version is {}".format(__ps_rec__, server_version))
-            else:
-                self.logger.info("Server version meets recommendations (v{})".format(__ps_rec__))
-        except Exception as e:
-            warnings.warn("Unable to determine server version.  Recommended version is {}".format(__ps_rec__))
-
+    def make_address(self, hostname, port):
+        # update hostname
+        self.hostname = hostname
+        # update port
+        self.port = port
+        # update address
+        self.address = "http://{}:{}".format(self.hostname, self.port)
 
     def _prepare_log_file(self, lf):
         """
@@ -166,6 +125,71 @@ class ProcessorsAPI(object):
 
     def is_running(self):
         return True if self.annotate("Blah") else False
+
+    def _check_server_version(self):
+        """
+        Checks server version to see if it meets the recommendations
+        """
+        # avoid circular imports by delaying this import
+        from .__init__ import __ps_rec__
+        try:
+            service_address = "{}/version".format(self.address)
+            server_version = post_json(service_address, None)["version"]
+            if str(__ps_rec__) != str(server_version):
+                warnings.warn("Recommended server version is {}, but server version is {}".format(__ps_rec__, server_version))
+            else:
+                self.logger.info("Server version meets recommendations (v{})".format(__ps_rec__))
+        except Exception as e:
+            warnings.warn("Unable to determine server version.  Recommended version is {}".format(__ps_rec__))
+
+
+class ProcessorsAPI(ProcessorsBaseAPI):
+
+    """
+    Manages a connection with the processors-server jar and provides an interface to the API.
+
+    Parameters
+    ----------
+    timeout : int
+        The number of seconds to wait for the server to initialize.  Default is 120.
+    jvm_mem : str
+        The maximum amount of memory to allocate to the JVM for the server.  Default is "-Xmx3G".
+    jar_path : str
+        The path to the processors-server jar.  Default is the jar installed with the package.
+    kee_alive : bool
+        Whether or not to keep the server running when ProcessorsAPI instance goes out of scope.  Default is false (server is shut down).
+    log_file: str
+        The path for the log file.  Default is py-processors.log in the user's home directory.
+
+    Methods
+    -------
+    start_server(jar_path, **kwargs)
+        Starts the server using the provided `jar_path`.  Optionally takes hostname, port, jvm_mem, and timeout.
+    stop_server()
+        Attempts to stop the server running at self.address.
+    """
+
+    PROC_VAR = 'PROCESSORS_SERVER'
+    TIMEOUT = 120
+    # save to lib loc
+    DEFAULT_JAR = os.path.join(os.path.dirname(os.path.realpath(__file__)), "processors-server.jar")
+    JVM_MEM = "-Xmx3G"
+    #print(resource_filename(__name__, "processors-server.jar"))
+
+    def __init__(self, **kwargs):
+        super(ProcessorsAPI, self).__init__(**kwargs)
+        self.timeout = kwargs.get("timeout", ProcessorsAPI.TIMEOUT)
+        self.jvm_mem = kwargs.get("jvm_mem", ProcessorsAPI.JVM_MEM)
+        self._start_command = "java {mem} -cp {jp} NLPServer --port {port} --host {host}" # mem, jar path, port, host
+        # whether or not to stop the server when the object is destroyed
+        self.keep_alive = kwargs.get("keep_alive", False)
+        # how long to wait between requests
+        self.wait_time = 2
+        # set self.jar_path
+        self.jar_path = ProcessorsAPI.DEFAULT_JAR
+        self._resolve_jar_path(kwargs.get("jar_path", self.jar_path))
+        # attempt to establish connection with server
+        self.establish_connection()
 
     def establish_connection(self):
         """
@@ -288,14 +312,6 @@ class ProcessorsAPI(object):
 
         # if the server still hasn't started, raise an Exception
         raise Exception("Couldn't connect to processors-server. Is the port in use?")
-
-    def make_address(self, hostname, port):
-        # update hostname
-        self.hostname = hostname
-        # update port
-        self.port = port
-        # update address
-        self.address = "http://{}:{}".format(self.hostname, self.port)
 
     @staticmethod
     def _download_jar(jar_url=None):

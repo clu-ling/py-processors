@@ -5,13 +5,13 @@
 from __future__ import absolute_import
 from .ds import *
 from .odin import Mention
-from .api import ProcessorsAPI
+from .api import ProcessorsBaseAPI, ProcessorsAPI
 from .serialization import JSONSerializer
 import json
 
 
 __title__ = 'py-processors'
-__version__ = '3.1.0'
+__version__ = '3.2.0'
 __ps_rec__ = '3.1.0' # known compatible version of server
 __author__ = 'Gus Hahn-Powell'
 __copyright__ = 'Copyright 2015 Gus Hahn-Powell'

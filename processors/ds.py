@@ -102,10 +102,10 @@ class Document(object):
         return not self.__eq__(other)
 
     def bag_of_labeled_dependencies_using(self, form):
-        return list(chain(*[s.labeled_dependencies_using(s._get_tokens(form)) for s in self.sentences]))
+        return list(chain(*[s.labeled_dependencies_from_tokens(s._get_tokens(form)) for s in self.sentences]))
 
     def bag_of_unlabeled_dependencies_using(self, form):
-        return list(chain(*[s.unlabeled_dependencies_using(s._get_tokens(form)) for s in self.sentences]))
+        return list(chain(*[s.unlabeled_dependencies_from_tokens(s._get_tokens(form)) for s in self.sentences]))
 
     def _merge_ne_dicts(self):
         # Get the set of all NE labels found in the Doc's sentences
@@ -290,6 +290,9 @@ class Sentence(object):
             tokens = self.nes
         elif f == "index":
             tokens = list(range(self.length))
+        # unrecognized form
+        else:
+            raise Exception("""form must be 'words', 'tags', 'lemmas', or 'index'""")
         return tokens
 
     def _set_toks(self, toks):
@@ -358,30 +361,39 @@ class Sentence(object):
     def to_string(self):
         return ' '.join("{w}__{p}".format(w=self.words[i],p=self.tags[i]) for i in range(self.length))
 
-    def labeled_dependencies_using(self, tokens):
+    def bag_of_labeled_dependencies_using(self, form):
+        """
+        Produces a list of syntactic dependencies
+        where each edge is labeled with its grammatical relation.
+        """
+        tokens = self._get_tokens(form)
+        return self.labeled_dependencies_from_tokens(tokens) if tokens else None
+
+    def bag_of_unlabeled_dependencies_using(self, form):
+        """
+        Produces a list of syntactic dependencies
+        where each edge is left unlabeled without its grammatical relation.
+        """
+        tokens = self._get_tokens(form)
+        return self.unlabeled_dependencies_from_tokens(tokens) if tokens else None
+
+    def labeled_dependencies_from_tokens(self, tokens):
         """
         Generates a list of labeled dependencies for a sentence
         using the provided tokens
         """
-        #else:
-        #    raise Exception("""form must be "words", "tags", "lemmas", or "index"""")
         deps = self.dependencies
         labeled = []
-        for out in deps.outgoing:
-            for (dest, rel) in deps.outgoing[out]:
-                labeled.append("{}_{}_{}".format(tokens[out], rel.upper(), tokens[dest]))
-        return labeled
+        return [(tokens[out], rel, tokens[dest]) \
+                for out in deps.outgoing \
+                for (dest, rel) in deps.outgoing[out]]
 
-    def unlabeled_dependencies_using(self, tokens):
+    def unlabeled_dependencies_from_tokens(self, tokens):
         """
         Generate a list of unlabeled dependencies for a sentence
         using the provided tokens
         """
-        unlabeled = []
-        for sd in self.labeled_dependencies_using(tokens):
-            (head, _, dep) = sd.split("_")
-            unlabeled.append("{}_{}".format(head, dep))
-        return unlabeled
+        return [(head, dep) for (head, rel, dep) in self.labeled_dependencies_from_tokens(tokens)]
 
     def semantic_head(self, graph_name="stanford-collapsed", valid_tags={r"^N", "VBG"}, valid_indices=None):
         return HeadFinder.semantic_head(self, graph_name, valid_tags, valid_indices)
@@ -491,9 +503,9 @@ class DirectedGraph(object):
 
     Methods
     -------
-    bag_of_labeled_dependencies_using(form)
+    bag_of_labeled_dependencies_from_tokens(form)
         Produces a list of syntactic dependencies where each edge is labeled with its grammatical relation.
-    bag_of_unlabeled_dependencies_using(form)
+    bag_of_unlabeled_dependencies_from_tokens(form)
         Produces a list of syntactic dependencies where each edge is left unlabeled without its grammatical relation.
     """
     STANFORD_BASIC_DEPENDENCIES = "stanford-basic"

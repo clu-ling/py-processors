@@ -1,4 +1,10 @@
 # Changes
+- v3.2.0:
+    - `ProcessorsAPI` now inherits from `ProcessorsBaseAPI`
+    - `ProcessorsBaseAPI` can be used with a [`docker` backend](https://hub.docker.com/r/myedibleenso/processors-server/)
+    - Updated documentation
+    - Updated requirements for building documentation
+    - More tests covering syntactic dependencies
 - v3.1.0:
     - Upgraded `processors-server` version to v3.1.0
     - Added support for `CluProcessor`
