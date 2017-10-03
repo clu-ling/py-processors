@@ -1,11 +1,4 @@
 six
 requests>=2.4.2
 networkx==1.11
-green>=2.5.0
-coverage
-Sphinx
-sphinx_rtd_theme
-recommonmark>=0.4.0
-sphinxcontrib-napoleon
 termcolor>=1.1.0
-jupyter>=1.0.0

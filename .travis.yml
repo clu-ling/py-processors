@@ -21,9 +21,6 @@ jdk:
 
 python:
   - "2.7"
-  # - "3.2"
-  # - "3.3"
-  # - "3.4"
   - "3.5"
 
 before_install:
@@ -48,7 +45,8 @@ before_install:
 
 # command to install dependencies
 install:
-  - pip install .
+  #- pip install .
+  - pip install .[test]
 #  - pip install git+https://github.com/myedibleenso/py-processors.git
 
 # command to run tests
@@ -56,6 +54,4 @@ script:
   - green -vv --run-coverage
 
 after_success:
-  # inspect log file
-  - cat ~/.py-processors.log
   - coveralls

@@ -89,12 +89,26 @@ class Processor(object):
             #print(e)
             return None
 
+class CluProcessor(Processor):
+
+    """
+    Processor for text annotation based on [`org.clulab.processors.clu.CluProcessor`](https://github.com/clulab/processors/blob/master/main/src/main/scala/org/clulab/processors/clu/CluProcessor.scala)
+
+    Uses the Malt parser.
+    """
+    def __init__(self, address):
+        self.service = "{}/api/clu/annotate".format(address)
+
+    def annotate(self, text):
+        return super(CluProcessor, self).annotate(text)
+
+
 class FastNLPProcessor(Processor):
 
     """
     Processor for text annotation based on [`org.clulab.processors.fastnlp.FastNLPProcessor`](https://github.com/clulab/processors/blob/master/corenlp/src/main/scala/org/clulab/processors/fastnlp/FastNLPProcessor.scala)
 
-    Uses the Malt parser.
+    Uses the Stanford CoreNLP neural network parser.
     """
     def __init__(self, address):
         self.service = "{}/api/fastnlp/annotate".format(address)

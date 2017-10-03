@@ -38,12 +38,14 @@ class ProcessorsAPI(object):
     kee_alive : bool
         Whether or not to keep the server running when ProcessorsAPI instance goes out of scope.  Default is false (server is shut down).
     log_file: str
-        The path for the log file.  Default is .py-processors.log in the user's home directory.
+        The path for the log file.  Default is py-processors.log in the user's home directory.
 
     Methods
     -------
     annotate(text)
         Produces a Document from the provided `text` using the default processor.
+    clu.annotate(text)
+        Produces a Document from the provided `text` using CluProcessor.
     fastnlp.annotate(text)
         Produces a Document from the provided `text` using FastNLPProcessor.
     bionlp.annotate(text)
@@ -77,7 +79,7 @@ class ProcessorsAPI(object):
     PORT = 8886
     JVM_MEM = "-Xmx3G"
     HOST = "localhost"
-    LOG = full_path(os.path.join("~", "py-processors.log"))
+    LOG = full_path(os.path.join(os.path.expanduser("~"), "py-processors.log"))
     #print(resource_filename(__name__, "processors-server.jar"))
 
     def __init__(self, **kwargs):
@@ -94,6 +96,7 @@ class ProcessorsAPI(object):
         self.wait_time = 2
         # processors
         self.default = Processor(self.address)
+        self.clu = CluProcessor(self.address)
         self.fastnlp = FastNLPProcessor(self.address)
         self.bionlp = BioNLPProcessor(self.address)
         # sentiment
@@ -106,7 +109,7 @@ class ProcessorsAPI(object):
         self.log_file = self._prepare_log_file(kwargs.get("log_file", ProcessorsAPI.LOG))
         # set self.jar_path
         self.jar_path = ProcessorsAPI.DEFAULT_JAR
-        self._resolve_jar_path(kwargs.get("jar_path", None))
+        self._resolve_jar_path(kwargs.get("jar_path", self.jar_path))
         # attempt to establish connection with server
         self.establish_connection()
 
@@ -186,15 +189,17 @@ class ProcessorsAPI(object):
         Attempts to preferentially set value of self.jar_path
         """
         jar_path = jar_path or ProcessorsAPI.DEFAULT_JAR
+
         # Preference 1: if a .jar is given, check to see if the path is valid
         if jar_path:
             jp = full_path(jar_path)
             # check if path is valid
             if os.path.exists(jp):
                 self.jar_path = jp
+
         # Preference 2: if a PROCESSORS_SERVER environment variable is defined, check its validity
-        elif ProcessorsAPI.PROC_VAR in os.environ:
-            self.logger.info("Using path given via $PROCESSORS_SERVER")
+        if not os.path.exists(self.jar_path) and ProcessorsAPI.PROC_VAR in os.environ:
+            self.logger.info("Using path given via ${}".format(ProcessorsAPI.PROC_VAR))
             jp = full_path(os.environ[ProcessorsAPI.PROC_VAR])
             # check if path is valid
             if os.path.exists(jp):
@@ -202,6 +207,7 @@ class ProcessorsAPI(object):
             else:
                 self.jar_path = None
                 self.logger.warn("WARNING: {0} path is invalid.  \nPlease verify this entry in your environment:\n\texport {0}=/path/to/processors-server.jar".format(ProcessorsAPI.PROC_VAR))
+
         # Preference 3: attempt to use the processors-sever.jar (download if not found)
         # check if jar exists
         if not self.jar_path or not os.path.exists(self.jar_path):

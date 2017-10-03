@@ -1,6 +1,12 @@
 # Changes
+- v3.1.0:
+    - Upgraded `processors-server` version to v3.1.0
+    - Added support for `CluProcessor`
+    - `odin` variables can now be used in imports
+    - Log file no longer prefixed with `.`
+    - `jupyter` notebook visualizations now treated as an extra module that can be installed via `pip install "py-processors[jupyter]"`
 - v3.0.3:
-  - jupyter notebook visualizations for `Sentence` graphs (dependency parses) and `Mention` structure
+  - `jupyter` notebook visualizations for `Sentence` graphs (dependency parses) and `Mention` structure
     - `visualization.JupyterVisualizer.display_graph()`
     - `visualization.Jupyter.Visualizer.display_mention()`
   - Display errors for broken Odin rules

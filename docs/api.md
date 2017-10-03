@@ -76,6 +76,13 @@ Communicating with the NLP server ([`processors-server`](https://github.com/myed
 
 Text annotation is performed by communicating with one of the following annotators ("processors").  
 
+### `CluProcessor`
+
+```eval_rst
+.. autoclass:: processors.annotators.CluProcessor
+    :show-inheritance:
+```
+
 ### `FastNLPProcessor`
 
 ```eval_rst
