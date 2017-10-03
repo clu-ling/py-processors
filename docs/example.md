@@ -40,7 +40,7 @@ Just replace `latest` in the command above with the appropriate version (`3.1.0`
 The following command will run the container in the background and expose the service on port `8886`:
 
 ```bash
-docker run -d -p 127.0.0.1:8886:8888 --name procserv myedibleenso/processors-server
+docker run -d -e _JAVA_OPTIONS="-Xmx3G" -p 127.0.0.1:8886:8888 --name procserv myedibleenso/processors-server
 ```
 For a more detailed example showcasing configuration optionstake a look at [this `docker-compose.yml` file](https://github.com/myedibleenso/processors-server/blob/master/docker-compose.yml).  You'll need to map a local port to `8888` in the container.
 
