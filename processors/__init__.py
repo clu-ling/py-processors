@@ -5,7 +5,7 @@
 from __future__ import absolute_import
 from .ds import *
 from .odin import Mention
-from .api import ProcessorsAPI
+from .api import ProcessorsBaseAPI, ProcessorsAPI
 from .serialization import JSONSerializer
 import json
 

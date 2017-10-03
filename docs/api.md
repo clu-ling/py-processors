@@ -6,6 +6,13 @@ This section of the documentation provides detailed information on functions, cl
 
 Communicating with the NLP server ([`processors-server`](https://github.com/myedibleenso/processors-server)) is handled by the following classes.
 
+## `ProcessorsBaseAPI`
+
+```eval_rst
+.. autoclass:: processors.api.ProcessorsBaseAPI
+    :show-inheritance:
+```
+
 ## `ProcessorsAPI`
 
 ```eval_rst

@@ -16,13 +16,32 @@
 Though [compatible*](https://github.com/myedibleenso/py-processors/issues?q=is%3Aopen+is%3Aissue+label%3Apython2.x) with Python 2.x, this library was developed with 3.x in mind.
 
 # Requirements
+The server component can be run either via `docker` or directly with `java`.
+
+## Option 1
+- [`docker`](https://www.docker.com/) and the [`myedibleenso/processors-server`](https://hub.docker.com/r/myedibleenso/processors-server/) container
+
+## Option 2
 - [Java 8](https://docs.oracle.com/javase/8/docs/technotes/guides/install/install_overview.html)
 - [`processor-sever`](http://github.com/myedibleenso/processors-server) (v3.1.0)
   - this dependency will be retrieved automatically during installation
-- At least 2GB of RAM free for the server (I recommend 3GB)
+- At least 2GB of RAM free for the server (I recommend 3GB+)
 
 # Installation
 
+`py-processors` can be installed via `pip`.  The library also has a `jupyter` extras module which adds widgets/visualizations to `juypter` notebooks.
+
+### basic installation
+```bash
+pip install py-processors
+```
+
+### basic + `jupyter` notebook widgets
+```bash
+pip install py-processors[jupyter]
+```
+
+### bleeding edge
 ```bash
 pip install git+https://github.com/myedibleenso/py-processors.git
 ```
