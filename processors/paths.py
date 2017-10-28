@@ -26,7 +26,7 @@ class DependencyUtils(object):
     simplify_tag(tag)
         Maps part of speech (PoS) tag to a subset of PoS tags to better consolidate categorical labels.
 
-    lexicalize_path(sentence, path, words=False, lemmas=False, tags=False, simple_tags=False, entities=False)
+    lexicalize_path(sentence, path, words=False, lemmas=False, tags=False, simple_tags=False, entities=False, limit_to=None)
         Lexicalizes path in syntactic dependency graph using Odin-style token constraints.
 
     pagerank(networkx_graph, alpha=0.85, personalization=None, max_iter=1000, tol=1e-06, nstart=None, weight='weight', dangling=None)
