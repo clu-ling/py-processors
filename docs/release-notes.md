@@ -1,4 +1,6 @@
 # Changes
+- v3.2.1:
+   - Fix to `limit_to` param of `DependencyUtils.lexicalize_path`
 - v3.2.0:
     - `ProcessorsAPI` now inherits from `ProcessorsBaseAPI`
     - `ProcessorsBaseAPI` can be used with a [`docker` backend](https://hub.docker.com/r/myedibleenso/processors-server/)

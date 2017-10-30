@@ -302,9 +302,9 @@ class DependencyUtils(object):
                     node_pattern = "[{}]".format(" & ".join(token_constraints))
                     # store lexicalized representation of node
                     lexicalized_path.append(node_pattern)
-                # append next edge
-                if i < len(relations):
-                    lexicalized_path.append(relations[i])
+            # append next edge
+            if i < len(relations):
+                lexicalized_path.append(relations[i])
         return lexicalized_path
 
     @staticmethod
