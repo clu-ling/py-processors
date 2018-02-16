@@ -319,10 +319,6 @@ class ProcessorsAPI(ProcessorsBaseAPI):
         # download processors-server.jar
         ppjar = ProcessorsAPI.DEFAULT_JAR
         dl = 0
-        # def dlProgress(count, blockSize, totalSize):
-        #     percent = int(count*blockSize*100/totalSize)
-        #     sys.stdout.write("\r{}".format("."))
-        #     sys.stdout.flush()
         print("Downloading {} from {} ...".format(ppjar, jar_url))
         response = requests.get(jar_url, stream=True, headers={'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'})
         total_length = int(response.headers.get('content-length'))
@@ -331,8 +327,9 @@ class ProcessorsAPI(ProcessorsBaseAPI):
                 # do we know the total file size?
                 if total_length:
                     percent_complete = int(100 * float(dl) / float(total_length))
-                    sys.stdout.write("\r{}% complete".format(percent_complete))
-                    sys.stdout.flush()
+                    if percent_complete % 5 == 0:
+                        sys.stdout.write("\r{}% complete".format(percent_complete))
+                        sys.stdout.flush()
                     dl += len(data)
                 # write data to disk
                 handle.write(data)
