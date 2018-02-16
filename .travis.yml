@@ -21,12 +21,12 @@ jdk:
 
 python:
   - "2.7"
-  - "3.5"
+  - "3.6"
 
 before_install:
   # show java version
   - java -version
-  - sudo apt-get update && sudo apt-get install oracle-java8-installer
+  - sudo apt-get -qq update && sudo apt-get -qq install oracle-java8-installer > /dev/null
   # get jdk_switcher
   - wget https://raw.githubusercontent.com/michaelklishin/jdk_switcher/master/jdk_switcher.sh
   - source jdk_switcher.sh
@@ -35,7 +35,7 @@ before_install:
   - jdk_switcher home oraclejdk8
   # update setuptools
   - pip install -U pip setuptools
-  - pip install coveralls
+  - pip install coveralls > /dev/null
   # show java version
   - java -version
   # start server as an experiment

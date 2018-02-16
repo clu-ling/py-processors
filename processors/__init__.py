@@ -11,7 +11,7 @@ import json
 
 
 __title__ = 'py-processors'
-__version__ = '3.2.2'
+__version__ = '3.2.3'
 __ps_rec__ = '3.1.0' # known compatible version of server
 __author__ = 'Gus Hahn-Powell'
 __copyright__ = 'Copyright 2015 Gus Hahn-Powell'

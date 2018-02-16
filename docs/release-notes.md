@@ -1,4 +1,8 @@
 # Changes
+- v3.2.2:
+   - Improved `jar` download
+   - Removed `six` dependency
+   - More compact `json`
 - v3.2.1:
    - Fix to `limit_to` param of `DependencyUtils.lexicalize_path`
 - v3.2.0:
