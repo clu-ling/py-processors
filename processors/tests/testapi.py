@@ -11,7 +11,7 @@ test_dir = os.path.dirname(__file__)
 
 port = 8886
 # initialize the server
-API = ProcessorsAPI(port=port, timeout=180, keep_alive=True)
+API = ProcessorsAPI(port=port, timeout=180, jvm_mem="-Xmx6G", keep_alive=True)
 
 class ProcessorsAPITests(unittest.TestCase):
 
