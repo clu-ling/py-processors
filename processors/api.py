@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 #from pkg_resources import resource_filename
-from six.moves.urllib.request import urlretrieve
+from six.moves.urllib.request import urlretrieve, build_opener, install_opener
 from .utils import *
 from .annotators import *
 from .sentiment import SentimentAnalysisAPI
@@ -326,6 +326,9 @@ class ProcessorsAPI(ProcessorsBaseAPI):
             sys.stdout.flush()
 
         print("Downloading {} from {} ...".format(ppjar, jar_url))
+        opener = build_opener()
+        opener.addheaders = [('User-Agent','Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/36.0.1941.0 Safari/537.36')]
+        install_opener(opener)
         urlretrieve(jar_url, ppjar, reporthook=dlProgress)
         print("\nDownload Complete! {}".format(ppjar))
 
