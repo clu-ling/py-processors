@@ -1,11 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-from processors.utils import post_json
+from processors.utils import is_string, post_json
 from processors.ds import Sentence, Document
 from processors.annotators import Message, SegmentedMessage
 import json
-import six
 
 
 class SentimentAnalysisAPI(object):
@@ -131,7 +130,7 @@ class SentimentAnalyzer(object):
         data : str or [str] or processors.ds.Sentence or processors.ds.Document
             The data to be scored for sentiment polarity.
         """
-        if isinstance(data, six.text_type):
+        if is_string(data):
             return self.score_text(data)
         elif isinstance(data, Sentence):
             return self.score_sentence(data)

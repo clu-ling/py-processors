@@ -9,7 +9,6 @@ from itertools import chain
 from collections import defaultdict, Counter
 from processors.paths import DependencyUtils, HeadFinder
 from processors.utils import LabelManager
-#from six import text_type
 import networkx as nx
 import json
 import re
