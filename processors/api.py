@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 #from pkg_resources import resource_filename
-from six.moves.urllib.request import urlretrieve, build_opener, install_opener
 from .utils import *
 from .annotators import *
 from .sentiment import SentimentAnalysisAPI
@@ -319,17 +318,25 @@ class ProcessorsAPI(ProcessorsBaseAPI):
         jar_url = jar_url or SERVER_JAR_URL
         # download processors-server.jar
         ppjar = ProcessorsAPI.DEFAULT_JAR
-        percent = 0
-        def dlProgress(count, blockSize, totalSize):
-            percent = int(count*blockSize*100/totalSize)
-            sys.stdout.write("\r{}% complete".format(percent))
-            sys.stdout.flush()
-
+        dl = 0
+        # def dlProgress(count, blockSize, totalSize):
+        #     percent = int(count*blockSize*100/totalSize)
+        #     sys.stdout.write("\r{}".format("."))
+        #     sys.stdout.flush()
         print("Downloading {} from {} ...".format(ppjar, jar_url))
-        opener = build_opener()
-        opener.addheaders = [('User-Agent','Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/36.0.1941.0 Safari/537.36')]
-        install_opener(opener)
-        urlretrieve(jar_url, ppjar, reporthook=dlProgress)
+        response = requests.get(jar_url, stream=True, headers={'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'})
+        total_length = int(response.headers.get('content-length'))
+        with open(ppjar, "wb") as handle:
+            for data in response.iter_content(chunk_size=2048):
+                # do we know the total file size?
+                if total_length:
+                    percent_complete = int(100 * float(dl) / float(total_length))
+                    sys.stdout.write("\r{}% complete".format(percent_complete))
+                    sys.stdout.flush()
+                    dl += len(data)
+                # write data to disk
+                handle.write(data)
+
         print("\nDownload Complete! {}".format(ppjar))
 
     def __del__(self):
