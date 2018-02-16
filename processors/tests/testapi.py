@@ -98,6 +98,7 @@ class ProcessorsAPITests(unittest.TestCase):
         text = "Ras phosphorylated Mek."
         # .annotate should be successful
         doc = API.bionlp.annotate(text)
+        # once more for fickle travis build
         doc = API.bionlp.annotate(text)
         self.assertNotEqual(doc, None, "bionlp.annotate failed to produce a Document")
         # should have two sentences

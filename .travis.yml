@@ -21,7 +21,7 @@ jdk:
 
 python:
   - "2.7"
-  - "3.5"
+  - "3.6"
 
 before_install:
   # show java version
