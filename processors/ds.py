@@ -15,7 +15,20 @@ import json
 import re
 
 
-class Document(object):
+class NLPDatum(object):
+
+    def to_JSON_dict(self):
+        return dict()
+
+    def to_JSON(self, pretty=True):
+        """
+        Returns JSON as String.
+        """
+        num_spaces = 4 if pretty else 0
+        return json.dumps(self.to_JSON_dict(), sort_keys=True, indent=num_spaces)
+
+
+class Document(NLPDatum):
 
     """
     Storage class for annotated text. Based on [`org.clulab.processors.Document`](https://github.com/clulab/processors/blob/master/main/src/main/scala/org/clulab/processors/Document.scala)
@@ -70,6 +83,7 @@ class Document(object):
     """
 
     def __init__(self, sentences):
+        NLPDatum.__init__(self)
         self.id = None
         self.size = len(sentences)
         self.sentences = sentences
@@ -132,13 +146,6 @@ class Document(object):
             doc_dict["id"] = self.id
         return doc_dict
 
-    def to_JSON(self, pretty=True):
-        """
-        Returns JSON as String.
-        """
-        num_spaces = 4 if pretty else 0
-        return json.dumps(self.to_JSON_dict(), sort_keys=True, indent=num_spaces)
-
     @staticmethod
     def load_from_JSON(json_dict):
         sentences = []
@@ -162,7 +169,7 @@ class Document(object):
         return doc
 
 
-class Sentence(object):
+class Sentence(NLPDatum):
 
     """
     Storage class for an annotated sentence. Based on [`org.clulab.processors.Sentence`](https://github.com/clulab/processors/blob/master/main/src/main/scala/org/clulab/processors/Sentence.scala)
@@ -249,6 +256,7 @@ class Sentence(object):
     O = LabelManager.O
 
     def __init__(self, **kwargs):
+        NLPDatum.__init__(self)
         self.words = kwargs["words"]
         self.startOffsets = kwargs["startOffsets"]
         self.endOffsets = kwargs["endOffsets"]
@@ -412,9 +420,6 @@ class Sentence(object):
             sentence_dict["graphs"][kind] = graph._graph_to_JSON_dict()
         return sentence_dict
 
-    def to_JSON(self):
-        return json.dumps(self.to_JSON_dict(), sort_keys=True, indent=4)
-
     @staticmethod
     def load_from_JSON(json_dict):
         sent = Sentence(
@@ -430,9 +435,10 @@ class Sentence(object):
         return sent
 
 
-class Edge(object):
+class Edge(NLPDatum):
 
     def __init__(self, source, destination, relation):
+        NLPDatum.__init__(self)
         self.source = source
         self.destination = destination
         self.relation = relation
@@ -456,11 +462,7 @@ class Edge(object):
         edge_dict["relation"] = self.relation
         return edge_dict
 
-    def to_JSON(self):
-        return json.dumps(self.to_JSON_dict(), sort_keys=True, indent=4)
-
-
-class DirectedGraph(object):
+class DirectedGraph(NLPDatum):
 
     """
     Storage class for directed graphs.
@@ -512,6 +514,7 @@ class DirectedGraph(object):
     STANFORD_COLLAPSED_DEPENDENCIES = "stanford-collapsed"
 
     def __init__(self, kind, deps, words):
+        NLPDatum.__init__(self)
         self._words = [w.lower() for w in words]
         self.kind = kind
         self.roots = deps.get("roots", [])
@@ -672,11 +675,8 @@ class DirectedGraph(object):
     def to_JSON_dict(self):
         return {self.kind:self._graph_to_JSON_dict()}
 
-    def to_JSON(self):
-        return json.dumps(self.to_JSON_dict(), sort_keys=True, indent=4)
 
-
-class Interval(object):
+class Interval(NLPDatum):
     """
     Defines a token or character span
 
@@ -690,14 +690,12 @@ class Interval(object):
     """
 
     def __init__(self, start, end):
+        NLPDatum.__init__(self)
         self.start = start
         self.end = end
 
     def to_JSON_dict(self):
         return {"start":self.start, "end":self.end}
-
-    def to_JSON(self):
-        return json.dumps(self.to_JSON_dict(), sort_keys=True, indent=4)
 
     @staticmethod
     def load_from_JSON(json):
