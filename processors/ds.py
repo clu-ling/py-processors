@@ -24,7 +24,7 @@ class NLPDatum(object):
         """
         Returns JSON as String.
         """
-        num_spaces = 4 if pretty else 0
+        num_spaces = 4 if pretty else None
         return json.dumps(self.to_JSON_dict(), sort_keys=True, indent=num_spaces)
 
 
