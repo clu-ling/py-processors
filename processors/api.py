@@ -75,6 +75,8 @@ class ProcessorsBaseAPI(object):
         self.sentiment = SentimentAnalysisAPI(self.address)
         # odin
         self.odin = OdinAPI(self.address)
+        #openie
+        self.openie = OpenIEAPI(self.address)
         # use the os module's devnull for compatibility with python 2.7
         #self.DEVNULL = open(os.devnull, 'wb')
         self.logger = logging.getLogger(__name__)
@@ -431,6 +433,42 @@ class OdinAPI(object):
         else:
             container = DocumentWithRules(doc, rules)
         return self._extract(container.to_JSON())
+
+
+class OpenIEAPI(object):
+
+    def __init__(self, address):
+        self._service = "{}/api/openie/entities/".format(address)
+
+    def _extract(self, etype, json_data):
+        mns_json = post_json(self._service+etype, json_data)
+        if "error" in mns_json:
+            error_msg = mns_json["error"]
+            print(error_msg)
+            return None
+        else:
+            return JSONSerializer.mentions_from_JSON(mns_json)
+
+    def extract_and_filter_entities_from_ds(self, ds):
+        return self._extract("extract-filter", json.dumps(ds.to_JSON_dict(), sort_keys=True, indent=4))
+
+    def extract_entities_from_ds(self, ds):
+        return self._extract("extract", json.dumps(ds.to_JSON_dict(), sort_keys=True, indent=4))
+
+    def extract_base_entities_from_ds(self, ds):
+        return self._extract("base-extract", json.dumps(ds.to_JSON_dict(), sort_keys=True, indent=4))
+
+    # def extract_and_filter_entities_from_text(self, text):
+    #     doc = ProcessorsAPI.annotate(text)
+    #     return self._extract("extract-filter", json.dumps(doc.to_JSON_dict(), sort_keys=True, indent=4))
+
+    # def extract_entities_from_text(self, text):
+    #     doc = ProcessorsAPI.annotate(text)
+    #     return self._extract("extract-filter", json.dumps(doc.to_JSON_dict(), sort_keys=True, indent=4))
+        
+    # def extract_base_entities_from_text(self, text):
+    #     doc = ProcessorsAPI.annotate(text)
+    #     return self._extract("base-extract", json.dumps(doc.to_JSON_dict(), sort_keys=True, indent=4))
 
 #############################################
 # Containers for Odin data
