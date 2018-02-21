@@ -32,6 +32,6 @@ class DSTests(unittest.TestCase):
         self.assertEqual(a.size(), 2, "Problem with Interval.size")
         self.assertEqual(b.size(), 1, "Problem with Interval.size")
         self.assertEqual(c.size(), 1, "Problem with Interval.size")
-        
+
 if __name__ == "__main__":
     unittest.main()
