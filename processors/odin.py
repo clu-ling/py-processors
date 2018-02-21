@@ -113,6 +113,26 @@ class Mention(NLPDatum):
     matches(label_pattern)
         Test if the provided pattern, `label_pattern`, matches any element in `Mention.labels`.
 
+    overlaps(other)
+        Test whether other (token index or Mention) overlaps with span of this Mention.
+
+    copy(**kwargs)
+        Copy constructor for this Mention.
+
+    words()
+        Words for this Mention's span.
+
+    tags()
+        Part of speech for this Mention's span.
+
+    lemmas()
+        Lemmas for this Mention's span.
+
+    _chunks()
+        chunk labels for this Mention's span.
+
+    _entities()
+        NE labels for this Mention's span.
     """
 
     TBM = "TextBoundMention"
@@ -201,6 +221,59 @@ class Mention(NLPDatum):
         m["keep"] = self.keep
         m["foundBy"] = self.foundBy
         return m
+
+    def startOffset(self):
+        return self.sentenceObj.endOffsets[self.start]
+
+    def endOffset(self):
+        return self.sentenceObj.endOffsets[self.end -1]
+
+    def words(self):
+        return self.sentenceObj.words[self.start:self.end]
+
+    def tags(self):
+        return self.sentenceObj.tags[self.start:self.end]
+
+    def lemmas(self):
+        return self.sentenceObj.lemmas[self.start:self.end]
+
+    def _chunks(self):
+        return self.sentenceObj._chunks[self.start:self.end]
+
+    def _entities(self):
+        return self.sentenceObj._entities[self.start:self.end]
+
+    def copy(self, **kwargs):
+        """
+        Copy constructor for mention
+        """
+        # return new instance
+        return self.__class__(
+            label=kwargs.get("label", self.label),
+            labels=kwargs.get("label", self.labels),
+            token_interval=kwargs.get("token_interval", self.tokenInterval),
+            sentence=kwargs.get("sentence", self.sentence), # NOTE: this is the sentence idx
+            document=kwargs.get("document", self.document),
+            foundBy=kwargs.get("foundBy", self.foundBy),
+            trigger=kwargs.get("trigger", self.trigger),
+            arguments=kwargs.get("arguments", self.arguments),
+            paths=kwargs.get("paths", self.paths),
+            keep=kwargs.get("keep", self.keep),
+            doc_id=kwargs.get("doc_id", self._doc_id)
+        )
+
+    def overlaps(self, other):
+        """
+        Checks for overlap.
+        """
+        if isinstance(other, int):
+            return self.start <= other < self.end
+        elif isinstance(other, Mention):
+            # equiv. sentences + checks on start and end
+            return (self.sentence.__hash__() == other.sentence.__hash__()) and \
+            ((other.start <= self.start < other.end) or (self.start <= other.start < self.end))
+        else:
+            return False
 
     def matches(self, label_pattern):
         """
