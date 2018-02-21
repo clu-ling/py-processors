@@ -271,7 +271,7 @@ class Mention(NLPDatum):
         elif isinstance(other, Mention):
             # equiv. sentences + checks on start and end
             return (self.sentence.__hash__() == other.sentence.__hash__()) and \
-            ((other.start <= self.start < other.end) or (self.start <= other.start < self.end))
+            self.tokenInterval.overlaps(other.tokenInterval)
         else:
             return False
 
