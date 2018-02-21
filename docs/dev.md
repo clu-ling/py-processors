@@ -4,7 +4,7 @@
 ```bash
 git clone https://github.com/myedibleenso/py-processors.git
 cd py-processors
-pip install -e .
+pip install -e .[test]
 ```
 2. Run the tests
 ```bash

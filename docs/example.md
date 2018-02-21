@@ -42,14 +42,14 @@ The following command will run the container in the background and expose the se
 ```bash
 docker run -d -e _JAVA_OPTIONS="-Xmx3G" -p 127.0.0.1:8886:8888 --name procserv myedibleenso/processors-server
 ```
-For a more detailed example showcasing configuration optionstake a look at [this `docker-compose.yml` file](https://github.com/myedibleenso/processors-server/blob/master/docker-compose.yml).  You'll need to map a local port to `8888` in the container.
+For a more detailed example showcasing configuration options, take a look at [this `docker-compose.yml` file](https://github.com/myedibleenso/processors-server/blob/master/docker-compose.yml).  You'll need to map a local port to `8888` in the container.
 
 Once the container is running, you can connect to it via `py-processors`:
 
 ```python
 from processors import *
 # provide the local port that you mapped to 8888 on the running container
-API = ProcessorsBaseAPI(port=8886)
+API = ProcessorsBaseAPI(hostname="127.0.0.1", port=8886)
 ```
 
 ## Annotating text
@@ -149,7 +149,7 @@ with open(json_file, "w") as out:
 
 # load from JSON
 with open(json_file, "r") as jf:
-    d = Document.load_from_JSON(json.load(jf))    
+    d = Document.load_from_JSON(json.load(jf))
 ```
 
 ## Perform sentiment analysis
@@ -177,7 +177,7 @@ lyrics = ["My sugar lumps are two of a kind", "Sweet and white and highly refine
 scores = API.sentiment.corenlp.score_segmented_text(lyrics)
 ```
 
-## Rule-based information extraction (IE) with `Odin`  
+## Rule-based information extraction (IE) with `Odin`
 If you're unfamiliar with writing `Odin` rules, see our manual for a primer on the language: [http://arxiv.org/pdf/1509.07513v1.pdf](http://arxiv.org/pdf/1509.07513v1.pdf)
 
 ```python
@@ -225,6 +225,9 @@ with open(mentions_json_file, "w") as out:
 with open(mentions_json_file, "r") as jf:
     mentions = JSONSerializer.mentions_from_JSON(json.load(jf))
 ```
+
+# OpenIE for concept recognition
+coming soon
 
 # `Jupyter` notebook visualizations
 
@@ -332,7 +335,7 @@ _NOTE: This won't have any effect if the server is already running on the given 
 
 # Keeping the server running
 
-If you've launched the server via `java`, `py-processors` will by default attempt to shut down the server whenever an API instance goes out of scope (ex. your script finishes or you exit the interpreter).  
+If you've launched the server via `java`, `py-processors` will by default attempt to shut down the server whenever an API instance goes out of scope (ex. your script finishes or you exit the interpreter).
 
 If you'd prefer to keep the server alive, you'll need to initialize the API with `keep_alive=True`:
 
