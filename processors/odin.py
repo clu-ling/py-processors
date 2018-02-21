@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 from .utils import post_json
-from .ds import Document, Interval
+from .ds import Document, Interval, NLPDatum
 from termcolor import colored
 import re
 import json
@@ -59,7 +59,7 @@ class OdinHighlighter(object):
         formatted_text = " ".join(text_span[:mention.start]) + " " + mention_span + " " + " ".join(text_span[mention.end:])
         return formatted_text.strip()
 
-class Mention(object):
+class Mention(NLPDatum):
     """
     A labeled span of text.  Used to model textual mentions of events, relations, and entities.
 
@@ -132,6 +132,7 @@ class Mention(object):
                 keep=True,
                 doc_id=None):
 
+        NLPDatum.__init__(self)
         self.label = label
         self.labels = labels if labels else [self.label]
         self.tokenInterval = token_interval
@@ -216,9 +217,6 @@ class Mention(object):
             True if `label_pattern` matches any element in `Mention.labels`
         """
         return any(re.match(label_pattern, label) for label in self.labels)
-
-    def to_JSON(self):
-        return json.dumps(self.to_JSON_dict(), sort_keys=True, indent=4)
 
     def _arguments_to_JSON_dict(self):
         return dict((role, [a.to_JSON_dict() for a in args]) for (role, args) in self.arguments.items())

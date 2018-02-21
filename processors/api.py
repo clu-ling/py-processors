@@ -440,8 +440,12 @@ class OpenIEAPI(object):
     def __init__(self, address):
         self._service = "{}/api/openie/entities/".format(address)
 
-    def _extract(self, etype, json_data):
-        mns_json = post_json(self._service+etype, json_data)
+    def _extract(self, endpoint, json_data):
+        """
+        """
+        # /api/openie/entities/???
+        api_endpoint = self._service + endpoint
+        mns_json = post_json(api_endpoint, json_data)
         if "error" in mns_json:
             error_msg = mns_json["error"]
             print(error_msg)
@@ -449,26 +453,23 @@ class OpenIEAPI(object):
         else:
             return JSONSerializer.mentions_from_JSON(mns_json)
 
-    def extract_and_filter_entities_from_ds(self, ds):
-        return self._extract("extract-filter", json.dumps(ds.to_JSON_dict(), sort_keys=True, indent=4))
+    def extract_entities(self, ds):
+        """
+        Extracts and expands Entities from a Sentence or Document
+        """
+        return self._extract(endpoint="extract", json_data=json.dumps(ds.to_JSON_dict(), sort_keys=True, indent=None))
 
-    def extract_entities_from_ds(self, ds):
-        return self._extract("extract", json.dumps(ds.to_JSON_dict(), sort_keys=True, indent=4))
+    def extract_and_filter_entities(self, ds):
+        """
+        Extracts, expands, and filters Entities from a Sentence or Document
+        """
+        return self._extract(endpoint="extract-filter", json_data=json.dumps(ds.to_JSON_dict(), sort_keys=True, indent=None))
 
-    def extract_base_entities_from_ds(self, ds):
-        return self._extract("base-extract", json.dumps(ds.to_JSON_dict(), sort_keys=True, indent=4))
-
-    # def extract_and_filter_entities_from_text(self, text):
-    #     doc = ProcessorsAPI.annotate(text)
-    #     return self._extract("extract-filter", json.dumps(doc.to_JSON_dict(), sort_keys=True, indent=4))
-
-    # def extract_entities_from_text(self, text):
-    #     doc = ProcessorsAPI.annotate(text)
-    #     return self._extract("extract-filter", json.dumps(doc.to_JSON_dict(), sort_keys=True, indent=4))
-        
-    # def extract_base_entities_from_text(self, text):
-    #     doc = ProcessorsAPI.annotate(text)
-    #     return self._extract("base-extract", json.dumps(doc.to_JSON_dict(), sort_keys=True, indent=4))
+    def extract_base_entities(self, ds):
+        """
+        Extracts non-expanded Entities from a Sentence or Document
+        """
+        return self._extract(endpoint="base-extract", json_data=json.dumps(ds.to_JSON_dict(), sort_keys=True, indent=None))
 
 #############################################
 # Containers for Odin data
@@ -488,7 +489,7 @@ class TextWithRules(object):
         return jdict
 
     def to_JSON(self):
-        return json.dumps(self.to_JSON_dict(), sort_keys=True, indent=4)
+        return json.dumps(self.to_JSON_dict(), sort_keys=True, indent=None)
 
 class TextWithURL(object):
 
@@ -504,7 +505,7 @@ class TextWithURL(object):
         return jdict
 
     def to_JSON(self):
-        return json.dumps(self.to_JSON_dict(), sort_keys=True, indent=4)
+        return json.dumps(self.to_JSON_dict(), sort_keys=True, indent=None)
 
 class DocumentWithRules(object):
 
@@ -520,7 +521,7 @@ class DocumentWithRules(object):
         return jdict
 
     def to_JSON(self):
-        return json.dumps(self.to_JSON_dict(), sort_keys=True, indent=4)
+        return json.dumps(self.to_JSON_dict(), sort_keys=True, indent=None)
 
 class DocumentWithURL(object):
 
@@ -537,4 +538,4 @@ class DocumentWithURL(object):
         return jdict
 
     def to_JSON(self):
-        return json.dumps(self.to_JSON_dict(), sort_keys=True, indent=4)
+        return json.dumps(self.to_JSON_dict(), sort_keys=True, indent=None)

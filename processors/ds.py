@@ -19,7 +19,7 @@ class NLPDatum(object):
     def to_JSON_dict(self):
         return dict()
 
-    def to_JSON(self, pretty=True):
+    def to_JSON(self, pretty=False):
         """
         Returns JSON as String.
         """
@@ -283,7 +283,7 @@ class Sentence(NLPDatum):
         return not self.__eq__(other)
 
     def __hash__(self):
-        return hash(self.to_JSON())
+        return hash(self.to_JSON(pretty=False))
 
     def _get_tokens(self, form):
         f = form.lower()
