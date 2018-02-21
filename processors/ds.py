@@ -19,7 +19,7 @@ class NLPDatum(object):
     def to_JSON_dict(self):
         return dict()
 
-    def to_JSON(self, pretty=True):
+    def to_JSON(self, pretty=False):
         """
         Returns JSON as String.
         """
@@ -283,7 +283,7 @@ class Sentence(NLPDatum):
         return not self.__eq__(other)
 
     def __hash__(self):
-        return hash(self.to_JSON())
+        return hash(self.to_JSON(pretty=False))
 
     def _get_tokens(self, form):
         f = form.lower()
@@ -413,6 +413,7 @@ class Sentence(NLPDatum):
         sentence_dict["tags"] = self.tags
         sentence_dict["lemmas"] = self.lemmas
         sentence_dict["entities"] = self._entities
+        sentence_dict["chunks"] = self._chunks
         # add graphs
         sentence_dict["graphs"] = dict()
         for (kind, graph) in self.graphs.items():
@@ -429,7 +430,8 @@ class Sentence(NLPDatum):
                     tags=json_dict.get("tags", None),
                     entities=json_dict.get("entities", None),
                     text=json_dict.get("text", None),
-                    graphs=json_dict.get("graphs", None)
+                    graphs=json_dict.get("graphs", None),
+                    chunks=json_dict.get("chunks", None)
                     )
         return sent
 
