@@ -10,6 +10,7 @@ from collections import defaultdict, Counter
 from processors.paths import DependencyUtils, HeadFinder
 from processors.utils import LabelManager
 import networkx as nx
+import hashlib
 import json
 import re
 
@@ -284,6 +285,12 @@ class Sentence(NLPDatum):
 
     def __hash__(self):
         return hash(self.to_JSON(pretty=False))
+
+    def deduplication_hash(self):
+        """
+        Generates a deduplication hash for the sentence
+        """
+        return hashlib.sha256(self.to_JSON(pretty=False).encode()).hexdigest()
 
     def _get_tokens(self, form):
         f = form.lower()
@@ -688,15 +695,47 @@ class Interval(NLPDatum):
 
     end : str
         The 1 + the index of the last token/character in the span.
+
+    Methods
+    -------
+    contains(that)
+        Test whether `that` (int or Interval) overlaps with span of this Interval.
+
+    overlaps(that)
+        Test whether this Interval contains another.  Equivalent Intervals will overlap.
     """
 
     def __init__(self, start, end):
         NLPDatum.__init__(self)
+        assert (start < end), "Interval start must precede end."
         self.start = start
         self.end = end
 
     def to_JSON_dict(self):
         return {"start":self.start, "end":self.end}
+
+    def size(self):
+        return self.end - self.start
+
+    def contains(self, that):
+        """
+        Checks if this interval contains another (that)
+        """
+        if isinstance(that, self.__class__):
+            return self.start <= that.start and self.end >= that.end
+        else:
+            return False
+
+    def overlaps(self, that):
+        """
+        Checks for overlap.
+        """
+        if isinstance(that, int):
+            return self.start <= other < self.end
+        elif isinstance(that, self.__class__):
+            return ((that.start <= self.start < that.end) or (self.start <= that.start < self.end))
+        else:
+            return False
 
     @staticmethod
     def load_from_JSON(json):

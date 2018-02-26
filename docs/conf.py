@@ -65,7 +65,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'py-processors'
-copyright = u'2016, Gus Hahn-Powell and contributors'
+copyright = u'2015, Gus Hahn-Powell and contributors'
 author = u'Gus Hahn-Powell'
 
 github_doc_root = 'https://github.com/myedibleenso/py-processors/tree/master/docs/'
@@ -209,7 +209,7 @@ html_static_path = ['_static']
 # Sphinx supports the following languages:
 #   'da', 'de', 'en', 'es', 'fi', 'fr', 'hu', 'it', 'ja'
 #   'nl', 'no', 'pt', 'ro', 'ru', 'sv', 'tr'
-#html_search_language = 'en'
+html_search_language = 'en'
 
 # A dictionary with options for the search language support, empty by default.
 # Now only 'ja' uses this config value
@@ -287,7 +287,7 @@ man_pages = [
 #  dir menu entry, description, category)
 texinfo_documents = [
   (master_doc, 'py-processors', u'py-processors Documentation',
-   author, 'py-processors', 'One line description of project.',
+   author, 'py-processors', "A wrapper++ for interacting with the CLU Lab's processors library.",
    'Miscellaneous'),
 ]
 
@@ -298,7 +298,7 @@ texinfo_documents = [
 #texinfo_domain_indices = True
 
 # How to display URL addresses: 'footnote', 'no', or 'inline'.
-#texinfo_show_urls = 'footnote'
+texinfo_show_urls = 'footnote'
 
 # If true, do not generate a @detailmenu in the "Top" node's menu.
 #texinfo_no_detailmenu = False
