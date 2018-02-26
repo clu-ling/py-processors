@@ -10,6 +10,7 @@ from collections import defaultdict, Counter
 from processors.paths import DependencyUtils, HeadFinder
 from processors.utils import LabelManager
 import networkx as nx
+import hashlib
 import json
 import re
 
@@ -284,6 +285,12 @@ class Sentence(NLPDatum):
 
     def __hash__(self):
         return hash(self.to_JSON(pretty=False))
+
+    def deduplication_hash(self):
+        """
+        Generates a deduplication hash for the sentence
+        """
+        return hashlib.sha256(self.to_JSON(pretty=False).encode()).hexdigest()
 
     def _get_tokens(self, form):
         f = form.lower()
@@ -709,7 +716,7 @@ class Interval(NLPDatum):
 
     def size(self):
         return self.end - self.start
-    
+
     def contains(self, that):
         """
         Checks if this interval contains another (that)
