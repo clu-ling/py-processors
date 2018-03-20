@@ -267,8 +267,8 @@ class Sentence(NLPDatum):
         self._entities = self._set_toks(kwargs.get("entities", None))
         self.text = kwargs.get("text", None) or " ".join(self.words)
         self.graphs = self._build_directed_graph_from_dict(kwargs.get("graphs", None))
-        self.basic_dependencies = self.graphs.get(DirectedGraph.STANFORD_BASIC_DEPENDENCIES, None)
-        self.collapsed_dependencies = self.graphs.get(DirectedGraph.STANFORD_COLLAPSED_DEPENDENCIES, None)
+        self.basic_dependencies = None if not any(g in self.graphs for g in DirectedGraph.BASIC_DEPENDENCIES) else [self.graphs.get(g, None) for g in DirectedGraph.BASIC_DEPENDENCIES][0]
+        self.collapsed_dependencies = None if not any(g in self.graphs for g in DirectedGraph.COLLAPSED_DEPENDENCIES) else [self.graphs.get(g, None) for g in DirectedGraph.COLLAPSED_DEPENDENCIES][0]
         self.dependencies = self.collapsed_dependencies if self.collapsed_dependencies != None else self.basic_dependencies
         # IOB tokens -> {label: [phrase 1, ..., phrase n]}
         self.nes = self._handle_iob(self._entities)
@@ -518,8 +518,8 @@ class DirectedGraph(NLPDatum):
     bag_of_unlabeled_dependencies_from_tokens(form)
         Produces a list of syntactic dependencies where each edge is left unlabeled without its grammatical relation.
     """
-    STANFORD_BASIC_DEPENDENCIES = "stanford-basic"
-    STANFORD_COLLAPSED_DEPENDENCIES = "stanford-collapsed"
+    BASIC_DEPENDENCIES = ["universal-basic", "stanford-basic"]
+    COLLAPSED_DEPENDENCIES = ["universal-enhanced", "stanford-collapsed"]
 
     def __init__(self, kind, deps, words):
         NLPDatum.__init__(self)
