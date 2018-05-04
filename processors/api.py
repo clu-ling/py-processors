@@ -36,6 +36,8 @@ class ProcessorsBaseAPI(object):
         Produces a Document from the provided `text` using the default processor.
     clu.annotate(text)
         Produces a Document from the provided `text` using CluProcessor.
+    clu.bio.annotate(text)
+        Produces a Document from the provided `text` using BioCluProcessor.
     fastnlp.annotate(text)
         Produces a Document from the provided `text` using FastNLPProcessor.
     bionlp.annotate(text)
@@ -68,7 +70,7 @@ class ProcessorsBaseAPI(object):
         self.make_address(self.hostname, self.port)
         # processors
         self.default = Processor(self.address)
-        self.clu = CluProcessor(self.address)
+        self.clu = CluService(self.address)
         self.fastnlp = FastNLPProcessor(self.address)
         self.bionlp = BioNLPProcessor(self.address)
         # sentiment

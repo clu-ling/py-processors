@@ -102,6 +102,44 @@ class CluProcessor(Processor):
     def annotate(self, text):
         return super(CluProcessor, self).annotate(text)
 
+class BioCluProcessor(Processor):
+
+    """
+    Processor for text annotation based on [`org.clulab.processors.clu.BioCluProcessor`](https://github.com/clulab/processors/blob/master/main/src/main/scala/org/clulab/processors/clu/CluProcessor.scala)
+
+    Uses the Malt parser.
+    """
+    def __init__(self, address):
+        self.service = "{}/api/clu/bio/annotate".format(address)
+
+    def annotate(self, text):
+        return super(BioCluProcessor, self).annotate(text)
+
+
+class CluService(object):
+    """
+    Manages processors under clu package
+
+    Parameters
+    ----------
+    address : str
+        The base address for the API (i.e., everything preceding `/api/..`)
+
+    Methods
+    -------
+    annotate(text)
+        Produces a Document from the provided `text` using the default processor (CluProcessor).
+    clu.annotate(text)
+        Produces a Document from the provided `text` using the default processor (CluProcessor).
+    bio.annotate(text)
+        Produces a Document from the provided `text` using BioCluProcessor.
+    """
+    def __init__(self, address):
+        self.clu = CluProcessor(address)
+        self.bio = BioCluProcessor(address)
+
+    def annotate(self, text):
+        return self.clu.annotate(text)
 
 class FastNLPProcessor(Processor):
 
