@@ -93,8 +93,8 @@ class Document(NLPDatum):
         self.lemmas = list(chain(*[s.lemmas for s in self.sentences]))
         self._entities = list(chain(*[s._entities for s in self.sentences]))
         self.nes = merge_entity_dicts = self._merge_ne_dicts()
-        self.bag_of_labeled_deps = list(chain(*[s.dependencies.labeled for s in self.sentences]))
-        self.bag_of_unlabeled_deps = list(chain(*[s.dependencies.unlabeled for s in self.sentences]))
+        self.bag_of_labeled_deps = list(chain(*[s.dependencies.labeled for s in self.sentences if s.dependencies]))
+        self.bag_of_unlabeled_deps = list(chain(*[s.dependencies.unlabeled for s in self.sentences if s.dependencies]))
         self.text = None
 
     def __hash__(self):
@@ -267,8 +267,8 @@ class Sentence(NLPDatum):
         self._entities = self._set_toks(kwargs.get("entities", None))
         self.text = kwargs.get("text", None) or " ".join(self.words)
         self.graphs = self._build_directed_graph_from_dict(kwargs.get("graphs", None))
-        self.basic_dependencies = None if not any(g in self.graphs for g in DirectedGraph.BASIC_DEPENDENCIES) else [self.graphs.get(g, None) for g in DirectedGraph.BASIC_DEPENDENCIES][0]
-        self.collapsed_dependencies = None if not any(g in self.graphs for g in DirectedGraph.COLLAPSED_DEPENDENCIES) else [self.graphs.get(g, None) for g in DirectedGraph.COLLAPSED_DEPENDENCIES][0]
+        self.basic_dependencies = Sentence._get_dependencies(self.graphs, DirectedGraph.BASIC_DEPENDENCIES)
+        self.collapsed_dependencies = Sentence._get_dependencies(self.graphs, DirectedGraph.COLLAPSED_DEPENDENCIES)
         self.dependencies = self.collapsed_dependencies if self.collapsed_dependencies != None else self.basic_dependencies
         # IOB tokens -> {label: [phrase 1, ..., phrase n]}
         self.nes = self._handle_iob(self._entities)
@@ -285,6 +285,13 @@ class Sentence(NLPDatum):
 
     def __hash__(self):
         return hash(self.to_JSON(pretty=False))
+
+    @staticmethod
+    def _get_dependencies(graphs, valid_labels):
+        for v in valid_labels:
+            if v in graphs:
+                return graphs[v]
+        return None
 
     def deduplication_hash(self):
         """

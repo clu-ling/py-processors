@@ -115,7 +115,6 @@ class BioCluProcessor(Processor):
     def annotate(self, text):
         return super(BioCluProcessor, self).annotate(text)
 
-
 class CluService(object):
     """
     Manages processors under clu package
