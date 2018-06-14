@@ -23,7 +23,7 @@ The server component can be run either via `docker` or directly with `java`.
 
 ## Option 2
 - [Java 8](https://docs.oracle.com/javase/8/docs/technotes/guides/install/install_overview.html)
-- [`processor-sever`](http://github.com/myedibleenso/processors-server) (v3.1.0)
+- [`processor-server`](http://github.com/myedibleenso/processors-server) (v3.1.0)
   - this dependency will be retrieved automatically during installation
 - At least 2GB of RAM free for the server (I recommend 3GB+)
 
