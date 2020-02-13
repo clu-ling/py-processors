@@ -1,5 +1,4 @@
 include processors/*.py
-include processors/*.jar
 
 include processors/assets/*.js
 include processors/assets/*.css

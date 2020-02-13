@@ -13,6 +13,10 @@ import re
 import os
 import sys
 
+# get version
+with open('processors/__init__.py', 'r', 'utf-8') as fd:
+    version = re.search(r'^__version__\s*=\s*[\'"]([^\'"]*)[\'"]',
+                        fd.read(), re.MULTILINE).group(1)
 
 class JarManager(object):
 
@@ -27,7 +31,7 @@ class JarManager(object):
             percent = int(count*blockSize*100/totalSize)
             sys.stdout.write("\r{}% complete".format(percent))
             sys.stdout.flush()
-        jar_url = "http://www.cs.arizona.edu/~hahnpowell/processors-server/current/processors-server.jar"
+        jar_url = "http://py-processors.parsertongue.com/v{}/processors-server.jar".format(version)
         print("Downloading {} from {} ...".format(ppjar, jar_url))
         urlretrieve(jar_url, ppjar, reporthook=dlProgress)
         print("\nInstalling py-processors ...")
@@ -56,21 +60,19 @@ with open('requirements.txt', 'r', 'utf-8') as f:
 with open('docs/index.md', 'r', 'utf-8') as f:
     readme = f.read()
 
-# get version
-with open('processors/__init__.py', 'r', 'utf-8') as fd:
-    version = re.search(r'^__version__\s*=\s*[\'"]([^\'"]*)[\'"]',
-                        fd.read(), re.MULTILINE).group(1)
+test_deps = ["green>=2.5.0", "coverage"]
+viz_deps = ["jupyter>=1.0.0", "ipython>=6.2.1", "traitlets>=4.3.2"]
 
 setup(name='py-processors',
       packages=["processors"],
       version=version,
       keywords=['nlp', 'processors', 'jvm'],
-      description="A wrapper for interacting with the CLU Lab's processors library.",
+      description="A wrapper++ for interacting with the CLU Lab's processors library.",
       long_description=readme,
-      url='http://github.com/myedibleenso/py-processors',
-      download_url="https://github.com/myedibleenso/py-processors/archive/v{}.zip".format(version),
+      url='https://github.com/clu-ling/py-processors',
+      download_url="https://github.com/clu-ling/py-processors/archive/v{}.zip".format(version),
       author='myedibleenso',
-      author_email='gushahnpowell@gmail.com',
+      author_email='gus@parsertongue.org',
       license='Apache 2.0',
       install_requires=required,
       cmdclass={
@@ -81,9 +83,12 @@ setup(name='py-processors',
         "Intended Audience :: Science/Research",
         "Natural Language :: English",
         "Topic :: Scientific/Engineering :: Artificial Intelligence",
-        "Programming Language :: Python :: 2.7",
         "Programming Language :: Python :: 3"
       ),
-      tests_require=['green', 'coverage'],
+      tests_require=test_deps,
+      extras_require={
+        'test': test_deps,
+        'jupyter': viz_deps
+      },
       include_package_data=True,
       zip_safe=False)

@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 # Gus Hahn-Powell 2015
@@ -9,13 +8,26 @@ from itertools import chain
 from collections import defaultdict, Counter
 from processors.paths import DependencyUtils, HeadFinder
 from processors.utils import LabelManager
-#from six import text_type
 import networkx as nx
+import hashlib
 import json
 import re
 
 
-class Document(object):
+class NLPDatum(object):
+
+    def to_JSON_dict(self):
+        return dict()
+
+    def to_JSON(self, pretty=False):
+        """
+        Returns JSON as String.
+        """
+        num_spaces = 4 if pretty else None
+        return json.dumps(self.to_JSON_dict(), sort_keys=True, indent=num_spaces)
+
+
+class Document(NLPDatum):
 
     """
     Storage class for annotated text. Based on [`org.clulab.processors.Document`](https://github.com/clulab/processors/blob/master/main/src/main/scala/org/clulab/processors/Document.scala)
@@ -70,6 +82,7 @@ class Document(object):
     """
 
     def __init__(self, sentences):
+        NLPDatum.__init__(self)
         self.id = None
         self.size = len(sentences)
         self.sentences = sentences
@@ -102,10 +115,10 @@ class Document(object):
         return not self.__eq__(other)
 
     def bag_of_labeled_dependencies_using(self, form):
-        return list(chain(*[s.labeled_dependencies_using(s._get_tokens(form)) for s in self.sentences]))
+        return list(chain(*[s.labeled_dependencies_from_tokens(s._get_tokens(form)) for s in self.sentences]))
 
     def bag_of_unlabeled_dependencies_using(self, form):
-        return list(chain(*[s.unlabeled_dependencies_using(s._get_tokens(form)) for s in self.sentences]))
+        return list(chain(*[s.unlabeled_dependencies_from_tokens(s._get_tokens(form)) for s in self.sentences]))
 
     def _merge_ne_dicts(self):
         # Get the set of all NE labels found in the Doc's sentences
@@ -132,13 +145,6 @@ class Document(object):
             doc_dict["id"] = self.id
         return doc_dict
 
-    def to_JSON(self, pretty=True):
-        """
-        Returns JSON as String.
-        """
-        num_spaces = 4 if pretty else 0
-        return json.dumps(self.to_JSON_dict(), sort_keys=True, indent=num_spaces)
-
     @staticmethod
     def load_from_JSON(json_dict):
         sentences = []
@@ -162,7 +168,7 @@ class Document(object):
         return doc
 
 
-class Sentence(object):
+class Sentence(NLPDatum):
 
     """
     Storage class for an annotated sentence. Based on [`org.clulab.processors.Sentence`](https://github.com/clulab/processors/blob/master/main/src/main/scala/org/clulab/processors/Sentence.scala)
@@ -249,6 +255,7 @@ class Sentence(object):
     O = LabelManager.O
 
     def __init__(self, **kwargs):
+        NLPDatum.__init__(self)
         self.words = kwargs["words"]
         self.startOffsets = kwargs["startOffsets"]
         self.endOffsets = kwargs["endOffsets"]
@@ -276,7 +283,13 @@ class Sentence(object):
         return not self.__eq__(other)
 
     def __hash__(self):
-        return hash(self.to_JSON())
+        return hash(self.to_JSON(pretty=False))
+
+    def deduplication_hash(self):
+        """
+        Generates a deduplication hash for the sentence
+        """
+        return hashlib.sha256(self.to_JSON(pretty=False).encode()).hexdigest()
 
     def _get_tokens(self, form):
         f = form.lower()
@@ -290,6 +303,9 @@ class Sentence(object):
             tokens = self.nes
         elif f == "index":
             tokens = list(range(self.length))
+        # unrecognized form
+        else:
+            raise Exception("""form must be 'words', 'tags', 'lemmas', or 'index'""")
         return tokens
 
     def _set_toks(self, toks):
@@ -358,30 +374,39 @@ class Sentence(object):
     def to_string(self):
         return ' '.join("{w}__{p}".format(w=self.words[i],p=self.tags[i]) for i in range(self.length))
 
-    def labeled_dependencies_using(self, tokens):
+    def bag_of_labeled_dependencies_using(self, form):
+        """
+        Produces a list of syntactic dependencies
+        where each edge is labeled with its grammatical relation.
+        """
+        tokens = self._get_tokens(form)
+        return self.labeled_dependencies_from_tokens(tokens) if tokens else None
+
+    def bag_of_unlabeled_dependencies_using(self, form):
+        """
+        Produces a list of syntactic dependencies
+        where each edge is left unlabeled without its grammatical relation.
+        """
+        tokens = self._get_tokens(form)
+        return self.unlabeled_dependencies_from_tokens(tokens) if tokens else None
+
+    def labeled_dependencies_from_tokens(self, tokens):
         """
         Generates a list of labeled dependencies for a sentence
         using the provided tokens
         """
-        #else:
-        #    raise Exception("""form must be "words", "tags", "lemmas", or "index"""")
         deps = self.dependencies
         labeled = []
-        for out in deps.outgoing:
-            for (dest, rel) in deps.outgoing[out]:
-                labeled.append("{}_{}_{}".format(tokens[out], rel.upper(), tokens[dest]))
-        return labeled
+        return [(tokens[out], rel, tokens[dest]) \
+                for out in deps.outgoing \
+                for (dest, rel) in deps.outgoing[out]]
 
-    def unlabeled_dependencies_using(self, tokens):
+    def unlabeled_dependencies_from_tokens(self, tokens):
         """
         Generate a list of unlabeled dependencies for a sentence
         using the provided tokens
         """
-        unlabeled = []
-        for sd in self.labeled_dependencies_using(tokens):
-            (head, _, dep) = sd.split("_")
-            unlabeled.append("{}_{}".format(head, dep))
-        return unlabeled
+        return [(head, dep) for (head, rel, dep) in self.labeled_dependencies_from_tokens(tokens)]
 
     def semantic_head(self, graph_name="stanford-collapsed", valid_tags={r"^N", "VBG"}, valid_indices=None):
         return HeadFinder.semantic_head(self, graph_name, valid_tags, valid_indices)
@@ -394,14 +419,12 @@ class Sentence(object):
         sentence_dict["tags"] = self.tags
         sentence_dict["lemmas"] = self.lemmas
         sentence_dict["entities"] = self._entities
+        sentence_dict["chunks"] = self._chunks
         # add graphs
         sentence_dict["graphs"] = dict()
         for (kind, graph) in self.graphs.items():
             sentence_dict["graphs"][kind] = graph._graph_to_JSON_dict()
         return sentence_dict
-
-    def to_JSON(self):
-        return json.dumps(self.to_JSON_dict(), sort_keys=True, indent=4)
 
     @staticmethod
     def load_from_JSON(json_dict):
@@ -413,14 +436,16 @@ class Sentence(object):
                     tags=json_dict.get("tags", None),
                     entities=json_dict.get("entities", None),
                     text=json_dict.get("text", None),
-                    graphs=json_dict.get("graphs", None)
+                    graphs=json_dict.get("graphs", None),
+                    chunks=json_dict.get("chunks", None)
                     )
         return sent
 
 
-class Edge(object):
+class Edge(NLPDatum):
 
     def __init__(self, source, destination, relation):
+        NLPDatum.__init__(self)
         self.source = source
         self.destination = destination
         self.relation = relation
@@ -444,11 +469,7 @@ class Edge(object):
         edge_dict["relation"] = self.relation
         return edge_dict
 
-    def to_JSON(self):
-        return json.dumps(self.to_JSON_dict(), sort_keys=True, indent=4)
-
-
-class DirectedGraph(object):
+class DirectedGraph(NLPDatum):
 
     """
     Storage class for directed graphs.
@@ -491,15 +512,16 @@ class DirectedGraph(object):
 
     Methods
     -------
-    bag_of_labeled_dependencies_using(form)
+    bag_of_labeled_dependencies_from_tokens(form)
         Produces a list of syntactic dependencies where each edge is labeled with its grammatical relation.
-    bag_of_unlabeled_dependencies_using(form)
+    bag_of_unlabeled_dependencies_from_tokens(form)
         Produces a list of syntactic dependencies where each edge is left unlabeled without its grammatical relation.
     """
     STANFORD_BASIC_DEPENDENCIES = "stanford-basic"
     STANFORD_COLLAPSED_DEPENDENCIES = "stanford-collapsed"
 
     def __init__(self, kind, deps, words):
+        NLPDatum.__init__(self)
         self._words = [w.lower() for w in words]
         self.kind = kind
         self.roots = deps.get("roots", [])
@@ -660,11 +682,8 @@ class DirectedGraph(object):
     def to_JSON_dict(self):
         return {self.kind:self._graph_to_JSON_dict()}
 
-    def to_JSON(self):
-        return json.dumps(self.to_JSON_dict(), sort_keys=True, indent=4)
 
-
-class Interval(object):
+class Interval(NLPDatum):
     """
     Defines a token or character span
 
@@ -675,17 +694,47 @@ class Interval(object):
 
     end : str
         The 1 + the index of the last token/character in the span.
+
+    Methods
+    -------
+    contains(that)
+        Test whether `that` (int or Interval) overlaps with span of this Interval.
+
+    overlaps(that)
+        Test whether this Interval contains another.  Equivalent Intervals will overlap.
     """
 
     def __init__(self, start, end):
+        NLPDatum.__init__(self)
+        assert (start < end), "Interval start must precede end."
         self.start = start
         self.end = end
 
     def to_JSON_dict(self):
         return {"start":self.start, "end":self.end}
 
-    def to_JSON(self):
-        return json.dumps(self.to_JSON_dict(), sort_keys=True, indent=4)
+    def size(self):
+        return self.end - self.start
+
+    def contains(self, that):
+        """
+        Checks if this interval contains another (that)
+        """
+        if isinstance(that, self.__class__):
+            return self.start <= that.start and self.end >= that.end
+        else:
+            return False
+
+    def overlaps(self, that):
+        """
+        Checks for overlap.
+        """
+        if isinstance(that, int):
+            return self.start <= other < self.end
+        elif isinstance(that, self.__class__):
+            return ((that.start <= self.start < that.end) or (self.start <= that.start < self.end))
+        else:
+            return False
 
     @staticmethod
     def load_from_JSON(json):

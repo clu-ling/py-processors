@@ -4,9 +4,13 @@ The following examples give an overview of how to use `py-processors`.
 
 ## Getting started
 
-First let's look at how to connect to the server.
+For annotation and parsing, `py-processors` communicates with [`processors-server`](https://github.com/clu-ling/processors-server) using a REST interface.
 
-As part of the installation process, `py-processors` will retrieve a compatible `processors-server.jar`.
+The server can be run either via `java` directly or in a [`docker` container](https://hub.docker.com/r/parsertongue/processors-server/).  Let's look at how to connect to the server.
+
+# Running the NLP server
+### Option 1:  `processors-server.jar`
+This method requires `java` and a compatible `processors-server.jar` for the server.  An appropriate `jar` will be downloaded automatically if one is not found.
 
 ```python
 from processors import *
@@ -14,6 +18,39 @@ from processors import *
 API = ProcessorsAPI(port=8886)
 ```
 _NOTE: It may take a minute or so for the server to initialize as there are some large model files that need to be loaded._
+
+### Option 2:  `docker` container
+
+You can pull [the official container from Docker Hub](https://hub.docker.com/r/parsertongue/processors-server/):
+
+```bash
+docker pull parsertongue/processors-server:latest
+```
+
+You can check `py-processors` for the appropriate version to retrieve:
+
+```python
+import processors
+# print the recommended processors-server version
+print(import processors.__ps_rec__)
+```
+
+Just replace `latest` in the command above with the appropriate version (`3.1.0` onwards).
+
+The following command will run the container in the background and expose the service on port `8886`:
+
+```bash
+docker run -d -e _JAVA_OPTIONS="-Xmx3G" -p 127.0.0.1:8886:8888 --name procserv parsertongue/processors-server
+```
+For a more detailed example showcasing configuration options, take a look at [this `docker-compose.yml` file](https://github.com/clu-ling/processors-server/blob/master/docker-compose.yml).  You'll need to map a local port to `8888` in the container.
+
+Once the container is running, you can connect to it via `py-processors`:
+
+```python
+from processors import *
+# provide the local port that you mapped to 8888 on the running container
+API = ProcessorsBaseAPI(hostname="127.0.0.1", port=8886)
+```
 
 ## Annotating text
 
@@ -47,10 +84,10 @@ s.length
 s.nes
 
 # generate labeled dependencies using "words", "tags", "lemmas", "entities", or token index ("index")
-s.labeled_dependencies_using("tags")
+s.bag_of_labeled_dependencies_using("tags")
 
 # generate unlabeled dependencies using "words", "tags", "lemmas", "entities", or token index ("index")
-s.unlabeled_dependencies_using("lemmas")
+s.bag_of_unlabeled_dependencies_using("lemmas")
 
 # play around with the dependencies directly
 deps = s.dependencies
@@ -112,7 +149,7 @@ with open(json_file, "w") as out:
 
 # load from JSON
 with open(json_file, "r") as jf:
-    d = Document.load_from_JSON(json.load(jf))    
+    d = Document.load_from_JSON(json.load(jf))
 ```
 
 ## Perform sentiment analysis
@@ -140,7 +177,7 @@ lyrics = ["My sugar lumps are two of a kind", "Sweet and white and highly refine
 scores = API.sentiment.corenlp.score_segmented_text(lyrics)
 ```
 
-## Rule-based information extraction (IE) with `Odin`  
+## Rule-based information extraction (IE) with `Odin`
 If you're unfamiliar with writing `Odin` rules, see our manual for a primer on the language: [http://arxiv.org/pdf/1509.07513v1.pdf](http://arxiv.org/pdf/1509.07513v1.pdf)
 
 ```python
@@ -189,10 +226,18 @@ with open(mentions_json_file, "r") as jf:
     mentions = JSONSerializer.mentions_from_JSON(json.load(jf))
 ```
 
-# Jupyter notebook visualizations
+# OpenIE for concept recognition
+coming soon
 
-`py-processors` has some notebook-based visualizations.
-Using [our fork](https://github.com/myedibleenso/displacy-processors) of [displaCy](https://github.com/explosion/displacy), You can now visualizer a `Sentence` graph as an SVG image using `visualization.JupyterVisualizer.display_graph()`:
+# `Jupyter` notebook visualizations
+
+`py-processors` supports some custom notebook-based visualizations, but  you'll need to install the extra `[jupyter]` module in order to use them:
+
+```
+pip install "py-processors[jupyter]"
+```
+
+These visualizations make use of [our fork](https://github.com/clu-ling/displacy-processors) of [displaCy](https://github.com/explosion/displacy), You can now visualize a `Sentence` graph as an SVG image using `visualization.JupyterVisualizer.display_graph()`:
 
 ```python
 from processors.visualization import JupyterVisualizer as viz
@@ -290,7 +335,7 @@ _NOTE: This won't have any effect if the server is already running on the given 
 
 # Keeping the server running
 
-By default, `py-processors` will attempt to shut down the server whenever an API instance goes out of scope (ex. your script finishes or you exit the interpreter).  
+If you've launched the server via `java`, `py-processors` will by default attempt to shut down the server whenever an API instance goes out of scope (ex. your script finishes or you exit the interpreter).
 
 If you'd prefer to keep the server alive, you'll need to initialize the API with `keep_alive=True`:
 

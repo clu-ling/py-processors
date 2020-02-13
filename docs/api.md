@@ -4,7 +4,14 @@ This section of the documentation provides detailed information on functions, cl
 
 ### Server Communication
 
-Communicating with the NLP server ([`processors-server`](https://github.com/myedibleenso/processors-server)) is handled by the following classes.
+Communicating with the NLP server ([`processors-server`](https://github.com/clu-ling/processors-server)) is handled by the following classes:
+
+## `ProcessorsBaseAPI`
+
+```eval_rst
+.. autoclass:: processors.api.ProcessorsBaseAPI
+    :show-inheritance:
+```
 
 ## `ProcessorsAPI`
 
@@ -20,6 +27,13 @@ Communicating with the NLP server ([`processors-server`](https://github.com/myed
     :show-inheritance:
 ```
 
+### `OdinAPI`
+
+```eval_rst
+.. autoclass:: processors.api.OpenIEAPI
+    :show-inheritance:
+```
+
 ### `SentimentAnalysisAPI`
 
 ```eval_rst
@@ -28,6 +42,13 @@ Communicating with the NLP server ([`processors-server`](https://github.com/myed
 ```
 
 ## Data Structures
+
+### `NLPDatum`
+
+```eval_rst
+.. autoclass:: processors.ds.NLPDatum
+    :show-inheritance:
+```
 
 ### `Document`
 
@@ -40,6 +61,13 @@ Communicating with the NLP server ([`processors-server`](https://github.com/myed
 
 ```eval_rst
 .. autoclass:: processors.ds.Sentence
+    :show-inheritance:
+```
+
+### `Edge`
+
+```eval_rst
+.. autoclass:: processors.ds.Edge
     :show-inheritance:
 ```
 
@@ -66,15 +94,16 @@ Communicating with the NLP server ([`processors-server`](https://github.com/myed
     :show-inheritance:
 ```
 
-## DependencyUtils
-```eval_rst
-.. autoclass:: processors.paths.DependencyUtils
-    :show-inheritance:
-```
-
 ## Annotators (Processors)
 
-Text annotation is performed by communicating with one of the following annotators ("processors").  
+Text annotation is performed by communicating with one of the following annotators ("processors").
+
+### `CluProcessor`
+
+```eval_rst
+.. autoclass:: processors.annotators.CluProcessor
+    :show-inheritance:
+```
 
 ### `FastNLPProcessor`
 
@@ -92,14 +121,49 @@ Text annotation is performed by communicating with one of the following annotato
 
 ## Sentiment Analysis
 
+### `SentimentAnalyzer`
+
 ```eval_rst
-.. autoclass:: processors.sentiment.BioNLPProcessor
+.. autoclass:: processors.sentiment.SentimentAnalyzer
+    :show-inheritance:
+```
+
+### `CoreNLPSentimentAnalyzer`
+
+```eval_rst
+.. autoclass:: processors.sentiment.CoreNLPSentimentAnalyzer
+    :show-inheritance:
+```
+
+## `paths`
+
+### `DependencyUtils`
+
+```eval_rst
+.. autoclass:: processors.paths.DependencyUtils
+    :show-inheritance:
+```
+
+### `HeadFinder`
+
+```eval_rst
+.. autoclass:: processors.paths.HeadFinder
     :show-inheritance:
 ```
 
 ## Serialization
 
+### `JSONSerializer`
+
 ```eval_rst
 .. autoclass:: processors.serialization.JSONSerializer
+    :show-inheritance:
+```
+
+## Visualization
+
+### `JupyterVisualizer`
+
+.. autoclass:: processors.Visualization.JupyterVisualizer
     :show-inheritance:
 ```

@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 # use data structures
@@ -89,18 +88,46 @@ class Processor(object):
             #print(e)
             return None
 
+class CluProcessor(Processor):
+
+    """
+    Processor for text annotation based on [`org.clulab.processors.clu.CluProcessor`](https://github.com/clulab/processors/blob/master/main/src/main/scala/org/clulab/processors/clu/CluProcessor.scala)
+
+    Uses the Malt parser.
+    """
+    def __init__(self, address):
+        self.service = "{}/api/clu/annotate".format(address)
+
+    def annotate(self, text):
+        return super(CluProcessor, self).annotate(text)
+
+
 class FastNLPProcessor(Processor):
 
     """
     Processor for text annotation based on [`org.clulab.processors.fastnlp.FastNLPProcessor`](https://github.com/clulab/processors/blob/master/corenlp/src/main/scala/org/clulab/processors/fastnlp/FastNLPProcessor.scala)
 
-    Uses the Malt parser.
+    Uses the Stanford CoreNLP neural network parser.
     """
     def __init__(self, address):
+        self.address = address
         self.service = "{}/api/fastnlp/annotate".format(address)
+        self.chunk_address = "{}/api/fastnlp/chunk".format(self.address)
+
 
     def annotate(self, text):
         return super(FastNLPProcessor, self).annotate(text)
+
+    def _chunk(self, obj):
+        return post_json(self.chunk_address, obj.to_JSON())
+
+    def chunk_sentence(self, sentence):
+        res = self._chunk(sentence)
+        return Sentence.load_from_JSON(res)
+
+    def chunk_document(self, doc):
+        res = self._chunk(doc)
+        return Document.load_from_JSON(res)
 
 
 class BioNLPProcessor(Processor):

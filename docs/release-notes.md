@@ -1,6 +1,24 @@
 # Changes
+- v3.2.2:
+   - Improved `jar` download
+   - Removed `six` dependency
+   - More compact `json`
+- v3.2.1:
+   - Fix to `limit_to` param of `DependencyUtils.lexicalize_path`
+- v3.2.0:
+    - `ProcessorsAPI` now inherits from `ProcessorsBaseAPI`
+    - `ProcessorsBaseAPI` can be used with a [`docker` backend](https://hub.docker.com/r/parsertongue/processors-server/)
+    - Updated documentation
+    - Updated requirements for building documentation
+    - More tests covering syntactic dependencies
+- v3.1.0:
+    - Upgraded `processors-server` version to v3.1.0
+    - Added support for `CluProcessor`
+    - `odin` variables can now be used in imports
+    - Log file no longer prefixed with `.`
+    - `jupyter` notebook visualizations now treated as an extra module that can be installed via `pip install "py-processors[jupyter]"`
 - v3.0.3:
-  - jupyter notebook visualizations for `Sentence` graphs (dependency parses) and `Mention` structure
+  - `jupyter` notebook visualizations for `Sentence` graphs (dependency parses) and `Mention` structure
     - `visualization.JupyterVisualizer.display_graph()`
     - `visualization.Jupyter.Visualizer.display_mention()`
   - Display errors for broken Odin rules
@@ -19,7 +37,7 @@
 - v3.0.0:
   - `PageRank` for dependency graphs via `networkx`
   - Find shortest paths in dependency graphs via `networkx`
-  - Updated api to match [v.3.0 of `processors-server`](https://github.com/myedibleenso/processors-server/releases/tag/v3.0)
+  - Updated api to match [v.3.0 of `processors-server`](https://github.com/clu-ling/processors-server/releases/tag/v3.0)
   - Support for Odin `@Mention.argname`
   - `json` compatible with [`org.clulab.processors`](https://github.com/clulab/processors)
 - v2.9.7:
@@ -48,11 +66,11 @@
   - `Dependencies` bug fix related to initializing from `json`
   - Added `keep_alive` boolean parameter to `ProcessorsAPI` constructor to provide a way to keep the server running when instance goes out of scope
   - Compatibility fixes for 2.x
-  - Updated api to match [v.2.7 of `processors-server`](https://github.com/myedibleenso/processors-server/releases/tag/v2.7)
+  - Updated api to match [v.2.7 of `processors-server`](https://github.com/clu-ling/processors-server/releases/tag/v2.7)
     - handle pre-segmented text (preserve provided sentence segmentation in `.annotate` and `.sentiment.corenlp.score_segmented_text` calls)
 - v2.7:
   - Added `Mention` class and support for rule-based information extraction with Odin
-  - Updated api to match [v.2.5 of `processors-server`](https://github.com/myedibleenso/processors-server/releases/tag/v2.5)
+  - Updated api to match [v.2.5 of `processors-server`](https://github.com/clu-ling/processors-server/releases/tag/v2.5)
 - v2.6:
   - Added interface to [CoreNLP's tree-based sentiment analysis](http://nlp.stanford.edu/~socherr/EMNLP2013_RNTN.pdf)
   - Rewrote `json` serialization and loading to mirror changes in `processors-server` v2.2

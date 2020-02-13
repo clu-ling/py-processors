@@ -1,14 +1,64 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 from .utils import post_json
-from .ds import Document, Interval
-from .visualization import OdinHighlighter
+from .ds import Document, Interval, NLPDatum
+from termcolor import colored
 import re
 import json
 
 
-class Mention(object):
+class OdinHighlighter(object):
+
+    @staticmethod
+    def LABEL(token):
+        return colored(token, color="red", attrs=["bold"])
+
+    @staticmethod
+    def ARG(token):
+        return colored(token, on_color="on_green", attrs=["bold"])
+
+    @staticmethod
+    def TRIGGER(token):
+        return colored(token, on_color="on_blue", attrs=["bold"])
+
+    @staticmethod
+    def CONCEAL(token):
+        return colored(token, on_color="on_grey", attrs=["concealed"])
+
+    @staticmethod
+    def MENTION(token):
+        return colored(token, on_color="on_yellow")
+
+    @staticmethod
+    def highlight_mention(mention):
+        """
+        Formats text of mention
+        """
+        text_span = mention.sentenceObj.words[:]
+        # format TBM span like an arg
+        if mention.type == "TextBoundMention":
+            for i in range(mention.start, mention.end):
+                text_span[i] = OdinHighlighter.ARG(text_span[i])
+        if mention.arguments:
+            for (role, args) in mention.arguments.items():
+                for arg in args:
+                    for i in range(arg.start, arg.end):
+                        text_span[i] = OdinHighlighter.ARG(text_span[i])
+        # format trigger distinctly from args
+        if mention.trigger:
+            trigger = mention.trigger
+            for i in range(trigger.start, trigger.end):
+                text_span[i] = OdinHighlighter.TRIGGER(text_span[i])
+
+        # highlight tokens contained in mention span
+        for i in range(mention.start, mention.end):
+            text_span[i] = OdinHighlighter.MENTION(text_span[i])
+        mention_span = OdinHighlighter.MENTION(" ").join(text_span[mention.start:mention.end])
+        # highlight spaces in mention span
+        formatted_text = " ".join(text_span[:mention.start]) + " " + mention_span + " " + " ".join(text_span[mention.end:])
+        return formatted_text.strip()
+
+class Mention(NLPDatum):
     """
     A labeled span of text.  Used to model textual mentions of events, relations, and entities.
 
@@ -62,6 +112,26 @@ class Mention(object):
     matches(label_pattern)
         Test if the provided pattern, `label_pattern`, matches any element in `Mention.labels`.
 
+    overlaps(other)
+        Test whether other (token index or Mention) overlaps with span of this Mention.
+
+    copy(**kwargs)
+        Copy constructor for this Mention.
+
+    words()
+        Words for this Mention's span.
+
+    tags()
+        Part of speech for this Mention's span.
+
+    lemmas()
+        Lemmas for this Mention's span.
+
+    _chunks()
+        chunk labels for this Mention's span.
+
+    _entities()
+        NE labels for this Mention's span.
     """
 
     TBM = "TextBoundMention"
@@ -81,6 +151,7 @@ class Mention(object):
                 keep=True,
                 doc_id=None):
 
+        NLPDatum.__init__(self)
         self.label = label
         self.labels = labels if labels else [self.label]
         self.tokenInterval = token_interval
@@ -150,6 +221,59 @@ class Mention(object):
         m["foundBy"] = self.foundBy
         return m
 
+    def startOffset(self):
+        return self.sentenceObj.endOffsets[self.start]
+
+    def endOffset(self):
+        return self.sentenceObj.endOffsets[self.end -1]
+
+    def words(self):
+        return self.sentenceObj.words[self.start:self.end]
+
+    def tags(self):
+        return self.sentenceObj.tags[self.start:self.end]
+
+    def lemmas(self):
+        return self.sentenceObj.lemmas[self.start:self.end]
+
+    def _chunks(self):
+        return self.sentenceObj._chunks[self.start:self.end]
+
+    def _entities(self):
+        return self.sentenceObj._entities[self.start:self.end]
+
+    def copy(self, **kwargs):
+        """
+        Copy constructor for mention
+        """
+        # return new instance
+        return self.__class__(
+            label=kwargs.get("label", self.label),
+            labels=kwargs.get("label", self.labels),
+            token_interval=kwargs.get("token_interval", self.tokenInterval),
+            sentence=kwargs.get("sentence", self.sentence), # NOTE: this is the sentence idx
+            document=kwargs.get("document", self.document),
+            foundBy=kwargs.get("foundBy", self.foundBy),
+            trigger=kwargs.get("trigger", self.trigger),
+            arguments=kwargs.get("arguments", self.arguments),
+            paths=kwargs.get("paths", self.paths),
+            keep=kwargs.get("keep", self.keep),
+            doc_id=kwargs.get("doc_id", self._doc_id)
+        )
+
+    def overlaps(self, other):
+        """
+        Checks for overlap.
+        """
+        if isinstance(other, int):
+            return self.start <= other < self.end
+        elif isinstance(other, Mention):
+            # equiv. sentences + checks on start and end
+            return (self.sentence.__hash__() == other.sentence.__hash__()) and \
+            self.tokenInterval.overlaps(other.tokenInterval)
+        else:
+            return False
+
     def matches(self, label_pattern):
         """
         Test if the provided pattern, `label_pattern`, matches any element in `Mention.labels`.
@@ -165,9 +289,6 @@ class Mention(object):
             True if `label_pattern` matches any element in `Mention.labels`
         """
         return any(re.match(label_pattern, label) for label in self.labels)
-
-    def to_JSON(self):
-        return json.dumps(self.to_JSON_dict(), sort_keys=True, indent=4)
 
     def _arguments_to_JSON_dict(self):
         return dict((role, [a.to_JSON_dict() for a in args]) for (role, args) in self.arguments.items())

@@ -1,7 +1,7 @@
 # FAQ
 
 ### I want the latest `processors-server.jar`
-In that case, take a look over [here](https:github.com/myedibleenso/processors-server).
+In that case, take a look over [here](https:github.com/clu-ling/processors-server).
 
 ### Something is already running on port `XXXX`, but I don't know what.  Help!
 

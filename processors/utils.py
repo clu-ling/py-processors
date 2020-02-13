@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 from termcolor import colored
@@ -6,6 +5,8 @@ import requests
 import json
 import os
 
+def is_string(x):
+    return isinstance(x, ("".__class__, u"".__class__))
 
 def post_json(service, json_data):
     # POST json to the server API
