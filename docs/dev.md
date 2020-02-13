@@ -2,7 +2,7 @@
 
 1. Clone and install the package locally:
 ```bash
-git clone https://github.com/myedibleenso/py-processors.git
+git clone https://github.com/clu-ling/py-processors.git
 cd py-processors
 pip install -e .[test]
 ```

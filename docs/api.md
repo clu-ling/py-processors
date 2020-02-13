@@ -4,7 +4,7 @@ This section of the documentation provides detailed information on functions, cl
 
 ### Server Communication
 
-Communicating with the NLP server ([`processors-server`](https://github.com/myedibleenso/processors-server)) is handled by the following classes:
+Communicating with the NLP server ([`processors-server`](https://github.com/clu-ling/processors-server)) is handled by the following classes:
 
 ## `ProcessorsBaseAPI`
 

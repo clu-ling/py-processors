@@ -4,9 +4,9 @@ The following examples give an overview of how to use `py-processors`.
 
 ## Getting started
 
-For annotation and parsing, `py-processors` communicates with [`processors-server`](https://github.com/myedibleenso/processors-server) using a REST interface.
+For annotation and parsing, `py-processors` communicates with [`processors-server`](https://github.com/clu-ling/processors-server) using a REST interface.
 
-The server can be run either via `java` directly or in a [`docker` container](https://hub.docker.com/r/myedibleenso/processors-server/).  Let's look at how to connect to the server.
+The server can be run either via `java` directly or in a [`docker` container](https://hub.docker.com/r/parsertongue/processors-server/).  Let's look at how to connect to the server.
 
 # Running the NLP server
 ### Option 1:  `processors-server.jar`
@@ -21,10 +21,10 @@ _NOTE: It may take a minute or so for the server to initialize as there are some
 
 ### Option 2:  `docker` container
 
-You can pull [the official container from Docker Hub](https://hub.docker.com/r/myedibleenso/processors-server/):
+You can pull [the official container from Docker Hub](https://hub.docker.com/r/parsertongue/processors-server/):
 
 ```bash
-docker pull myedibleenso/processors-server:latest
+docker pull parsertongue/processors-server:latest
 ```
 
 You can check `py-processors` for the appropriate version to retrieve:
@@ -40,9 +40,9 @@ Just replace `latest` in the command above with the appropriate version (`3.1.0`
 The following command will run the container in the background and expose the service on port `8886`:
 
 ```bash
-docker run -d -e _JAVA_OPTIONS="-Xmx3G" -p 127.0.0.1:8886:8888 --name procserv myedibleenso/processors-server
+docker run -d -e _JAVA_OPTIONS="-Xmx3G" -p 127.0.0.1:8886:8888 --name procserv parsertongue/processors-server
 ```
-For a more detailed example showcasing configuration options, take a look at [this `docker-compose.yml` file](https://github.com/myedibleenso/processors-server/blob/master/docker-compose.yml).  You'll need to map a local port to `8888` in the container.
+For a more detailed example showcasing configuration options, take a look at [this `docker-compose.yml` file](https://github.com/clu-ling/processors-server/blob/master/docker-compose.yml).  You'll need to map a local port to `8888` in the container.
 
 Once the container is running, you can connect to it via `py-processors`:
 
@@ -237,7 +237,7 @@ coming soon
 pip install "py-processors[jupyter]"
 ```
 
-These visualizations make use of [our fork](https://github.com/myedibleenso/displacy-processors) of [displaCy](https://github.com/explosion/displacy), You can now visualize a `Sentence` graph as an SVG image using `visualization.JupyterVisualizer.display_graph()`:
+These visualizations make use of [our fork](https://github.com/clu-ling/displacy-processors) of [displaCy](https://github.com/explosion/displacy), You can now visualize a `Sentence` graph as an SVG image using `visualization.JupyterVisualizer.display_graph()`:
 
 ```python
 from processors.visualization import JupyterVisualizer as viz

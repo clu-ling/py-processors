@@ -68,7 +68,7 @@ project = u'py-processors'
 copyright = u'2015, Gus Hahn-Powell and contributors'
 author = u'Gus Hahn-Powell'
 
-github_doc_root = 'https://github.com/myedibleenso/py-processors/tree/master/docs/'
+github_doc_root = 'https://github.com/clu-ling/py-processors/tree/master/docs/'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
